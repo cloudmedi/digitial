@@ -31,10 +31,11 @@ module.exports = {
 		/** Public fields */
 		fields: [
 			"_id",
-			"admin",
 			"username",
 			"email",
 			"phone",
+			"is_admin",
+			"is_company",
 			"email_verified_at",
 			"email_verify_code",
 			"status"
@@ -42,7 +43,6 @@ module.exports = {
 
 		/** Validator schema for entity */
 		entityValidator: {
-			admin: {type: "string", min: 2},
 			username: {type: "string", min: 2},
 			password: {type: "string", min: 6},
 			email: {type: "email"},
@@ -67,6 +67,9 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
+				ctx.params.updatedAt = null;
+				ctx.params.is_admin = false;
+				ctx.params.is_company = false;
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -186,7 +189,7 @@ module.exports = {
 				const user = await this.adapter.findOne({email});
 				if (!user) {
 					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{
-						field: "email",
+						field: "User",
 						message: "is not found"
 					}]);
 				}
@@ -195,7 +198,7 @@ module.exports = {
 				if (!res) {
 					throw new MoleculerClientError("Wrong password!", 422, "", [{
 						field: "password",
-						message: "is not found"
+						message: "is wrong"
 					}]);
 				}
 
@@ -430,6 +433,8 @@ module.exports = {
 			return jwt.sign({
 				id: user._id,
 				username: user.username,
+				is_company: user.is_company,
+				is_admin: user.is_admin,
 				exp: Math.floor(exp.getTime() / 1000)
 			}, this.settings.JWT_SECRET);
 		},

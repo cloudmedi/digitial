@@ -47,8 +47,10 @@ module.exports = {
 		entityValidator: {
 			user: {type: "object"},
 			birthdate: {type: "date", convert: true},
-			skype: {type: "string"},
-			image: {type: "string"},
+			company_name: {type: "string"},
+			company_authorized: {type: "string"},
+			logo: {type: "string"},
+			description: {type: "string"},
 			address: {type: "string"},
 			country: {type: "string"},
 			city: {type: "string"},
@@ -86,8 +88,8 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
-		getWUser: {
-			rest: "POST /user",
+		getUser: {
+			rest: "GET /detail/:user",
 			auth: "required",
 			/*cache: {
 				keys: ["user"],
@@ -99,9 +101,10 @@ module.exports = {
 			async handler(ctx) {
 				const user = new ObjectId(ctx.params.user);
 				const doc = await this.adapter.findOne({user});
+				console.log(doc);
 				const json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
 
-				return json;
+				return this.transformResult(ctx, json, user);
 			}
 		},
 		get: false,
@@ -129,7 +132,9 @@ module.exports = {
 		find: false,
 		count: false,
 		insert: false,
-		update: {},
+		update: {
+			auth: "required",
+		},
 		remove: false
 	},
 
@@ -148,11 +153,11 @@ module.exports = {
 			if (Array.isArray(entities)) {
 				const user_profiles = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
 				return {
-					user_profiles
+					...user_profiles
 				};
 			} else {
 				const user_profiles = await this.transformEntity(ctx, entities, user);
-				return {user_profiles};
+				return {...user_profiles};
 			}
 		},
 
