@@ -1,0 +1,82 @@
+[
+	{
+		"name": "Bisiklet",
+		"description": "Doğa içinde veya şehirde bisiklet sürme aktivitesi."
+	},
+	{
+		"name": "Rafting",
+		"description": "Akarsu üzerinde yapılan ekstrem bir su sporu."
+	},
+	{
+		"name": "Tırmanış",
+		"description": "Doğal kayalıklar, duvarlar veya yapay tırmanma duvarları üzerinde tırmanış aktivitesi."
+	},
+	{
+		"name": "Uzun Yürüyüş",
+		"description": "Genellikle doğada, uzun mesafeler boyunca yapılan yürüyüş aktivitesi."
+	},
+	{
+		"name": "Kısa Yürüyüş",
+		"description": "Daha kısa mesafelerde yapılan yürüyüş aktivitesi."
+	},
+	{
+		"name": "Yoga",
+		"description": "Vücut ve zihin sağlığına odaklanan esneklik ve nefes egzersizleri içeren bir aktivite."
+	},
+	{
+		"name": "Meditasyon",
+		"description": "Zihinsel rahatlama ve farkındalık geliştirmek için yapılan sessiz bir aktivite."
+	},
+	{
+		"name": "Sergi",
+		"description": "Sanat, bilim veya kültür gibi konularda eserlerin sergilendiği etkinlik."
+	},
+	{
+		"name": "Konser",
+		"description": "Canlı müzik performanslarının izlendiği etkinlik."
+	},
+	{
+		"name": "Dans",
+		"description": "Müziğe ritmik olarak uyumlu hareketlerle katılılan eğlenceli bir aktivite."
+	},
+	{
+		"name": "Yüzme",
+		"description": "Su içinde yapılan fiziksel aktivite ve spor."
+	},
+	{
+		"name": "Sörf",
+		"description": "Denizde dalgalar üzerinde kayarak yapılan su sporu."
+	},
+	{
+		"name": "Balon Gezisi",
+		"description": "Ballooning olarak da bilinen bu aktivite, sıcak hava balonları ile yapılan gezilere katılmayı içerir."
+	},
+	{
+		"name": "Fotoğrafçılık",
+		"description": "Görsel anılar oluşturmak için fotoğraf çekme aktivitesi."
+	},
+	{
+		"name": "Kamp",
+		"description": "Doğada açık havada konaklama ve doğal ortamın keyfini çıkarma aktivitesi."
+	},
+	{
+		"name": "Kayak",
+		"description": "Dağlarda veya kayak merkezlerinde kar üzerinde kayma sporu."
+	},
+	{
+		"name": "Snowboard",
+		"description": "Kar üzerinde tek bir tahta üzerinde yapılan bir snowboard sporu."
+	},
+	{
+		"name": "Buz Pateni",
+		"description": "Dondurulmuş bir yüzey üzerinde patenle kayma sporu."
+	},
+	{
+		"name": "Kızak",
+		"description": "Karlı bir yüzeyde aşağıya doğru kayan bir araç üzerinde yapılan aktivite."
+	},
+	{
+		"name": "Snowshoeing",
+		"description": "Kar üzerinde yürüme yeteneğini artırmak için kullanılan özel ayakkabılarla yapılan bir aktivite."
+	}
+]

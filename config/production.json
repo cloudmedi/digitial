@@ -1,0 +1,27 @@
+{
+	"ENV": "production",
+	"PORT": 4001,
+	"SOCKET_PORT": 3001,
+	"REDIS": {
+		"host": "localhost",
+		"port": "6379",
+		"password": "",
+		"db": 12
+	},
+	"MONGODB": {
+		"is_active": true,
+		"URL": "mongodb://172.17.0.2:27017/signage_api"
+	},
+	"JWT_SECRET": "5ca854e9a10491b53cab2d6a885aa9bc",
+	"JSON_SOCKET_PORT": 9838,
+	"JSON_SOCKET_HOST": "127.0.0.1",
+	"JSON_SOCKET_CACHE_PREFIX": "cp",
+	"provider_creds": {
+		"demotest": {
+			"app_base": "https://localhost/v1",
+			"api_key": "i22IBAnmnutgTESTQ2FcGVib72qZR5nR",
+			"api_secret": "yK5YUHTESTqlEHhu"
+
+		}
+	}
+}

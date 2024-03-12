@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title><!DOCTYPE html>
+		<html lang="en">
+		<head>
+		<meta charset="UTF-8">
+		<title>Demo</title>
+	<style>
+		.d {
+			background-color: #999999;
+		}
+
+		/* http://meyerweb.com/eric/tools/css/reset/
+	   v2.0 | 20110126
+	   License: none (public domain)
+	*/
+
+		html, body, div, span, applet, object, iframe,
+		h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+		a, abbr, acronym, address, big, cite, code,
+		del, dfn, em, img, ins, kbd, q, s, samp,
+		small, strike, strong, sub, sup, tt, var,
+		b, u, i, center,
+		dl, dt, dd, ol, ul, li,
+		fieldset, form, label, legend,
+		table, caption, tbody, tfoot, thead, tr, th, td,
+		article, aside, canvas, details, embed,
+		figure, figcaption, footer, header, hgroup,
+		menu, nav, output, ruby, section, summary,
+		time, mark, audio, video {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+
+		/* HTML5 display-role reset for older browsers */
+		article, aside, details, figcaption, figure,
+		footer, header, hgroup, menu, nav, section {
+			display: block;
+		}
+
+		body {
+			line-height: 1;
+		}
+
+		ol, ul {
+			list-style: none;
+		}
+
+		blockquote, q {
+			quotes: none;
+		}
+
+		blockquote:before, blockquote:after,
+		q:before, q:after {
+			content: '';
+			content: none;
+		}
+
+		table {
+			border-collapse: collapse;
+			border-spacing: 0;
+		}
+
+
+		.slidecontainer {
+			width: 100%;
+		}
+
+		.slider {
+			-webkit-appearance: none;
+			width: 100%;
+			height: 25px;
+			background-size: contain;
+			background-position: center center;
+			background-repeat: repeat-x;
+			background-image: url('http://0.0.0.0:4000/assets/roads/road1.png');
+			outline: none;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
+		}
+
+		.slider:hover {
+			opacity: 1;
+		}
+
+		.slider::-webkit-slider-thumb {
+			-webkit-appearance: none;
+			appearance: none;
+			width: 48px;
+			height: 48px;
+			border: 0;
+			background-size: contain;
+			background-position: center center;
+			background-repeat: no-repeat;
+			cursor: pointer;
+		}
+
+		.slider_car1::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_1.png');
+		}
+
+		.slider_car2::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_2.png');
+		}
+
+		.slider_car3::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_3.png');
+		}
+
+		.slider_car4::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_4.png');
+		}
+
+		.slider_car5::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_5.png');
+		}
+
+		.slider_car6::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_6.png');
+		}
+
+		.slider_car7::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_8.png');
+		}
+
+		.slider_car8::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_8.png');
+		}
+
+		.slider_car9::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_9.png');
+		}
+
+		.slider_car10::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_10.png');
+		}
+
+		.slider_car11::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_11.png');
+		}
+
+		.slider_car12::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_12.png');
+		}
+
+		.slider_car13::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_13.png');
+		}
+
+		.slider_car14::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_14.png');
+		}
+
+		.slider_car15::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_15.png');
+		}
+
+		.slider_car16::-webkit-slider-thumb {
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_15.png');
+		}
+
+		.slider::-moz-range-thumb {
+			width: 48px;
+			height: 48px;
+			background-size: contain;
+			background-position: center center;
+			background-repeat: no-repeat;
+			background-image: url('http://0.0.0.0:4000/assets/engines/v1/car_1.png');
+			cursor: pointer;
+		}
+	</style>
+	<link rel="stylesheet"
+		  href="https://raw.githubusercontent.com/kristoferjoseph/flexboxgrid/master/dist/flexboxgrid.min.css">
+</head>
+<body>
+<div id="list_of">
+	<button class="join">Join</button>
+</div>
+<div class="row" id="tables">
+
+</div>
+
+<ul id="list">
+
+</ul>
+<!-- Scripts -->
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+		integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+		crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
+<script>
+	(() => {
+		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzOTMyNTEwOWZkYTczMmU2MTQyY2NmMiIsInVzZXJuYW1lIjoiQnRjT2xleSIsImV4cCI6MTY3NTc3MTk4MywiaWF0IjoxNjcwNTg3OTgzfQ.rf-zbBew0nGiwOljoGR3VjrhtHfsolo1J04y-1SdF18";
+		const socket = io("http://0.0.0.0:3000", {
+			reconnectionDelayMax: 10000,
+			upgrades: ["websocket"],
+			auth: {
+				token: token
+			},
+			query: {
+				"token": token
+			}
+		});
+
+		socket.on("connect", () => {
+			console.log("connected with:");
+			console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+		});
+
+		socket.on("disconnect", () => {
+			console.log(socket.id); // undefined
+		});
+		let i = 0;
+		let classList = "";
+		let room_stop = [];
+
+		let old = null;
+		socket.onAny((eventName, ...args) => {
+			let room = args[0];
+			let data = JSON.parse(args[1]);
+			if (old === null) {
+				old = data;
+				console.log("burada old doldu 1");
+			}
+			let room_place = $("#a" + room);
+			/*console.log(room, data);*/
+
+			if (room_place.length) {
+				if (!room_stop.includes(room)) {
+					Object.keys(data).forEach(key => {
+						console.log(old, old[key], key);
+						if (old[key] === null || typeof old[key] === "undefined") {
+							old[key] = data[key];
+							console.log("burada old doldu 2");
+						}
+						let speed = Number(data[key].speed);
+						let duration = Number(data[key].duration);
+						console.log("asdasd", Number(old[key].speed), speed);
+						if (Number(old[key].speed) > speed) {
+
+							/* Movement */
+							let current = Number(document.getElementById(key).value);
+							document.getElementById(key).value = current + (speed / duration);
+
+							/* Stops Board Actions */
+							if (document.getElementById(key).value >= 480) {
+								document.getElementById(key).style.background = "green";
+								room_stop.push(room);
+							}
+						}
+					});
+				}
+			} else {
+				// insert
+				let color = getRandomColor();
+				let table = "<hr>";
+				table += "<table id='a" + room + "' style='width: 95%; background: " + color + "'>";
+
+				let im = 1;
+				Object.keys(data).forEach(key => {
+					table += "<tr>";
+					table += "<td style='width: 150px; padding: 4px'>" + key + "</td>";
+					table += "<td>";
+					table += "<input id=\"" + key + "\" type=\"range\" min=\"1\" max=\"480\" value=\"0\" class=\"slider slider_car" + im + "\" disabled='disabled'>";
+					table += "</td>";
+					table += "</tr>";
+					im++;
+				});
+
+				table += "</table>";
+				table += "";
+
+				$("#tables").append(table);
+			}
+			old = data;
+
+		});
+
+
+		$(".join").on("click", (el) => {
+			let settings = {
+				"url": "http://0.0.0.0:4000/api/v1/race-game/join",
+				"method": "POST",
+				"timeout": 0,
+				"headers": {
+					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzOTMyNTEwOWZkYTczMmU2MTQyY2NmMiIsInVzZXJuYW1lIjoiQnRjT2xleSIsImV4cCI6MTY3NTc3MTk4MywiaWF0IjoxNjcwNTg3OTgzfQ.rf-zbBew0nGiwOljoGR3VjrhtHfsolo1J04y-1SdF18",
+					"Content-Type": "application/json"
+				},
+				"data": JSON.stringify({
+					"room": "63973ae350ec3a746ff230f2",
+					"game": "6398403a3f95d437cf8c6085"
+				}),
+			};
+
+			$.ajax(settings).done(function (response) {
+				//console.log(response);
+			});
+		});
+
+		function getRandomColor() {
+			let color = "hsl(" + Math.random() * 360 + ", 100%, 80%)";
+			return color;
+		}
+	})();
+
+</script>
+
+</body>
+</html>
+</title>
+</head>
+<body>
+
+</body>
+</html>

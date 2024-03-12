@@ -1,0 +1,62 @@
+[
+	{
+		"name": "Otobüs",
+		"description": "Yolcu taşımacılığı için genellikle şehir içi ve şehirlerarası kullanılan karayolu taşıma aracı."
+	},
+	{
+		"name": "Tren",
+		"description": "Demiryolu üzerinde hareket eden yolcu ve yük taşıyan ulaşım aracı."
+	},
+	{
+		"name": "Uçak",
+		"description": "Havada seyahat eden, genellikle uzun mesafeli yolculuklar için kullanılan hava taşıma aracı."
+	},
+	{
+		"name": "Gemiler / Feribotlar",
+		"description": "Denizde seyahat etmek için kullanılan su taşıma araçları, feribotlar ise genellikle kısa mesafeli deniz geçişlerinde kullanılır."
+	},
+	{
+		"name": "Bisiklet",
+		"description": "Pedallı bir araç olan bisiklet, insan gücüyle çalışır ve genellikle kısa mesafeli ulaşım için tercih edilir."
+	},
+	{
+		"name": "Yürüyüş",
+		"description": "İnsanların kendi ayakları ile yürüyerek ulaştığı ulaşım yöntemi."
+	},
+	{
+		"name": "Otomobil",
+		"description": "Bireylerin özel olarak sahip olduğu veya kiraladığı motorlu araçlar."
+	},
+	{
+		"name": "Motorlu Bisiklet / Scooter",
+		"description": "Motorlu bir araç olan scooter veya motosiklet, genellikle kişisel ulaşım için kullanılır."
+	},
+	{
+		"name": "Çekçek / Rikşa",
+		"description": "İnsan gücüyle çekilen taşıma aracı, özellikle Asya'da yaygın olarak kullanılır."
+	},
+	{
+		"name": "Eşek / Deve",
+		"description": "Hayvan gücüyle çalışan taşıma aracı, özellikle kırsal bölgelerde kullanılır."
+	},
+	{
+		"name": "Kamyon / TIR",
+		"description": "Yük taşımacılığı için tasarlanmış motorlu taşıma aracı."
+	},
+	{
+		"name": "Taksi",
+		"description": "Yolcu taşımacılığı için kullanılan motorlu bir araç, genellikle kiralama esasına dayalıdır."
+	},
+	{
+		"name": "Helikopter",
+		"description": "Havada dikey olarak kalkabilen ve inebilen hava taşıma aracı."
+	},
+	{
+		"name": "Uzay Araçları",
+		"description": "Uzayda seyahat eden araçlar, genellikle uzay araştırmalarında veya ulusal uzay ajansları tarafından kullanılır."
+	},
+	{
+		"name": "Atv / Quad",
+		"description": "Dört tekerlekli bir araç olan ATV veya quad, genellikle off-road ve macera sporları için kullanılır."
+	}
+]

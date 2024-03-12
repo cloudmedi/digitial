@@ -1,0 +1,2382 @@
+[
+	{
+		"country": "IT",
+		"types": [
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "NZ",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "JP",
+		"types": [
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Oct"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Oct"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Apr",
+					"May",
+					"Oct"
+				]
+			}
+		]
+	},
+	{
+		"country": "CA",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug",
+					"Sep"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "CH",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Mountain Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "ES",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "AU",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr",
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "FR",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "ME",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "IL",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "SC",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "FJ",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			}
+		]
+	},
+	{
+		"country": "NO",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "IS",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "BB",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "MV",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "GE",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "CA",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "MY",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "SG",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "PH",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "AT",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "DE",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "IE",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "CD",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "AE",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Dec",
+					"Jan",
+					"Feb",
+					"Mar",
+					"Apr"
+				]
+			}
+		]
+	},
+	{
+		"country": "ES",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "ID",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "TW",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "PT",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "CZ",
+		"types": [
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Entertainment Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "HU",
+		"types": [
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Entertainment Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "RO",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "HR",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "RS",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "ME",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "MK",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "RS",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "MT",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Gastronomy Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "TN",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "DZ",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "MA",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "KE",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "TZ",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "ZA",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "NA",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "BW",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun, Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "ZW",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "OM",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Sep",
+					"Oct",
+					"Nov"
+				]
+			}
+		]
+	},
+	{
+		"country": "JO",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Wellness and Spa Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "LB",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "History and Culture Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	},
+	{
+		"country": "BS",
+		"types": [
+			{
+				"name": "Beach Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "City Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Rural Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Adventure Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			},
+			{
+				"name": "Family Holiday",
+				"dates": [
+					"Jun",
+					"Jul",
+					"Aug"
+				]
+			}
+		]
+	}
+]

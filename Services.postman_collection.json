@@ -1,0 +1,581 @@
+{
+	"info": {
+		"_postman_id": "fd53bc9b-3a42-48c8-ba16-ef0dfd35907e",
+		"name": "MoleculerServices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19081557"
+	},
+	"item": [
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Products List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"vulcan\",\n    \"price\":10.77\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"vulcan\",\n    \"price\":10.77,\n    \"quantity\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products/:id",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "YsAiMa05m0gavzK4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Quantity Increase",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"WXPGVkUkJ5Sywrpf\",\n    \"value\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products/:id/quantity/increase",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								":id",
+								"quantity",
+								"increase"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "WXPGVkUkJ5Sywrpf"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Quantity Decrease",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": \"WXPGVkUkJ5Sywrpf\",\n    \"value\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products/:id/quantity/decrease",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								":id",
+								"quantity",
+								"decrease"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "WXPGVkUkJ5Sywrpf"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product View",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products/:id",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "YsAiMa05m0gavzK4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Product Delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"vulcan\",\n    \"price\":10.77,\n    \"quantity\": 20\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/products/:id",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"products",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "YsAiMa05m0gavzK4"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Wallet",
+					"item": [
+						{
+							"name": "My Wallets",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user\": {\n        \"email\": \"murat@ksks.com\",\n        \"password\": \"\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://0.0.0.0:3000/api/wallet",
+									"protocol": "http",
+									"host": [
+										"0",
+										"0",
+										"0",
+										"0"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"wallet"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"wallet\": {\n    \"amount\": 100,\n    \"currency\": \"try\"\n}\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://0.0.0.0:3000/api/wallet",
+									"protocol": "http",
+									"host": [
+										"0",
+										"0",
+										"0",
+										"0"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"wallet"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Kyc",
+					"item": [
+						{
+							"name": "Upload",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/x-www-form-urlencoded",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file_1",
+											"type": "file",
+											"src": "/home/m2/Pictures/Screenshot from 2022-09-06 17-10-44.png"
+										},
+										{
+											"key": "file_2",
+											"type": "file",
+											"src": "/home/m2/Pictures/Screenshot from 2022-09-06 16-41-36.png"
+										},
+										{
+											"key": "file_3",
+											"type": "file",
+											"src": "/home/m2/Pictures/Screenshot from 2022-09-03 15-59-56.png"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://0.0.0.0:3000/api/kyc/upload",
+									"protocol": "http",
+									"host": [
+										"0",
+										"0",
+										"0",
+										"0"
+									],
+									"port": "3000",
+									"path": [
+										"api",
+										"kyc",
+										"upload"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"username\": \"m67a1fvc\",\n        \"password\": \"123123123\",\n        \"email\": \"m1ag6@ksks.com\",\n        \"bio\": \"bio my midio\",\n        \"phone\": \"5337054133\",\n        \"address\": \"address\",\n        \"country\": \"Turkey\",\n        \"city\": \"Istanbul\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verify Email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"1pSOaZYj\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/users/email_verify",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"email_verify"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user\": {\n        \"email\": \"m6g6@ksks.com\",\n        \"password\": \"123123123\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/users/login",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://0.0.0.0:3000/api/users",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fraud",
+			"item": [
+				{
+					"name": "Create & Check",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"fraud_data\": {\n        \"transaction\": \"ad66I13ID\",\n        \"identifier\": \"35745455ff6987\",\n        \"full_name\": \"Tarık Mengüç\",\n        \"amount\": 1000,\n        \"currency\": \"TRY\",\n        \"ip\": \"177.29.100.77\",\n        \"card_number\": \"4124446578111023\",\n        \"device_type\": \"mobile\",\n        \"device_info\": \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/104.0.0.0 Safari/537.36\",\n        \"payment_status\": 3,\n        \"payment_error\": \"3ds Hatalı\"\n    }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://0.0.0.0:3030/api/v1/fraudEngine",
+							"protocol": "http",
+							"host": [
+								"0",
+								"0",
+								"0",
+								"0"
+							],
+							"port": "3030",
+							"path": [
+								"api",
+								"v1",
+								"fraudEngine"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6InJUbUk4ZmF1OEJiZ1hmQ3MiLCJ1c2VybmFtZSI6Im02N2ExZnZjIiwiZXhwIjoxNjY3ODM2NDg1LCJpYXQiOjE2NjI2NTI0ODV9.jr0K7G-rWTIt-DLsoroQCoXbvYYEL6vt-Ni_pzum7Pk",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

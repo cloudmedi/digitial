@@ -1,0 +1,74 @@
+{
+  "name": "signage_api",
+  "version": "1.0.0",
+  "description": "Digital Signage Api",
+  "scripts": {
+    "dev": "LAB_PORT=3211 NODE_ID=development-adm moleculer-runner --repl --hot services/*.service.js",
+    "dev-partials": "NODE_ID=dev-ip_info moleculer-runner --repl --hot services/_partial/*.service.js",
+    "dev-admin": "NODE_ID=dev-admin moleculer-runner --repl --hot services/admin/*.service.js",
+    "dev-ipinfo": "NODE_ID=dev-ip_info moleculer-runner --repl --hot services/_partial/ip_location.service.js",
+    "dev-countries": "NODE_ID=dev-country moleculer-runner --repl --hot services/_partial/country.service.js services/_partial/country_holiday.service.js",
+    "dev-currencies": "NODE_ID=dev-io-adm moleculer-runner --repl --hot services/_partial/currency.service.js",
+    "dev-io": "NODE_ID=dev-io moleculer-runner --repl --hot services/io.service.js services/room.service.js",
+    "start": "NODE_ENV=production moleculer-runner services/**/*.service.js",
+    "cli": "moleculer connect Redis",
+    "ci": "jest --watch",
+    "test": "jest --coverage",
+    "lint": "eslint services",
+    "dc:up": "docker-compose up --build -d",
+    "dc:logs": "docker-compose logs -f",
+    "dc:down": "docker-compose down"
+  },
+  "keywords": [
+    "signage",
+    "stream"
+  ],
+  "author": "",
+  "devDependencies": {
+    "eslint": "^8.55.0",
+    "jest": "^29.7.0",
+    "jest-cli": "^29.7.0",
+    "moleculer-repl": "^0.7.4"
+  },
+  "dependencies": {
+    "@moleculer/lab": "^0.6.4",
+    "axios": "^1.6.2",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "busboy": "^1.6.0",
+    "config": "^3.3.9",
+    "ecpair": "^2.1.0",
+    "ioredis": "^5.3.2",
+    "json-socket": "^0.3.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "moleculer": "^0.14.32",
+    "moleculer-db": "^0.8.25",
+    "moleculer-db-adapter-mongo": "^0.4.19",
+    "moleculer-io": "^2.2.0",
+    "moleculer-web": "^0.10.7",
+    "moment": "^2.29.4",
+    "mongodb": "^6.3.0",
+    "multer": "^1.4.5-lts.1",
+    "node-fetch": "^3.3.2",
+    "redlock": "^4.2.0",
+    "socket.io-redis": "^6.1.1",
+    "sqlite3": "^5.1.6",
+    "stellar-base": "^10.0.0",
+    "throttled-queue": "^2.1.4",
+    "uuid": "^9.0.1",
+    "ws": "^8.15.1"
+  },
+  "engines": {
+    "node": ">= 18.x.x"
+  },
+  "jest": {
+    "coverageDirectory": "../coverage",
+    "testEnvironment": "node",
+    "rootDir": "./services",
+    "roots": [
+      "../test"
+    ]
+  }
+}

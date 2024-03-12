@@ -1,0 +1,12 @@
+apps:
+  - name: "999-lab"
+    script: moleculer-runner
+    exec_mode: cluster
+    instances: 1
+    autostart: true
+    interpreter: npm
+    args:
+      - services/**/lab.service.js
+    env:
+      NODE_ENV: production
+      NODE_ID: labservice

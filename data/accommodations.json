@@ -1,0 +1,62 @@
+[
+	{
+		"name": "Otel",
+		"description": "Konforlu konaklama, genellikle çeşitli hizmetler ve olanaklar sunan ticari bir konaklama tesisidir."
+	},
+	{
+		"name": "Motel",
+		"description": "Yolda seyahat edenler için uygun fiyatlı ve temel konaklama sunan genellikle küçük işletmelerdir."
+	},
+	{
+		"name": "Pansiyon",
+		"description": "Sadece konaklama sunan küçük işletmeler, genellikle ev yapımı yemeklerle birlikte samimi bir atmosfer sunar."
+	},
+	{
+		"name": "Hostel",
+		"description": "Bütçe dostu konaklama, genellikle genç gezginlere hitap eder ve ortak odalı veya özel odalı seçenekleri bulunur."
+	},
+	{
+		"name": "Villa / Tatil Evi",
+		"description": "Özel ev veya villa kiralama seçenekleri, genellikle aileler veya büyük gruplar için idealdir."
+	},
+	{
+		"name": "Apartman",
+		"description": "Kısa vadeli konaklama için daireler, genellikle ev konforunu otel benzeri hizmetlerle birleştirir."
+	},
+	{
+		"name": "Pansiyon",
+		"description": "Genellikle öğrencilere veya genç gezginlere uygun fiyatlı konaklama seçenekleri sunan yerlerdir."
+	},
+	{
+		"name": "Kamping",
+		"description": "Doğada kamp yapma imkanı sunan konaklama seçeneği, genellikle kamp alanlarında bulunur."
+	},
+	{
+		"name": "Lodge",
+		"description": "Doğal güzelliklere yakın konaklama seçenekleri, genellikle dağlık veya ormanlık alanlarda bulunur."
+	},
+	{
+		"name": "Bungalov",
+		"description": "Genellikle tek katlı, tek bir yapıda konaklama birimleri, genellikle doğa içinde huzurlu bir konaklama sunar."
+	},
+	{
+		"name": "Konukevi / Misafirhane",
+		"description": "Ev sahibi ile birlikte konaklama imkanı, kişisel bir dokunuş ve yerel deneyim sunar."
+	},
+	{
+		"name": "Kahya Evi / Boutique Otel",
+		"description": "Küçük ve lüks oteller, genellikle kişisel hizmet ve özel tasarımla öne çıkar."
+	},
+	{
+		"name": "Apart Otel",
+		"description": "Dairelerin otel hizmetleri ile birleştiği konaklama seçenekleri."
+	},
+	{
+		"name": "Thermal Otel",
+		"description": "Termal sulara erişim sağlayan oteller, genellikle sağlık ve dinlenme odaklıdır."
+	},
+	{
+		"name": "Süit Oteller",
+		"description": "Geniş ve lüks konaklama birimleri, genellikle otel içinde özel alan ve hizmetler sunar."
+	}
+]
