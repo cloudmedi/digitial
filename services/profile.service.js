@@ -47,8 +47,7 @@ module.exports = {
 		entityValidator: {
 			user: {type: "object"},
 			birthdate: {type: "date", convert: true},
-			company_name: {type: "string"},
-			company_authorized: {type: "string"},
+			merchant_name: {type: "string"},
 			logo: {type: "string"},
 			description: {type: "string"},
 			address: {type: "string"},

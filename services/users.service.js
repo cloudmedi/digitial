@@ -35,7 +35,7 @@ module.exports = {
 			"email",
 			"phone",
 			"is_admin",
-			"is_company",
+			"is_merchant",
 			"email_verified_at",
 			"email_verify_code",
 			"status"
@@ -69,7 +69,7 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = null;
 				ctx.params.is_admin = false;
-				ctx.params.is_company = false;
+				ctx.params.is_merchant = false;
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -433,7 +433,7 @@ module.exports = {
 			return jwt.sign({
 				id: user._id,
 				username: user.username,
-				is_company: user.is_company,
+				is_merchant: user.is_merchant,
 				is_admin: user.is_admin,
 				exp: Math.floor(exp.getTime() / 1000)
 			}, this.settings.JWT_SECRET);
