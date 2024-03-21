@@ -25,6 +25,7 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
+			"user",
 			"name",
 			"direction",
 			"serial",
@@ -62,6 +63,26 @@ module.exports = {
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
 			}
+		},
+		after: {
+			create: [
+				// Add a new virtual field to the entity
+				async function (ctx, res) {
+console.log(ctx.meta.user);
+					res.subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription});
+
+					return res;
+				},
+				// Populate the `referrer` field
+				/*
+				async function (ctx, res) {
+					if (res.referrer)
+						res.referrer = await ctx.call("users.get", { id: res._id });
+
+					return res;
+				}
+				 */
+			]
 		}
 	},
 
@@ -90,7 +111,7 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
-			async handler(ctx)  {
+			async handler(ctx) {
 				return await this.adapter.findOne({user: ctx.params.user});
 			}
 		},
@@ -151,7 +172,8 @@ module.exports = {
 		 * It is called in the DB.mixin after the database
 		 * connection establishing & the collection is empty.
 		 */
-		async seedDB() {},
+		async seedDB() {
+		},
 	},
 
 	/**

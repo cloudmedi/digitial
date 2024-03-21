@@ -443,6 +443,8 @@ module.exports = {
 				username: user.username,
 				is_merchant: user.is_merchant,
 				is_admin: user.is_admin,
+				subscription: user.subscription,
+				subscription_expire: user.subscription_expire,
 				exp: Math.floor(exp.getTime() / 1000)
 			}, this.settings.JWT_SECRET);
 		},
