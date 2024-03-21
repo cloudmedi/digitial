@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Digital Signage Api",
   "scripts": {
-    "dev": "LAB_PORT=3211 NODE_ID=development-adm moleculer-runner --repl --hot services/*.service.js",
+    "dev": "LAB_PORT=3211 NODE_ID=dev-apibase moleculer-runner --repl --hot services/*.service.js",
     "dev-partials": "NODE_ID=dev-ip_info moleculer-runner --repl --hot services/_partial/*.service.js",
     "dev-screen": "NODE_ID=dev-screen moleculer-runner --repl --hot services/screen/*.service.js",
     "dev-services": "NODE_ID=dev-screen moleculer-runner --repl --hot services/package/*.service.js services/serialno/*.service.js",
+    "dev-source": "NODE_ID=dev-source moleculer-runner --repl --hot services/source/*.service.js",
     "dev-admin": "NODE_ID=dev-admin moleculer-runner --repl --hot services/admin/*.service.js",
     "dev-ipinfo": "NODE_ID=dev-ip_info moleculer-runner --repl --hot services/_partial/ip_location.service.js",
     "dev-countries": "NODE_ID=dev-country moleculer-runner --repl --hot services/_partial/country.service.js services/_partial/country_holiday.service.js",
