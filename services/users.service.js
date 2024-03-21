@@ -8,6 +8,8 @@ const jwt = require("jsonwebtoken");
 const DbService = require("../mixins/db.mixin");
 const CacheCleanerMixin = require("../mixins/cache.cleaner.mixin");
 const {ObjectId} = require("mongodb");
+const {v4: uuidv4} = require("uuid");
+const moment = require("moment");
 
 module.exports = {
 	name: "users",
@@ -70,6 +72,10 @@ module.exports = {
 				ctx.params.updatedAt = null;
 				ctx.params.is_admin = false;
 				ctx.params.is_merchant = false;
+				ctx.params.api_key = uuidv4().toString();
+				ctx.params.api_secret = uuidv4().toString().replaceAll("-", "").substring(2, 16);
+				ctx.params.subscription = null;
+				ctx.params.subscription_expire = moment(new Date()).add(7, "days").toDate();
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -152,6 +158,7 @@ module.exports = {
 
 				const json = await this.transformEntity(user, true, ctx.meta.token);
 				await this.entityChanged("created", json, ctx);
+				await this.broker.broadcast("user.created", {user}, ["mail", "package"]);
 				await ctx.call("wallet.create", {
 					wallet: {
 						user: json.user._id.toString(),
@@ -339,7 +346,15 @@ module.exports = {
 
 		update: {
 			auth: "required",
-			rest: "PUT /users/:id"
+			rest: "PUT /users/:id",
+			params: {
+				id: {type: "string", required: true}
+			},
+			async handler(ctx) {
+				console.log(ctx.params);
+				const {subscription, subscription_expire, updatedAt} = ctx.params;
+				return await this.adapter.updateById(ctx.params.id, {"$set": {subscription: new ObjectId(subscription), subscription_expire, updatedAt}});
+			}
 		},
 
 		remove: false,
@@ -364,7 +379,7 @@ module.exports = {
 				const user = await this.adapter.findOne({username: ctx.params.username});
 				if (!user)
 					throw new MoleculerClientError("User not found!", 404);
-				const profile = await ctx.call("v1.profile.getWUser", { user: user._id.toString()});
+				const profile = await ctx.call("v1.profile.getWUser", {user: user._id.toString()});
 				return profile;
 			}
 		},

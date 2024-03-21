@@ -4,6 +4,7 @@ const DbMixin = require("../../mixins/db.mixin");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
 const {ObjectId} = require("mongodb");
 const _ = require("lodash");
+const moment = require("moment/moment");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -47,21 +48,53 @@ module.exports = {
 		entityValidator: {},
 		populates: {},
 	},
+
+	events: {
+		// Subscribe to `user.created` event
+		"user.created"(user) {
+			//console.log("User created:", user);
+			const user_id = user.user._id;
+			this.broker.call("v1.package.getTrialPackage").then((res) => {
+				const package_info = res.data;
+				this.broker.call("users.update", {
+					"id": user_id,
+					subscription: new ObjectId(package_info._id),
+					subscription_expire: moment(new Date()).add(package_info.trial_days, "days").toDate()
+				});
+			});
+		},
+
+		// Subscribe to all `user` events
+		"user.*"(user) {
+			//console.log("User event:", user);
+		},
+
+		// Subscribe to all internal events
+		/*
+		"$**"(payload, sender, event) {
+			console.log(`Event '${event}' received from ${sender} node:`, payload);
+		}
+		 */
+	},
+
 	/**
 	 * Actions
 	 */
 	actions: {
 		create: {
-			auth: "required"
+			auth: "required",
+			async handler(ctx) {
+				//
+			}
 		},
 		getTrialPackage: {
 			rest: "GET /trial_package",
 			cache: {
 				ttl: 60 * 60 * 24// 24 hour
 			},
-			async handler(ctx){
+			async handler(ctx) {
 				const trial_package = await this.adapter.findOne({is_trial: true, status: true});
-				if(trial_package) {
+				if (trial_package) {
 					const doc = await this.transformDocuments(ctx, {}, trial_package);
 					return await this.transformResult(ctx, doc, ctx.meta.user);
 				} else {
@@ -150,7 +183,7 @@ module.exports = {
 					old_price: 100,
 					price: 0,
 					annual_discount: 0,
-					serial_count: 150,
+					serial_count: 1,
 					is_trial: true,
 					trial_days: 7,
 					package_properties: [
