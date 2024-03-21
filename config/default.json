@@ -3,7 +3,7 @@
 	"PORT": 4001,
 	"SOCKET_PORT": 3001,
 	"REDIS": {
-		"host": "localhost",
+		"host": "172.17.0.3",
 		"port": "6379",
 		"password": "",
 		"db": 12
