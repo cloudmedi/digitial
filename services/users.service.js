@@ -158,14 +158,7 @@ module.exports = {
 
 				const json = await this.transformEntity(user, true, ctx.meta.token);
 				await this.entityChanged("created", json, ctx);
-				await this.broker.broadcast("user.created", {user}, ["mail", "package"]);
-				await ctx.call("wallet.create", {
-					wallet: {
-						user: json.user._id.toString(),
-						amount: 0.000001,
-						currency: "try"
-					}
-				});
+				await this.broker.broadcast("user.created", {user}, ["mail","wallet", "package"]);
 
 				return json;
 			}

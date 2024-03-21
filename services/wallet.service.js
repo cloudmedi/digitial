@@ -3,6 +3,8 @@
 const {MoleculerClientError} = require("moleculer").Errors;
 const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../mixins/db.mixin");
+const {ObjectId} = require("mongodb");
+const moment = require("moment");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -48,7 +50,33 @@ module.exports = {
 			}
 		}
 	},
+	events: {
+		// Subscribe to `user.created` event
+		"user.created"(user) {
+			//console.log("User created:", user);
+			const user_id = user.user._id;
+			this.broker.call("wallet.create", {
+				wallet: {
+					user: user_id,
+					amount: 0.000001,
+					currency: "try"
+				}
+			}).catch(e => console.log(e));
 
+		},
+
+		// Subscribe to all `user` events
+		"user.*"(user) {
+			//console.log("User event:", user);
+		},
+
+		// Subscribe to all internal events
+		/*
+		"$**"(payload, sender, event) {
+			console.log(`Event '${event}' received from ${sender} node:`, payload);
+		}
+		 */
+	},
 	/**
 	 * Action Hooks
 	 */
@@ -84,6 +112,7 @@ module.exports = {
 				if (!wallet) {
 					entity.createdAt = new Date();
 					entity.updatedAt = new Date();
+					entity.user = new ObjectId(entity.user);
 
 					const doc = await this.adapter.insert(entity);
 					let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
