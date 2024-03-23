@@ -20,7 +20,7 @@ module.exports = {
 	mixins: [DbMixin("screens"),
 		CacheCleanerMixin([
 			"cache.clean.screens",
-			"screen.created"
+			"screens"
 		])],
 	whitelist: [],
 	/**
@@ -62,7 +62,7 @@ module.exports = {
 			create(ctx) {
 				ctx.params.createddAt = new Date();
 				ctx.params.updatedAt = null;
-				ctx.params.user = new ObjectId(ctx.meta.user.id);
+				ctx.params.user = new ObjectId(ctx.meta.userID);
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -74,6 +74,7 @@ module.exports = {
 				// Add a new virtual field to the entity
 				async function (ctx, res) {
 					res.subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription});
+					await this.entityChanged("created", res, ctx);
 					return res;
 				},
 				// Populate the `referrer` field
@@ -101,7 +102,7 @@ module.exports = {
 				console.log(subscription_expire_At);
 				const subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription.toString()});
 				const screens_count = await ctx.call("v1.screen.count");
-				if(screens_count >= subscription_detail.serial_count) {
+				if (screens_count >= subscription_detail.serial_count) {
 					throw new MoleculerClientError("You can't add more screen", 400, "", [{
 						field: "Screen.Count",
 						message: "more screen than subscription"
@@ -109,11 +110,31 @@ module.exports = {
 				}
 
 				const doc = await this.adapter.insert(ctx.params);
-				const screen = await this.transformDocuments(ctx, {}, doc);
-				await this.broker.broadcast("screen.created", {screen:doc, user: ctx.meta.user}, ["mail"]);
+				const screen = await this.transformEntity(ctx, doc);
+				await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
+
 				return screen;
 			}
 		},
+		count: {
+			auth: "required",
+			cache: {
+				keys: ["#userID"],
+				ttl: 60 * 60 * 24 * 1 // 1 day
+			},
+			async handler(ctx) {
+				return await this.adapter.count({user: ctx.params.userID});
+			}
+		},
+		list: {
+			auth: "required",
+			async handler(ctx) {
+				return await this.adapter.findOne({user: ctx.params.user});
+			}
+		},
+		insert: false,
+		update: false,
+		remove: false,
 		findByName: {
 			rest: "POST /search",
 			auth: "required",
@@ -127,28 +148,8 @@ module.exports = {
 				if (doc) {
 					return doc;
 				}
-
 			}
-		},
-		list: {
-			auth: "required",
-			async handler(ctx) {
-				return await this.adapter.findOne({user: ctx.params.user});
-			}
-		},
-		count: {
-			auth: "required",
-			cache: {
-				keys: ["#userID"],
-				ttl: 60 * 60 * 24 * 7 // 1 week
-			},
-			async handler(ctx) {
-				return await this.adapter.count({user: ctx.params.userID});
-			}
-		},
-		insert: false,
-		update: false,
-		remove: false
+		}
 	},
 
 	/**
