@@ -180,7 +180,7 @@ module.exports = {
 					if (user) {
 						this.logger.info("Authenticated via JWT: ", user.username);
 						// Reduce user fields (it will be transferred to other nodes)
-						ctx.meta.user = _.pick(user, ["_id", "username", "email", "image"]);
+						ctx.meta.user = _.pick(user, ["_id", "username", "email", "image", "subscription", "subscription_expire"]);
 						ctx.meta.token = token;
 						ctx.meta.userID = user._id;
 					}

@@ -38,6 +38,8 @@ module.exports = {
 			"phone",
 			"is_admin",
 			"is_merchant",
+			"subscription",
+			"subscription_expire",
 			"email_verified_at",
 			"email_verify_code",
 			"status"
@@ -187,18 +189,20 @@ module.exports = {
 				const {email, password} = ctx.params.user;
 
 				const user = await this.adapter.findOne({email});
+				let login_error = false;
 				if (!user) {
+					login_error=true;
+				} else {
+					const res = await bcrypt.compare(password, user.password);
+					if (!res) {
+						login_error=true;
+					}
+				}
+
+				if(login_error) {
 					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{
 						field: "User",
 						message: "is not found"
-					}]);
-				}
-
-				const res = await bcrypt.compare(password, user.password);
-				if (!res) {
-					throw new MoleculerClientError("Wrong password!", 422, "", [{
-						field: "password",
-						message: "is wrong"
 					}]);
 				}
 
@@ -327,10 +331,7 @@ module.exports = {
 			}
 		},
 
-		list: {
-			auth: "required",
-			rest: "GET /users",
-		},
+		list: false,
 
 		get: {
 			auth: "required",

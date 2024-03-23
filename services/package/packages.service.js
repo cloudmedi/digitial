@@ -37,8 +37,11 @@ module.exports = {
 			"old_price",
 			"price",
 			"annual_discount",
-			"screen_count",
+			"serial_count",
+			"is_trial",
+			"trial_days",
 			"package_properties",
+			"order",
 			"status",
 			"updatedAt",
 			"createdAt"
@@ -53,13 +56,12 @@ module.exports = {
 		// Subscribe to `user.created` event
 		"user.created"(user) {
 			//console.log("User created:", user);
-			const user_id = user.user._id;
 			this.broker.call("v1.package.getTrialPackage").then((res) => {
 				const package_info = res.data;
 				this.broker.call("users.update", {
-					"id": user_id,
-					subscription: new ObjectId(package_info._id),
-					subscription_expire: moment(new Date()).add(package_info.trial_days, "days").toDate()
+					"id": user.user._id,
+					subscription: new ObjectId(package_info.packages._id),
+					subscription_expire: new Date(moment(new Date()).add(package_info.packages.trial_days, "days").toDate())
 				});
 			});
 		},
@@ -103,7 +105,6 @@ module.exports = {
 						message: "Not found"
 					}]);
 				}
-
 			}
 		},
 		get: {

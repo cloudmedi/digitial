@@ -68,9 +68,7 @@ module.exports = {
 			create: [
 				// Add a new virtual field to the entity
 				async function (ctx, res) {
-console.log(ctx.meta.user);
 					res.subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription});
-
 					return res;
 				},
 				// Populate the `referrer` field
@@ -92,6 +90,24 @@ console.log(ctx.meta.user);
 	actions: {
 		create: {
 			auth: "required",
+			async handler(ctx) {
+				const entity = ctx.params;
+				const subscription_expire_At = ctx.meta.user.subscription_expire;
+				console.log(subscription_expire_At);
+				const subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription.toString()});
+				const screens_count = await ctx.call("v1.screen.count");
+				if(screens_count >= subscription_detail.serial_count) {
+					throw new MoleculerClientError("You can't add more screen", 400, "", [{
+						field: "Screen.Count",
+						message: "more screen than subscription"
+					}]);
+				}
+
+				const doc = await this.adapter.insert(ctx.params);
+				const screen = await this.transformDocuments(ctx, {}, doc);
+				await this.broker.broadcast("screen.added", {screen:doc, user: ctx.meta.user}, ["mail"]);
+				return screen;
+			}
 		},
 		findByName: {
 			rest: "POST /search",
@@ -115,7 +131,12 @@ console.log(ctx.meta.user);
 				return await this.adapter.findOne({user: ctx.params.user});
 			}
 		},
-		count: false,
+		count: {
+			auth: "required",
+			async handler(ctx) {
+				return await this.adapter.count({user: ctx.params.userID});
+			}
+		},
 		insert: false,
 		update: false,
 		remove: false
