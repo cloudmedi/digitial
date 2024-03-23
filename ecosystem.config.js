@@ -65,6 +65,72 @@ module.exports = {
 				LAB_PORT: 3211,
 				NODE_ID: "signage-dev-admin"
 			}
+		},
+		{
+			name: "signage-screens",
+			script: "./node_modules/.bin/moleculer-runner",
+			args: "services/screen/screen.service.js",
+			exec_mode: "cluster",
+			instances: 1,
+			env: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_production: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_development: {
+				NODE_ENV: "development",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-dev-admin"
+			}
+		},
+		{
+			name: "signage-package",
+			script: "./node_modules/.bin/moleculer-runner",
+			args: "services/package/packages.service.js",
+			exec_mode: "cluster",
+			instances: 1,
+			env: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_production: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_development: {
+				NODE_ENV: "development",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-dev-admin"
+			}
+		},
+		{
+			name: "signage-source",
+			script: "./node_modules/.bin/moleculer-runner",
+			args: "services/source/source.service.js services/source/channel.service.js services/source/playlist.service.js services/source/program.service.js",
+			exec_mode: "cluster",
+			instances: 1,
+			env: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_production: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-admin"
+			},
+			env_development: {
+				NODE_ENV: "development",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-dev-admin"
+			}
 		}
 	]
 };
