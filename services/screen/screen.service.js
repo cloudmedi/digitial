@@ -4,6 +4,7 @@ const {MoleculerClientError} = require("moleculer").Errors;
 const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
+const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -16,7 +17,11 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("screens")],
+	mixins: [DbMixin("screens"),
+		CacheCleanerMixin([
+			"cache.clean.screens",
+			"screen.created"
+		])],
 	whitelist: [],
 	/**
 	 * Settings
@@ -105,7 +110,7 @@ module.exports = {
 
 				const doc = await this.adapter.insert(ctx.params);
 				const screen = await this.transformDocuments(ctx, {}, doc);
-				await this.broker.broadcast("screen.added", {screen:doc, user: ctx.meta.user}, ["mail"]);
+				await this.broker.broadcast("screen.created", {screen:doc, user: ctx.meta.user}, ["mail"]);
 				return screen;
 			}
 		},
@@ -133,6 +138,10 @@ module.exports = {
 		},
 		count: {
 			auth: "required",
+			cache: {
+				keys: ["#userID"],
+				ttl: 60 * 60 * 24 * 7 // 1 week
+			},
 			async handler(ctx) {
 				return await this.adapter.count({user: ctx.params.userID});
 			}
