@@ -75,17 +75,17 @@ module.exports = {
 			env: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-screens"
 			},
 			env_production: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-screens"
 			},
 			env_development: {
 				NODE_ENV: "development",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-dev-admin"
+				NODE_ID: "signage-dev-screens"
 			}
 		},
 		{
@@ -97,17 +97,17 @@ module.exports = {
 			env: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-package"
 			},
 			env_production: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-package"
 			},
 			env_development: {
 				NODE_ENV: "development",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-dev-admin"
+				NODE_ID: "signage-dev-package"
 			}
 		},
 		{
@@ -119,17 +119,17 @@ module.exports = {
 			env: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-source"
 			},
 			env_production: {
 				NODE_ENV: "production",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-admin"
+				NODE_ID: "signage-source"
 			},
 			env_development: {
 				NODE_ENV: "development",
 				LAB_PORT: 3211,
-				NODE_ID: "signage-dev-admin"
+				NODE_ID: "signage-dev-source"
 			}
 		}
 	]
