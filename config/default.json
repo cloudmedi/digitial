@@ -17,10 +17,10 @@
 	"JSON_SOCKET_HOST": "127.0.0.1",
 	"JSON_SOCKET_CACHE_PREFIX": "cp",
 	"provider_creds": {
-		"demotest": {
-			"app_base": "https://localhost/v1",
-			"api_key": "i22IBAnmnutgTESTQ2FcGVib72qZR5nR",
-			"api_secret": "yK5YUHTESTqlEHhu"
+		"postmarkapp": {
+			"app_base": "",
+			"api_key": "177ed2a8-0f55-4b52-85f2-5b9043f02d49",
+			"api_secret": ""
 
 		}
 	}
