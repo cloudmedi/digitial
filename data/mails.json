@@ -1,0 +1,13 @@
+[
+	{
+		"slug":  "user.created",
+		"name": "User Welcome eMail Template",
+		"subject":  "Welcome to Future Of Digital Signage",
+		"description":  "welcome mail",
+		"html":  "Hi [NAME],\nWelcome to Maia Signage! Your 7-day free Trial starts today.\nWhat happens next? Keep an eye on your inbox as we’ll be sending you the best tips for Maia Signage to make sure you get the most out of it.\nWant to get things done faster? Choose a plan below:\n[plan details or a link]\nIf you’re interested in learning more about Maia Signage or need help deciding on the best plan for your business, feel free to contact our support team at any time. We’re always here to help you in any way we can.\nHave an awesome day,\nMaia Signage CEO",
+		"text": "Hi [NAME],\nWelcome to Maia Signage! Your 7-day free Trial starts today.\nWhat happens next? Keep an eye on your inbox as we’ll be sending you the best tips for Maia Signage to make sure you get the most out of it.\nWant to get things done faster? Choose a plan below:\n[plan details or a link]\nIf you’re interested in learning more about [PRODUCT/ SERVICE] or need help deciding on the best plan for your business, feel free to contact our support team at any time. We’re always here to help you in any way we can.\nHave an awesome day,\nMaia Signage CEO",
+		"status": true,
+		"updatedAt": null,
+		"createdAt": null
+	}
+]

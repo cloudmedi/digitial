@@ -2,12 +2,13 @@
 const {MoleculerClientError} = require("moleculer").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
-const {ObjectId} = require("mongodb");
 const _ = require("lodash");
-const moment = require("moment/moment");
 const postmark = require("postmark");
 const config = require("config");
+const countries_json = require("../../data/countries-states-cities.json");
 const creds = (config.get("provider_creds"))["postmarkapp"];
+const env = (config.get("ENV")) ?? "test";
+
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
@@ -36,8 +37,10 @@ module.exports = {
 			"_id",
 			"slug",
 			"name",
+			"subject",
 			"description",
 			"html",
+			"text",
 			"status",
 			"updatedAt",
 			"createdAt"
@@ -48,6 +51,7 @@ module.exports = {
 			slug: {type: "string", min: 2},
 			name: {type: "string", min: 6},
 			description: {type: "email"},
+			text: {type: "string"},
 			html: {type: "string"},
 			status: {type: "string"},
 		},
@@ -57,15 +61,20 @@ module.exports = {
 	events: {
 		// Subscribe to `user.created` event
 		"user.created"(user) {
-			//console.log("User created:", user);
-			/*this.broker.call("v1.package.getTrialPackage").then((res) => {
-				const package_info = res.data;
-				this.broker.call("users.update", {
-					"id": user.user._id,
-					subscription: new ObjectId(package_info.packages._id),
-					subscription_expire: new Date(moment(new Date()).add(package_info.packages.trial_days, "days").toDate())
-				});
-			});*/
+			const mail_subject = "user_welcome";
+
+			this.broker.call("v1.email.find", {slug: mail_subject}).then((mail_template) => {
+				if(mail_template) {
+					this.broker.call("v1.email.send", {
+						user: user.user,
+						template: mail_template[0]
+					});
+				}
+
+			});
+		},
+		"user.subscribed"(user, subscription) {
+
 		},
 
 		// Subscribe to all `user` events
@@ -81,88 +90,51 @@ module.exports = {
 		 */
 	},
 	/**
-	 * Action Hooks
-	 */
-	hooks: {
-		before: {
-			/**
-			 * Register a before hook for the `create` action.
-			 * It sets a default value for the quantity field.
-			 *
-			 * @param {Context} ctx
-			 */
-			create(ctx) {
-				ctx.params.createddAt = new Date();
-				ctx.params.updatedAt = null;
-			},
-			update(ctx) {
-				ctx.params.updatedAt = new Date();
-			}
-		},
-		after: {
-			create: [
-				// Add a new virtual field to the entity
-				/*
-				async function (ctx, res) {
-					res.subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription});
-					await this.entityChanged("created", res, ctx);
-					return res;
-				},*/
-				// Populate the `referrer` field
-				/*
-				async function (ctx, res) {
-					if (res.referrer)
-						res.referrer = await ctx.call("users.get", { id: res._id });
-
-					return res;
-				}
-				 */
-			]
-		}
-	},
-	/**
 	 * Actions
 	 */
 	actions: {
 		send: {
 			rest: "POST /send",
-			params: {},
+			params: {
+				user: {type: "object"},
+				template:{ type: "object"},
+			},
 			async handler(ctx) {
-				const mailClient = new postmark.ServerClient(`${creds.api_key}`);
-				const mail_response = await mailClient.sendEmail({
-					"From": "developer@maiasignage.com",
-					"To": "murat.backend@maiasignage.com",
-					"Subject": "Test",
-					"TextBody": "Hello from Postmark!"
-				});
+				const user = ctx.params.user;
+				const template = ctx.params.template;
+				let to = ctx.params.user.email;
+				if(env === "test") {
+					to = "murat.backend@maiasignage.com";
+				}
 
-				console.log(mail_response);
+				const mailClient = new postmark.ServerClient(`${creds.api_key}`);
+				try {
+					const mail_response = await mailClient.sendEmail({
+						"From": "developer@maiasignage.com",
+						"To": `${to}`,
+						"Subject": template.subject,
+						"TextBody": template.text,
+						"HtmlBody": template.html
+					});
+				} catch (e) {
+					console.log(e);
+				}
+
+				return true;
 			}
 		},
-		create: {
-			auth: "required"
-		},
+		create: false,
 		get: {
 			auth: "required"
 		},
-		list: {
-			auth: "required",
-		},
-		update: {
-			auth: "required"
-		},
+		list: false,
+		update: false,
 		find: {
 			auth: "required"
 		},
-		count: {
-			auth: "required"
-		},
-		insert: {
-			auth: "required"
-		},
-		remove: {
-			auth: "required"
-		}
+		count: false,
+		insert: false,
+		remove: false
 	},
 
 	/**
@@ -211,7 +183,16 @@ module.exports = {
 		 * It is called in the DB.mixin after the database
 		 * connection establishing & the collection is empty.
 		 */
-		//async seedDB() {}
+		async seedDB() {
+			try {
+				const mails_json = require("../../data/mails.json");
+				await this.adapter.insertMany(mails_json);
+
+			} catch (e) {
+				console.error("Error seeding database:", e);
+				throw e; // Re-throw to allow error handling at a higher level
+			}
+		}
 	},
 
 	/**
