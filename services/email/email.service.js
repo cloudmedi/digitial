@@ -74,6 +74,7 @@ module.exports = {
 			});
 		},
 		"user.subscribed"(user, subscription) {
+			this.logger.info("user subscription email");
 
 		},
 

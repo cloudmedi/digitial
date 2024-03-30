@@ -62,7 +62,9 @@ module.exports = {
 					"id": user.user._id,
 					subscription: new ObjectId(package_info.packages._id),
 					subscription_expire: new Date(moment(new Date()).add(package_info.packages.trial_days, "days").toDate())
-				});
+				}).then((updated_user => {
+					this.broker.broadcast("user.subscribed", {user, subscription: {...package_info}}, ["email"]);
+				}));
 			});
 		},
 
