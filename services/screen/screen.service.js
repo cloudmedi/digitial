@@ -134,7 +134,7 @@ module.exports = {
 		list: {
 			auth: "required",
 			async handler(ctx) {
-				return await this.adapter.findOne({user: new ObjectId(ctx.meta.user._id)});
+				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
 			}
 		},
 		insert: false,
