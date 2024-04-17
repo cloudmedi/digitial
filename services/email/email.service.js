@@ -2,28 +2,31 @@
 const {MoleculerClientError} = require("moleculer").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
-const {ObjectId} = require("mongodb");
 const _ = require("lodash");
-const moment = require("moment/moment");
+const postmark = require("postmark");
+const config = require("config");
+const countries_json = require("../../data/countries-states-cities.json");
+const creds = (config.get("provider_creds"))["postmarkapp"];
+const env = (config.get("ENV")) ?? "test";
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
 
 module.exports = {
-	name: "package",
+	name: "email",
 	version: 1,
 
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("packages"),
+	mixins: [DbMixin("email_templates"),
 		CacheCleanerMixin([
-			"cache.clean.packages",
+			"cache.clean.email_templates",
 		])],
 	whitelist: [
-		"package.list",
-		"package.get",
+		"email.list",
+		"email.get",
 	],
 	/**
 	 * Settings
@@ -32,40 +35,47 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
+			"slug",
 			"name",
+			"subject",
 			"description",
-			"old_price",
-			"price",
-			"annual_discount",
-			"serial_count",
-			"is_trial",
-			"trial_days",
-			"package_properties",
-			"order",
+			"html",
+			"text",
 			"status",
 			"updatedAt",
 			"createdAt"
 		],
 
 		// Validator for the `create` & `insert` actions.
-		entityValidator: {},
+		entityValidator: {
+			slug: {type: "string", min: 2},
+			name: {type: "string", min: 6},
+			description: {type: "email"},
+			text: {type: "string"},
+			html: {type: "string"},
+			status: {type: "string"},
+		},
 		populates: {},
 	},
 
 	events: {
 		// Subscribe to `user.created` event
 		"user.created"(user) {
-			//console.log("User created:", user);
-			this.broker.call("v1.package.getTrialPackage").then((res) => {
-				const package_info = res.data;
-				this.broker.call("users.update", {
-					"id": user.user._id,
-					subscription: new ObjectId(package_info.packages._id),
-					subscription_expire: new Date(moment(new Date()).add(package_info.packages.trial_days, "days").toDate())
-				}).then((updated_user => {
-					this.broker.broadcast("user.subscribed", {user, subscription: {...package_info}}, ["email"]);
-				}));
+			const mail_subject = "user_welcome";
+
+			this.broker.call("v1.email.find", {slug: mail_subject}).then((mail_template) => {
+				if(mail_template) {
+					this.broker.call("v1.email.send", {
+						user: user.user,
+						template: mail_template[0]
+					});
+				}
+
 			});
+		},
+		"user.subscribed"(user, subscription) {
+			this.logger.info("user subscription email");
+
 		},
 
 		// Subscribe to all `user` events
@@ -80,56 +90,52 @@ module.exports = {
 		}
 		 */
 	},
-
 	/**
 	 * Actions
 	 */
 	actions: {
-		create: {
-			auth: "required",
-			async handler(ctx) {
-				//
-			}
-		},
-		getTrialPackage: {
-			rest: "GET /trial_package",
-			cache: {
-				ttl: 60 * 60 * 24// 24 hour
+		send: {
+			rest: "POST /send",
+			params: {
+				user: {type: "object"},
+				template:{ type: "object"},
 			},
 			async handler(ctx) {
-				const trial_package = await this.adapter.findOne({is_trial: true, status: true});
-				if (trial_package) {
-					const doc = await this.transformDocuments(ctx, {}, trial_package);
-					return await this.transformResult(ctx, doc, ctx.meta.user);
-				} else {
-					throw new MoleculerClientError("There is no active trial package", 404, "", [{
-						field: "trial_package",
-						message: "Not found"
-					}]);
+				const user = ctx.params.user;
+				const template = ctx.params.template;
+				let to = ctx.params.user.email;
+				if(env === "test") {
+					to = "murat.backend@maiasignage.com";
 				}
+
+				const mailClient = new postmark.ServerClient(`${creds.api_key}`);
+				try {
+					const mail_response = await mailClient.sendEmail({
+						"From": "developer@maiasignage.com",
+						"To": `${to}`,
+						"Subject": template.subject,
+						"TextBody": template.text,
+						"HtmlBody": template.html
+					});
+				} catch (e) {
+					console.log(e);
+				}
+
+				return true;
 			}
 		},
+		create: false,
 		get: {
 			auth: "required"
 		},
-		list: {
-			auth: "required",
-		},
-		update: {
-			auth: "required"
-		},
+		list: false,
+		update: false,
 		find: {
 			auth: "required"
 		},
-		count: {
-			auth: "required"
-		},
-		insert: {
-			auth: "required"
-		},
-		remove: {
-			auth: "required"
-		}
+		count: false,
+		insert: false,
+		remove: false
 	},
 
 	/**
@@ -180,26 +186,9 @@ module.exports = {
 		 */
 		async seedDB() {
 			try {
-				const packages = [{
-					name: "Free Trial",
-					description: "7 days free trial",
-					old_price: 100,
-					price: 0,
-					annual_discount: 0,
-					serial_count: 1,
-					is_trial: true,
-					trial_days: 7,
-					package_properties: [
-						{name: "150 serial number", description: ""},
-						{name: "10 req/min", description: ""},
-						{name: "Cancel when you want", description: ""}
-					],
-					order: 0,
-					status: true,
-					updatedAt: null,
-					createdAt: new Date()
-				}];
-				await this.adapter.insertMany(packages);
+				const mails_json = require("../../data/mails.json");
+				await this.adapter.insertMany(mails_json);
+
 			} catch (e) {
 				console.error("Error seeding database:", e);
 				throw e; // Re-throw to allow error handling at a higher level
