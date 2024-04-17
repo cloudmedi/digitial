@@ -101,7 +101,8 @@ module.exports = {
 				const subscription_expire_At = ctx.meta.user.subscription_expire;
 				console.log(subscription_expire_At);
 				const subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription.toString()});
-				const screens_count = await ctx.call("v1.screen.count");
+				const screens_count = await ctx.call("v1.screen.count_for_me");
+				console.log("screens_count", screens_count);
 				if (screens_count >= subscription_detail.serial_count) {
 					throw new MoleculerClientError("You can't add more screen", 400, "", [{
 						field: "Screen.Count",
@@ -116,20 +117,24 @@ module.exports = {
 				return screen;
 			}
 		},
-		count: {
+		count_for_me: {
 			auth: "required",
+			/*
 			cache: {
 				keys: ["#userID"],
 				ttl: 60 * 60 * 24 * 1 // 1 day
 			},
+			* */
 			async handler(ctx) {
-				return await this.adapter.count({user: ctx.params.userID});
+				const res = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+				console.log(ctx.meta.user._id,res.length);
+				return res.length;
 			}
 		},
 		list: {
 			auth: "required",
 			async handler(ctx) {
-				return await this.adapter.findOne({user: ctx.params.user});
+				return await this.adapter.findOne({user: new ObjectId(ctx.meta.user._id)});
 			}
 		},
 		insert: false,

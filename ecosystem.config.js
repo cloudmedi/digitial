@@ -111,6 +111,28 @@ module.exports = {
 			}
 		},
 		{
+			name: "signage-email",
+			script: "./node_modules/.bin/moleculer-runner",
+			args: "services/email/email.service.js",
+			exec_mode: "cluster",
+			instances: 1,
+			env: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-email"
+			},
+			env_production: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-email"
+			},
+			env_development: {
+				NODE_ENV: "development",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-dev-email"
+			}
+		},
+		{
 			name: "signage-source",
 			script: "./node_modules/.bin/moleculer-runner",
 			args: "services/source/source.service.js services/source/channel.service.js services/source/playlist.service.js services/source/program.service.js",
