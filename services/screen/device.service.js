@@ -5,7 +5,7 @@ const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
-const crypto = require('crypto');
+const crypto = require("crypto");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -31,7 +31,6 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
-			"user",
 			"screen",
 			"fingerprint",
 			"serial",
@@ -66,23 +65,6 @@ module.exports = {
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
 			}
-		},
-		after: {
-			create: [
-				// Add a new virtual field to the entity
-				/*async function (ctx, res) {
-
-				},*/
-				// Populate the `referrer` field
-				/*
-				async function (ctx, res) {
-					if (res.referrer)
-						res.referrer = await ctx.call("users.get", { id: res._id });
-
-					return res;
-				}
-				 */
-			]
 		}
 	},
 
@@ -94,29 +76,43 @@ module.exports = {
 			rest: "POST /pre_create",
 			params: {
 				fingerprint: {type: "string", required: true},
-				meta: {type: "object", required:true}
+				meta: {type: "object", required: true}
 			},
-			async handler(ctx){
+			async handler(ctx) {
 				const entity = ctx.params;
 				const serial_number_first_part = crypto.randomBytes(2).toString("hex");
 				const serial_number_second_part = crypto.randomBytes(2).toString("hex");
 				const serial = `${serial_number_first_part}-${serial_number_second_part}`;
 
 				const device_data = {...entity, serial};
-
-				await this.broker.cacher.set(`new_device:${entity.serial}`, device_data, 60);
+				console.log(device_data);
+				await this.broker.cacher.set(`new_device:${serial}`, device_data, 60 * 100);
 
 				return await this.transformDocuments(ctx, device_data, device_data);
 			}
 		},
-		create: {
-			auth: "required",
+		check_serial: {
+			rest: "POST /check_serial",
+			params: {
+				serial: {type: "string", required: true}
+			},
 			async handler(ctx) {
-				const entity = ctx.params;
+				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
+				if (pre_register_data) {
+					await this.adapter.insert(pre_register_data);
+					return {status: true, message: "Correct serial number", data: pre_register_data};
+				} else {
+					const check_db = await this.adapter.findOne({serial: ctx.params.serial});
 
-				return {entity};
+					if(check_db) {
+						return check_db;
+					} else {
+						return {status: false, message: "Wrong serial number", data: null};
+					}
+				}
 			}
 		},
+		create: false,
 		list: {
 			auth: "required",
 			async handler(ctx) {
@@ -126,21 +122,6 @@ module.exports = {
 		insert: false,
 		update: false,
 		remove: false,
-		findByName: {
-			rest: "POST /search",
-			auth: "required",
-			/*visibility: "protected",*/
-			params: {
-				"name": "string|required|min:3"
-			},
-			async handler(ctx) {
-				const screens = await this.adapter.findOne({name: ctx.params.name});
-				let doc = this.transformEntity(ctx, screens);
-				if (doc) {
-					return doc;
-				}
-			}
-		}
 	},
 
 	/**
