@@ -31,6 +31,7 @@ module.exports = {
 		fields: [
 			"_id",
 			"user",
+			"device",
 			"name",
 			"direction",
 			"serial",
@@ -72,11 +73,7 @@ module.exports = {
 		after: {
 			create: [
 				// Add a new virtual field to the entity
-				async function (ctx, res) {
-					res.subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription});
-					await this.entityChanged("created", res, ctx);
-					return res;
-				},
+
 				// Populate the `referrer` field
 				/*
 				async function (ctx, res) {
@@ -96,13 +93,23 @@ module.exports = {
 	actions: {
 		create: {
 			auth: "required",
+			hooks: {
+				after(ctx, res) {
+					return ctx.call("v1.package.get", {"id": ctx.meta.user.subscription}).then((detail) => {
+						res.subscription_detail = detail;
+						return res;
+					});
+					//await this.entityChanged("created", res, ctx);
+
+				},
+			},
 			async handler(ctx) {
 				const entity = ctx.params;
 				const subscription_expire_At = ctx.meta.user.subscription_expire;
-				console.log(subscription_expire_At);
+				console.log("expire",subscription_expire_At);
+
 				const subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription.toString()});
 				const screens_count = await ctx.call("v1.screen.count_for_me");
-				console.log("screens_count", screens_count);
 				if (screens_count >= subscription_detail.serial_count) {
 					throw new MoleculerClientError("You can't add more screen", 400, "", [{
 						field: "Screen.Count",
@@ -110,11 +117,29 @@ module.exports = {
 					}]);
 				}
 
-				const doc = await this.adapter.insert(ctx.params);
-				const screen = await this.transformEntity(ctx, doc);
-				await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
+				const check_serial = await ctx.call("v1.device.check_serial", {serial: entity.serial});
+				const is_device_connected_screen = await this.adapter.findOne({serial: entity.serial});
+				if(is_device_connected_screen) {
+					throw new MoleculerClientError("This serial number used before", 400, "", [{
+						field: "Screen.Serial",
+						message: "This serial number used before"
+					}]);
+				}
 
-				return screen;
+				if (check_serial.status === true) {
+					const screen_data = {
+						name: entity.name,
+						serial: entity.serial,
+						direction: entity.direction,
+						place: entity.place,
+						device: new ObjectId(check_serial._id)
+					};
+
+					const doc = await this.adapter.insert(screen_data);
+					const screen = await this.transformEntity(ctx, doc);
+					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
+					return screen;
+				}
 			}
 		},
 		count_for_me: {
@@ -127,7 +152,7 @@ module.exports = {
 			* */
 			async handler(ctx) {
 				const res = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
-				console.log(ctx.meta.user._id,res.length);
+				console.log(ctx.meta.user._id, res.length);
 				return res.length;
 			}
 		},
