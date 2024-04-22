@@ -69,7 +69,7 @@ module.exports = {
 		{
 			name: "signage-screens",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/screen/screen.service.js",
+			args: "services/screen/screen.service.js services/screen/device.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
