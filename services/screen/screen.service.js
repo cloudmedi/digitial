@@ -46,7 +46,9 @@ module.exports = {
 			direction: "string",
 			place: "string"
 		},
-		populates: {}
+		populates: {
+
+		}
 	},
 
 	/**
@@ -63,7 +65,7 @@ module.exports = {
 			create(ctx) {
 				ctx.params.createddAt = new Date();
 				ctx.params.updatedAt = null;
-				ctx.params.user = new ObjectId(ctx.meta.userID);
+				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -127,15 +129,8 @@ module.exports = {
 				}
 
 				if (check_serial.status === true) {
-					const screen_data = {
-						name: entity.name,
-						serial: entity.serial,
-						direction: entity.direction,
-						place: entity.place,
-						device: new ObjectId(check_serial._id)
-					};
-
-					const doc = await this.adapter.insert(screen_data);
+					ctx.params.device = new ObjectId(check_serial._id);
+					const doc = await this.adapter.insert(ctx.params);
 					const screen = await this.transformEntity(ctx, doc);
 					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
 					return screen;
