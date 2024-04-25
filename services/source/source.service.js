@@ -68,21 +68,13 @@ module.exports = {
 	actions: {
 		create: {
 			auth: "required",
-		},
-		findByName: {
-			rest: "POST /search",
-			auth: "required",
-			/*visibility: "protected",*/
 			params: {
-				"name": "string|required|min:3"
+				layout: "string",
+				screen: "string"
 			},
 			async handler(ctx) {
-				const screens = await this.adapter.findOne({name: ctx.params.name});
-				let doc = this.transformEntity(ctx, screens);
-				if (doc) {
-					return doc;
-				}
-
+				const entity = ctx.params;
+				return await this.adapter.insert({layout: entity.layout, screen: entity.screen});
 			}
 		},
 		list: {
