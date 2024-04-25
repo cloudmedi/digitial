@@ -74,6 +74,11 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
+
+				// @todo: check screen
+				// @todo: check screen has device
+				// @todo: check screen has source
+
 				return await this.adapter.insert({layout: entity.layout, screen: entity.screen});
 			}
 		},
