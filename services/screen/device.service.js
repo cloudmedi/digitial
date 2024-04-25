@@ -104,6 +104,11 @@ module.exports = {
 			async handler(ctx) {
 				await this.validateEntity(ctx.params);
 
+				const is_serial_binded = await ctx.call("v1.screen.is_serial_binded", {serial: ctx.params.serial});
+				if(is_serial_binded) {
+					return {status: false, message: "Used Serial Number", data: null};
+				}
+
 				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
 				if (pre_register_data) {
 					const check_device = await this.adapter.findOne({serial: pre_register_data.serial});
