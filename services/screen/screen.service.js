@@ -46,9 +46,7 @@ module.exports = {
 			direction: "string",
 			place: "string"
 		},
-		populates: {
-
-		}
+		populates: {}
 	},
 
 	/**
@@ -108,7 +106,7 @@ module.exports = {
 			async handler(ctx) {
 				const entity = ctx.params;
 				const subscription_expire_At = ctx.meta.user.subscription_expire;
-				console.log("expire",subscription_expire_At);
+				console.log("expire", subscription_expire_At);
 
 				const subscription_detail = await ctx.call("v1.package.get", {"id": ctx.meta.user.subscription.toString()});
 				const screens_count = await ctx.call("v1.screen.count_for_me");
@@ -121,7 +119,7 @@ module.exports = {
 
 				const check_serial = await ctx.call("v1.device.check_serial", {serial: entity.serial});
 				const is_device_connected_screen = await this.adapter.findOne({serial: entity.serial});
-				if(is_device_connected_screen) {
+				if (is_device_connected_screen) {
 					throw new MoleculerClientError("This serial number used before", 400, "", [{
 						field: "Screen.Serial",
 						message: "This serial number used before"
@@ -134,6 +132,11 @@ module.exports = {
 					const screen = await this.transformEntity(ctx, doc);
 					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
 					return screen;
+				} else {
+					throw new MoleculerClientError(check_serial.message, 400, "", [{
+						field: "Screen.Serial",
+						message: check_serial.message
+					}]);
 				}
 			}
 		},
@@ -147,7 +150,7 @@ module.exports = {
 			* */
 			async handler(ctx) {
 				const res = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
-				console.log(ctx.meta.user._id, res.length);
+				//console.log(ctx.meta.user._id, res.length);
 				return res.length;
 			}
 		},
@@ -155,6 +158,15 @@ module.exports = {
 			auth: "required",
 			async handler(ctx) {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+			}
+		},
+		is_serial_binded: {
+			params: {
+				serial: "string"
+			},
+			async handler(ctx) {
+				const screen = await this.adapter.findOne({serial: ctx.params.serial});
+				return !!screen;
 			}
 		},
 		insert: false,
