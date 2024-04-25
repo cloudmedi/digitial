@@ -39,10 +39,7 @@ module.exports = {
 		],
 
 		// Validator for the `create` & `insert` actions.
-		entityValidator: {
-			fingerprint: "string",
-			meta: "string"
-		},
+		entityValidator: {},
 		populates: {}
 	},
 
@@ -75,32 +72,48 @@ module.exports = {
 		pre_create: {
 			rest: "POST /pre_create",
 			params: {
-				fingerprint: {type: "string", required: true},
+				fingerprint: { type: "string", min: 3, max: 255 },
 				meta: {type: "object", required: true}
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const serial_number_first_part = crypto.randomBytes(2).toString("hex");
-				const serial_number_second_part = crypto.randomBytes(2).toString("hex");
-				const serial = `${serial_number_first_part}-${serial_number_second_part}`;
+				await this.validateEntity(entity);
 
-				const device_data = {...entity, serial};
-				console.log(device_data);
-				await this.broker.cacher.set(`new_device:${serial}`, device_data, 60 * 100);
+				const is_recorded_before = await this.broker.cacher.get(`new_device:fingerprint:${entity.fingerprint}`);
+				if(is_recorded_before) {
+					return await this.transformDocuments(ctx, is_recorded_before, is_recorded_before);
+				} else {
+					const serial_number_first_part = crypto.randomBytes(2).toString("hex");
+					const serial_number_second_part = crypto.randomBytes(2).toString("hex");
+					const serial = `${serial_number_first_part}-${serial_number_second_part}`;
 
-				return await this.transformDocuments(ctx, device_data, device_data);
+					const device_data = {...entity, serial};
+					await this.broker.cacher.set(`new_device:${serial}`, device_data, 60 * 100);
+					await this.broker.cacher.set(`new_device:fingerprint:${entity.fingerprint}`, device_data, 60 * 100);
+
+					return await this.transformDocuments(ctx, device_data, device_data);
+				}
+
 			}
 		},
 		check_serial: {
 			rest: "POST /check_serial",
 			params: {
-				serial: {type: "string", required: true}
+				serial: { type: "string", min: 9, max: 16 }
 			},
 			async handler(ctx) {
+				await this.validateEntity(ctx.params);
+
 				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
 				if (pre_register_data) {
-					await this.adapter.insert(pre_register_data);
-					return {status: true, message: "Correct serial number", data: pre_register_data};
+					const check_device = await this.adapter.findOne({serial: pre_register_data.serial});
+					if(check_device) {
+						return {status: true, message: "Correct serial number", data: pre_register_data};
+					} else {
+						await this.adapter.insert(pre_register_data);
+						return {status: true, message: "Correct serial number", data: pre_register_data};
+					}
+
 				} else {
 					const check_db = await this.adapter.findOne({serial: ctx.params.serial});
 

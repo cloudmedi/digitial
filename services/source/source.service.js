@@ -27,17 +27,14 @@ module.exports = {
 			"_id",
 			"name",
 			"source_type",
-			"serial",
-			"place",
-			"status"
+			"source_meta"
 		],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
 			name: "string",
-			serial: "string",
-			direction: "string",
-			place: "string"
+			source_type: "string",
+			source_meta: "object"
 		},
 		populates: {}
 	},
@@ -90,8 +87,24 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
-			async handler(ctx)  {
-				return await this.adapter.findOne({user: ctx.params.user});
+			async handler(ctx) {
+				return [
+					{
+						name: "Playlist",
+						alias: "playlist",
+						meta: {}
+					},
+					{
+						name: "Program",
+						alias: "program",
+						meta: {}
+					},
+					{
+						name: "Channel",
+						alias: "channel",
+						meta: {}
+					}
+				];
 			}
 		},
 		count: false,
@@ -151,7 +164,8 @@ module.exports = {
 		 * It is called in the DB.mixin after the database
 		 * connection establishing & the collection is empty.
 		 */
-		async seedDB() {},
+		async seedDB() {
+		},
 	},
 
 	/**
