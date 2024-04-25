@@ -134,6 +134,11 @@ module.exports = {
 					const screen = await this.transformEntity(ctx, doc);
 					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
 					return screen;
+				} else {
+					throw new MoleculerClientError(check_serial.message, 400, "", [{
+						field: "Screen.Serial",
+						message: check_serial.message
+					}]);
 				}
 			}
 		},
@@ -147,7 +152,7 @@ module.exports = {
 			* */
 			async handler(ctx) {
 				const res = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
-				console.log(ctx.meta.user._id, res.length);
+				//console.log(ctx.meta.user._id, res.length);
 				return res.length;
 			}
 		},
