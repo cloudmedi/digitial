@@ -25,7 +25,7 @@ module.exports = {
 		{
 			name: "signage-partials",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/_partial/country.service.js services/_partial/currency.service.js services/_partial/ip_location.service.js",
+			args: "services/_partial/currency.service.js services/_partial/ip_location.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
