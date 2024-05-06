@@ -135,7 +135,7 @@ module.exports = {
 		{
 			name: "signage-source",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/source/source.service.js services/source/channel.service.js services/source/playlist.service.js services/source/program.service.js",
+			args: "services/source/source.service.js services/source/layout.service.js services/source/channel.service.js services/source/playlist.service.js services/source/program.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
