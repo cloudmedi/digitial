@@ -4,40 +4,31 @@ const {MoleculerClientError} = require("moleculer").Errors;
 const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
+const countries_json = require("../../data/countries-states-cities.json");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
 
 module.exports = {
-	name: "source",
+	name: "source.layout",
 	version: 1,
 
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("sources")],
-	whitelist: [],
-	/**
+	mixins: [DbMixin("layouts")],
+	whitelist: [], /**
 	 * Settings
 	 */
 	settings: {
 		// Available fields in the responses
-		fields: [
-			"_id",
-			"name",
-			"source_type",
-			"layout",
-			"content"
-		],
+		fields: ["_id", "name", "properties", "meta", "image", "order"],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
-			name: "string",
-			source_type: "string",
-			source_meta: "object"
-		},
-		populates: {}
+			name: "string", properties: "object", meta: "object"
+		}, populates: {}
 	},
 
 	/**
@@ -54,10 +45,8 @@ module.exports = {
 			create(ctx) {
 				ctx.params.createddAt = new Date();
 				ctx.params.updatedAt = null;
-				ctx.params.user = new ObjectId(ctx.meta.user.id);
 				ctx.params.status = true;
-			},
-			update(ctx) {
+			}, update(ctx) {
 				ctx.params.updatedAt = new Date();
 			}
 		}
@@ -67,50 +56,16 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
-		create: {
-			auth: "required",
-			params: {
-				layout: "string",
-				name: "string",
-				source_type: "string"
-			},
-			async handler(ctx) {
-				const entity = ctx.params;
-
-				// @todo: check screen
-				// @todo: check screen has device
-				// @todo: check screen has source
-				const layout = await ctx.call("v1.source.layout.get", {id: entity.layout});
-				return await this.adapter.insert({
-					user: new ObjectId(ctx.meta.user._id),
-					layout: layout,
-					name: entity.name,
-					content: [],
-					source_type: "playlist"
-				});
-			}
-		},
+		create: false,
 		list: {
 			auth: "required",
-			async handler(ctx) {
-				return [
-					{
-						name: "Playlist",
-						alias: "playlist",
-						meta: {}
-					},
-					{
-						name: "Program",
-						alias: "program",
-						meta: {}
-					},
-					{
-						name: "Channel",
-						alias: "channel",
-						meta: {}
-					}
-				];
-			}
+			cache: {
+				ttl: 60 * 60 * 24 * 7 // 1 week
+			},
+		},
+		get: {
+			auth: "required",
+
 		},
 		count: false,
 		insert: false,
@@ -122,17 +77,6 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-		/**
-		 * Find an wallet by user
-		 *
-		 * @param {String} user - Article slug
-		 *
-		 * @results {Object} Promise<Article
-		 */
-		findByUser(user) {
-			return this.adapter.findOne({user});
-		},
-
 		/**
 		 * Transform the result entities to follow the API spec
 		 *
@@ -163,13 +107,47 @@ module.exports = {
 			if (!entity) return null;
 
 			return entity;
-		},
-		/**
+		}, /**
 		 * Loading sample data to the collection.
 		 * It is called in the DB.mixin after the database
 		 * connection establishing & the collection is empty.
+		 $2y$10$2WoyAcE0mbW/V3zjfIQfw.Zpp49aSlqxh.nxdI6LrIV1K4s.0XIBy
 		 */
 		async seedDB() {
+			const data = [
+				{
+					name: "single",
+					image: "",
+					order: 10,
+					properties: {
+						x: [
+							{cell: 0, classes: "layout-single-x-01", meta: {}}],
+						y: []
+					}, meta: {}
+				},
+				{
+					name: "two-row",
+					image: "",
+					order: 20,
+					properties: {
+						x: [
+							{cell: 0, classes: "layout-two-row-x-01", meta: {}}
+						],
+						y: [{cell: 0, classes: "layout-two-row-x-01", meta: {}}
+						]
+					}, meta: {}
+				},
+				{
+					name: "two-col", image: "", order: 30, properties: {
+						x: [
+							{cell: 0, classes: "layout-two-col-x-01", meta: {}},
+							{cell: 1, classes: "layout-two-col-x-02", meta: {}}
+						],
+						y: []
+					}, meta: {}
+				}];
+
+			await this.adapter.insertMany(data);
 		},
 	},
 
