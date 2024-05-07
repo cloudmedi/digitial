@@ -22,6 +22,11 @@
 			"api_key": "177ed2a8-0f55-4b52-85f2-5b9043f02d49",
 			"api_secret": ""
 
+		},
+		"cloudflare-images": {
+			"api_key": "",
+			"auth_key": "",
+			"user_mail": ""
 		}
 	}
 }

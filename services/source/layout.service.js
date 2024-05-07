@@ -120,9 +120,11 @@ module.exports = {
 					image: "",
 					order: 10,
 					properties: {
-						x: [
-							{cell: 0, classes: "layout-single-x-01", meta: {}}],
-						y: []
+						container: "flex-col",
+						boxes: [
+							{cell: 0, classes: "layout-single-01", meta: {}}
+						],
+
 					}, meta: {}
 				},
 				{
@@ -130,20 +132,20 @@ module.exports = {
 					image: "",
 					order: 20,
 					properties: {
-						x: [
-							{cell: 0, classes: "layout-two-row-x-01", meta: {}}
-						],
-						y: [{cell: 0, classes: "layout-two-row-x-01", meta: {}}
+						container: "flex-col",
+						boxes: [
+							{cell: 0, classes: "layout-two-row-01", meta: {}},
+							{cell: 0, classes: "layout-two-row-02", meta: {}}
 						]
 					}, meta: {}
 				},
 				{
 					name: "two-col", image: "", order: 30, properties: {
-						x: [
-							{cell: 0, classes: "layout-two-col-x-01", meta: {}},
-							{cell: 1, classes: "layout-two-col-x-02", meta: {}}
+						container: "flex-col",
+						boxes: [
+							{cell: 0, classes: "layout-two-col-01", meta: {}},
+							{cell: 1, classes: "layout-two-col-02", meta: {}}
 						],
-						y: []
 					}, meta: {}
 				}];
 

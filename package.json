@@ -9,6 +9,7 @@
     "dev-package": "NODE_ID=dev-package moleculer-runner --repl --hot services/package/*.service.js",
     "dev-email": "NODE_ID=dev-email moleculer-runner --repl --hot services/email/*.service.js",
     "dev-source": "NODE_ID=dev-source moleculer-runner --repl --hot services/source/*.service.js",
+    "dev-widget": "NODE_ID=dev-widget moleculer-runner --repl --hot services/widget/*.service.js services/widget/**/*.service.js",
     "dev-admin": "NODE_ID=dev-admin moleculer-runner --repl --hot services/admin/*.service.js",
     "dev-ipinfo": "NODE_ID=dev-ip_info moleculer-runner --repl --hot services/_partial/ip_location.service.js",
     "dev-countries": "NODE_ID=dev-country moleculer-runner --repl --hot services/_partial/country.service.js services/_partial/country_holiday.service.js",
