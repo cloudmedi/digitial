@@ -2,8 +2,13 @@
 
 const {MoleculerClientError} = require("moleculer").Errors;
 const {ForbiddenError} = require("moleculer-web").Errors;
-const DbMixin = require("../../../mixins/db.mixin");
+const fs = require("fs");
+const path = require("path");
 const {ObjectId} = require("mongodb");
+
+const DbMixin = require("../../../mixins/db.mixin");
+
+let fileUrls = [];
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -39,7 +44,9 @@ module.exports = {
 		},
 		populates: {}
 	},
-
+	dependencies: [
+		"v1.widget", // shorthand w/o version
+	],
 	/**
 	 * Action Hooks
 	 */
@@ -60,6 +67,47 @@ module.exports = {
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
 			}
+		},
+		after: {
+			/**
+			 * Register a before hook for the `create` action.
+			 * It sets a default value for the quantity field.
+			 *
+			 * @param {Context} ctx
+			 */
+			async upload(ctx) {
+				if(fileUrls.length === 3) {
+					fileUrls.forEach((val, key) => {
+						if(key === 0) {
+							ctx.params.file_1 = val;
+						}
+
+						if(key === 1) {
+							ctx.params.file_2 = val;
+						}
+
+						if(key === 2) {
+							ctx.params.file_3 = val;
+						}
+					});
+					let entity = ctx.params;
+					await this.validateEntity(entity);
+					const kyc = await this.findByUser(entity.user);
+					if(!kyc) {
+						entity.createdAt = new Date();
+						entity.updatedAt = new Date();
+
+						const doc = await this.adapter.insert(entity);
+
+						let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
+
+						json = await this.transformResult(ctx, json, ctx.meta.user);
+						await this.entityChanged("created", json, ctx);
+						return json;
+					}
+				}
+			}
+
 		}
 	},
 
@@ -69,6 +117,7 @@ module.exports = {
 	actions: {
 		properties: {
 			rest: "GET /properties",
+			auth: "required",
 			async handler(ctx) {
 				return {
 					name: "image",
@@ -77,7 +126,69 @@ module.exports = {
 				};
 			}
 		},
-		create: false,
+		create: {
+			auth: "required",
+			params: {
+				file: {type: "string"},
+				source: {type: "string", optional: true},
+				meta: {type: "object"}
+			},
+			async handler(ctx){
+
+			}
+		},
+		/**
+		 * Upload Files action.
+		 *
+		 * @returns
+		 */
+		upload: {
+			auth: "required",
+			rest: {
+				method: "POST",
+				type: "multipart",
+				path: "/upload",
+				busboyConfig: {
+					limits: {files: 3}
+				},
+				params: {
+					files: {
+						file_1: {type: "file"},
+						file_2: {type: "file"},
+						file_3: {type: "file"},
+					}
+				}
+			},
+			async handler(ctx, req, res) {
+				return new this.Promise((resolve, reject) => {
+					let uploadDir = "./public/upload/" + ctx.meta.user._id.toString();
+
+					if (!fs.existsSync(uploadDir)) {
+						fs.mkdirSync(uploadDir, {recursive: true});
+					}
+
+					//reject(new Error("Disk out of space"));
+					const ext = ctx.meta.filename
+						.split(".")
+						.filter(Boolean) // removes empty extensions (e.g. `filename...txt`)
+						.slice(1)
+						.join(".");
+
+					// ctx.meta.filename ||
+					const filePath = path.join(uploadDir, this.randomName() + "." + ext);
+					const f = fs.createWriteStream(filePath);
+					f.on("close", () => {
+						this.logger.info(`Uploaded file stored in '${filePath}'`);
+						fileUrls.push(filePath);
+
+						resolve({filePath, meta: ctx.meta});
+					});
+					f.on("error", err => reject(err));
+
+					ctx.params.pipe(f);
+				});
+			}
+		},
 		list: false,
 		get: false,
 		count: false,
@@ -90,6 +201,17 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		randomName() {
+			let length = 8;
+			let result = "";
+			const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			let charactersLength = characters.length;
+			for (let i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() *
+					charactersLength));
+			}
+			return result;
+		},
 		/**
 		 * Find an wallet by user
 		 *
