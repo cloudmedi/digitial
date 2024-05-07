@@ -75,36 +75,32 @@ module.exports = {
 			 *
 			 * @param {Context} ctx
 			 */
-			async upload(ctx) {
-				if(fileUrls.length === 3) {
-					fileUrls.forEach((val, key) => {
-						if(key === 0) {
-							ctx.params.file_1 = val;
-						}
-
-						if(key === 1) {
-							ctx.params.file_2 = val;
-						}
-
-						if(key === 2) {
-							ctx.params.file_3 = val;
-						}
+			async upload(ctx, res) {
+				if (res.fileUrls.length >= 1) {
+					const data = [];
+					res.fileUrls.forEach((val, key) => {
+						data.push({
+							user: new ObjectId(res.meta.user._id),
+							path: val.path,
+							domain: val.domain,
+							name: val.name,
+							provider: "local",
+							file: val.file,
+							slug:  this.randomName(),
+						});
 					});
 					let entity = ctx.params;
-					await this.validateEntity(entity);
-					const kyc = await this.findByUser(entity.user);
-					if(!kyc) {
-						entity.createdAt = new Date();
-						entity.updatedAt = new Date();
 
-						const doc = await this.adapter.insert(entity);
+					//await this.validateEntity(entity);
+					entity.createdAt = new Date();
+					entity.updatedAt = new Date();
+					const doc = await this.adapter.insertMany(data);
 
-						let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
+					//let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
 
-						json = await this.transformResult(ctx, json, ctx.meta.user);
-						await this.entityChanged("created", json, ctx);
-						return json;
-					}
+					//json = await this.transformResult(ctx, json, ctx.meta.user);
+					await this.entityChanged("created", doc, ctx);
+					return doc.reverse()[0];
 				}
 			}
 
@@ -133,7 +129,7 @@ module.exports = {
 				source: {type: "string", optional: true},
 				meta: {type: "object"}
 			},
-			async handler(ctx){
+			async handler(ctx) {
 
 			}
 		},
@@ -154,8 +150,7 @@ module.exports = {
 				params: {
 					files: {
 						file_1: {type: "file"},
-						file_2: {type: "file"},
-						file_3: {type: "file"},
+
 					}
 				}
 			},
@@ -175,13 +170,14 @@ module.exports = {
 						.join(".");
 
 					// ctx.meta.filename ||
-					const filePath = path.join(uploadDir, this.randomName() + "." + ext);
+					const fileName = this.randomName() + "." + ext;
+					const filePath = path.join(uploadDir, fileName);
 					const f = fs.createWriteStream(filePath);
 					f.on("close", () => {
 						this.logger.info(`Uploaded file stored in '${filePath}'`);
-						fileUrls.push(filePath);
+						fileUrls.push({path: uploadDir.replace("./public/",""), name: ctx.meta.filename, file: fileName, domain: "local"});
 
-						resolve({filePath, meta: ctx.meta});
+						resolve({fileUrls, meta: ctx.meta});
 					});
 					f.on("error", err => reject(err));
 
@@ -232,13 +228,13 @@ module.exports = {
 		 */
 		async transformResult(ctx, entities, user) {
 			if (Array.isArray(entities)) {
-				const currency = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
+				const images = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
 				return {
-					currency
+					images
 				};
 			} else {
-				const currency = await this.transformEntity(ctx, entities);
-				return {currency};
+				const images = await this.transformEntity(ctx, entities);
+				return {images};
 			}
 		},
 

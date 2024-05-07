@@ -135,7 +135,7 @@ module.exports = {
 						container: "flex-col",
 						boxes: [
 							{cell: 0, classes: "layout-two-row-01", meta: {}},
-							{cell: 0, classes: "layout-two-row-02", meta: {}}
+							{cell: 1, classes: "layout-two-row-02", meta: {}}
 						]
 					}, meta: {}
 				},
