@@ -5,8 +5,10 @@ const {ForbiddenError} = require("moleculer-web").Errors;
 const fs = require("fs");
 const path = require("path");
 const {ObjectId} = require("mongodb");
+const https = require("https");
 
 const DbMixin = require("../../../mixins/db.mixin");
+const config = require("config");
 
 let fileUrls = [];
 
@@ -77,17 +79,31 @@ module.exports = {
 			 */
 			async upload(ctx, res) {
 				if (res.fileUrls.length >= 1) {
+
 					const data = [];
 					res.fileUrls.forEach((val, key) => {
-						data.push({
+						const image_row = {
 							user: new ObjectId(res.meta.user._id),
 							path: val.path,
 							domain: val.domain,
 							name: val.name,
 							provider: "local",
 							file: val.file,
-							slug:  this.randomName(),
-						});
+							slug: this.randomName(),
+						};
+						data.push(image_row);
+
+						this.bunnyUpload(image_row);
+
+						setTimeout(() => {
+							try {
+								fs.unlinkSync(path.join("./public", image_row.path, image_row.file));
+							} catch (e) {
+								console.log(e);
+							}
+						}, 1000 * 60);
+
+
 					});
 					let entity = ctx.params;
 
@@ -175,8 +191,12 @@ module.exports = {
 					const f = fs.createWriteStream(filePath);
 					f.on("close", () => {
 						this.logger.info(`Uploaded file stored in '${filePath}'`);
-						fileUrls.push({path: uploadDir.replace("./public/",""), name: ctx.meta.filename, file: fileName, domain: "local"});
-
+						fileUrls.push({
+							path: uploadDir.replace("./public/", ""),
+							name: ctx.meta.filename,
+							file: fileName,
+							domain: "local"
+						});
 						resolve({fileUrls, meta: ctx.meta});
 					});
 					f.on("error", err => reject(err));
@@ -197,6 +217,43 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		async bunnyUpload(file_info) {
+			console.log("bunny", file_info);
+			/*
+				curl --request PUT --url https://storage.bunnycdn.com/maiasignage/layouts.png --header 'AccessKey: 0f7cf934-031e-4561-bc9bb9420448-a1ea-48ee' --header 'Content-Type: application/octet-stream' --header 'accept: application/json' --data-binary ./layouts.png
+				* */
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const HOSTNAME = api_info.region ? `${api_info.region}.${api_info.hostname}` : api_info.hostname;
+			const STORAGE_ZONE_NAME = api_info.username;
+			const FILENAME_TO_UPLOAD = file_info.file;
+			const FILE_PATH = path.join("./public", file_info.path);
+			const ACCESS_KEY = api_info.api_key;
+			const filePath = path.join(FILE_PATH, FILENAME_TO_UPLOAD);
+
+			const readStream = fs.createReadStream("./" + filePath);
+
+			const options = {
+				method: "PUT",
+				host: HOSTNAME,
+				path: `/${STORAGE_ZONE_NAME}/${FILE_PATH}/${FILENAME_TO_UPLOAD}`,
+				headers: {
+					AccessKey: ACCESS_KEY,
+					"Content-Type": "application/octet-stream",
+				},
+			};
+
+			const req = https.request(options, (res) => {
+				res.on("data", (chunk) => {
+					console.log(chunk.toString("utf8"));
+				});
+			});
+
+			req.on("error", (error) => {
+				console.error(error);
+			});
+			//fs.unlinkSync(filePath);
+			readStream.pipe(req);
+		},
 		randomName() {
 			let length = 8;
 			let result = "";

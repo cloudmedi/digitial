@@ -23,10 +23,14 @@
 			"api_secret": ""
 
 		},
-		"cloudflare-images": {
-			"api_key": "",
-			"auth_key": "",
-			"user_mail": ""
+		"bunny_net": {
+			"api_key": "0f7cf934-031e-4561-bc9bb9420448-a1ea-48ee",
+			"ro_api_key": "9eee22e1-0626-49a1-a9dca0abfbcc-ef82-46dc",
+			"username": "maiasignage",
+			"hostname": "storage.bunnycdn.com",
+			"port": 21,
+			"conn_type": "passive",
+			"region": null
 		}
 	}
 }
