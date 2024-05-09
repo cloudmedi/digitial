@@ -2,6 +2,11 @@
 	"ENV": "test",
 	"PORT": 4001,
 	"SOCKET_PORT": 3001,
+	"DOMAINS": {
+		"pre_cdn": "pre-cdn.maiasignage.com",
+		"cdn": "cdn.maiasignage.com",
+		"stream": "stream.maiasignage.com"
+	},
 	"REDIS": {
 		"host": "localhost",
 		"port": "6379",

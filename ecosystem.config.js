@@ -153,6 +153,28 @@ module.exports = {
 				LAB_PORT: 3211,
 				NODE_ID: "signage-dev-source"
 			}
+		},
+		{
+			name: "signage-widget",
+			script: "./node_modules/.bin/moleculer-runner",
+			args: "services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js",
+			exec_mode: "cluster",
+			instances: 1,
+			env: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-widget"
+			},
+			env_production: {
+				NODE_ENV: "production",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-widget"
+			},
+			env_development: {
+				NODE_ENV: "development",
+				LAB_PORT: 3211,
+				NODE_ID: "signage-dev-widget"
+			}
 		}
 	]
 };
