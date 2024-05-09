@@ -5,8 +5,10 @@ const {ForbiddenError} = require("moleculer-web").Errors;
 const fs = require("fs");
 const path = require("path");
 const {ObjectId} = require("mongodb");
+const https = require("https");
 
 const DbMixin = require("../../../mixins/db.mixin");
+const config = require("config");
 
 let fileUrls = [];
 
@@ -75,36 +77,41 @@ module.exports = {
 			 *
 			 * @param {Context} ctx
 			 */
-			async upload(ctx) {
-				if(fileUrls.length === 3) {
-					fileUrls.forEach((val, key) => {
-						if(key === 0) {
-							ctx.params.file_1 = val;
-						}
+			async upload(ctx, res) {
+				if (res.fileUrls.length >= 1) {
 
-						if(key === 1) {
-							ctx.params.file_2 = val;
-						}
+					const data = [];
+					res.fileUrls.forEach((val, key) => {
+						const image_row = {
+							user: new ObjectId(res.meta.user._id),
+							path: val.path,
+							domain: val.domain,
+							name: val.name,
+							slug: this.randomName(),
+							provider: "local",
+							file: val.file,
+							status: 1,
+							createdAt: new Date(),
+							updatedAt: null
+						};
+						data.push(image_row);
 
-						if(key === 2) {
-							ctx.params.file_3 = val;
-						}
+						this.bunnyUpload(image_row);
+
+						this.broker.broadcast("image.created", {...image_row}, ["filemanager"]);
 					});
 					let entity = ctx.params;
-					await this.validateEntity(entity);
-					const kyc = await this.findByUser(entity.user);
-					if(!kyc) {
-						entity.createdAt = new Date();
-						entity.updatedAt = new Date();
 
-						const doc = await this.adapter.insert(entity);
+					//await this.validateEntity(entity);
+					entity.createdAt = new Date();
+					entity.updatedAt = new Date();
+					const doc = await this.adapter.insertMany(data);
+					fileUrls.length = 0;
+					//let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
 
-						let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
-
-						json = await this.transformResult(ctx, json, ctx.meta.user);
-						await this.entityChanged("created", json, ctx);
-						return json;
-					}
+					//json = await this.transformResult(ctx, json, ctx.meta.user);
+					await this.entityChanged("created", doc, ctx);
+					return doc.reverse()[0];
 				}
 			}
 
@@ -133,7 +140,7 @@ module.exports = {
 				source: {type: "string", optional: true},
 				meta: {type: "object"}
 			},
-			async handler(ctx){
+			async handler(ctx) {
 
 			}
 		},
@@ -154,8 +161,7 @@ module.exports = {
 				params: {
 					files: {
 						file_1: {type: "file"},
-						file_2: {type: "file"},
-						file_3: {type: "file"},
+
 					}
 				}
 			},
@@ -175,13 +181,18 @@ module.exports = {
 						.join(".");
 
 					// ctx.meta.filename ||
-					const filePath = path.join(uploadDir, this.randomName() + "." + ext);
+					const fileName = this.randomName() + "." + ext;
+					const filePath = path.join(uploadDir, fileName);
 					const f = fs.createWriteStream(filePath);
 					f.on("close", () => {
 						this.logger.info(`Uploaded file stored in '${filePath}'`);
-						fileUrls.push(filePath);
-
-						resolve({filePath, meta: ctx.meta});
+						fileUrls.push({
+							path: uploadDir.replace("./public/", ""),
+							name: ctx.meta.filename,
+							file: fileName,
+							domain: "local"
+						});
+						resolve({fileUrls, meta: ctx.meta});
 					});
 					f.on("error", err => reject(err));
 
@@ -189,8 +200,30 @@ module.exports = {
 				});
 			}
 		},
-		list: false,
-		get: false,
+		list: {
+			auth: "required",
+			async handler(ctx) {
+				let limit = 20;
+				let offset = 0;
+				const entities = await this.adapter.find({
+					sort: {createdAt: -1},
+					limit: limit,
+					offset: offset,
+					query: {user: new ObjectId(ctx.meta.user._id)}
+				});
+				return await this.transformResult(ctx, entities, ctx.meta.user);
+			}
+		},
+		get: {
+			auth: "required",
+			params: {
+				id: {type: "string"}
+			},
+			async handler(ctx) {
+				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
+				return {image: entity};
+			}
+		},
 		count: false,
 		insert: false,
 		update: false,
@@ -201,6 +234,43 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		async bunnyUpload(file_info) {
+			console.log("bunny", file_info);
+			/*
+				curl --request PUT --url https://storage.bunnycdn.com/maiasignage/layouts.png --header 'AccessKey: 0f7cf934-031e-4561-bc9bb9420448-a1ea-48ee' --header 'Content-Type: application/octet-stream' --header 'accept: application/json' --data-binary ./layouts.png
+				* */
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const HOSTNAME = api_info.region ? `${api_info.region}.${api_info.hostname}` : api_info.hostname;
+			const STORAGE_ZONE_NAME = api_info.username;
+			const FILENAME_TO_UPLOAD = file_info.file;
+			const FILE_PATH = path.join("./public", file_info.path);
+			const ACCESS_KEY = api_info.api_key;
+			const filePath = path.join(FILE_PATH, FILENAME_TO_UPLOAD);
+
+			const readStream = fs.createReadStream("./" + filePath);
+
+			const options = {
+				method: "PUT",
+				host: HOSTNAME,
+				path: `/${STORAGE_ZONE_NAME}/${FILE_PATH}/${FILENAME_TO_UPLOAD}`,
+				headers: {
+					AccessKey: ACCESS_KEY,
+					"Content-Type": "application/octet-stream",
+				},
+			};
+
+			const req = https.request(options, (res) => {
+				res.on("data", (chunk) => {
+					console.log(chunk.toString("utf8"));
+				});
+			});
+
+			req.on("error", (error) => {
+				console.error(error);
+			});
+			//fs.unlinkSync(filePath);
+			readStream.pipe(req);
+		},
 		randomName() {
 			let length = 8;
 			let result = "";
@@ -219,8 +289,8 @@ module.exports = {
 		 *
 		 * @results {Object} Promise<Article
 		 */
-		findByUser(user) {
-			return this.adapter.findOne({user});
+		async findByUser(user) {
+			return await this.adapter.find({query: {user: new ObjectId(user)}});
 		},
 
 		/**
@@ -232,13 +302,13 @@ module.exports = {
 		 */
 		async transformResult(ctx, entities, user) {
 			if (Array.isArray(entities)) {
-				const currency = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
+				const images = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
 				return {
-					currency
+					images
 				};
 			} else {
-				const currency = await this.transformEntity(ctx, entities);
-				return {currency};
+				const images = await this.transformEntity(ctx, entities);
+				return {images};
 			}
 		},
 
