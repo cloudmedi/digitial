@@ -87,9 +87,12 @@ module.exports = {
 							path: val.path,
 							domain: val.domain,
 							name: val.name,
+							slug: this.randomName(),
 							provider: "local",
 							file: val.file,
-							slug: this.randomName(),
+							status: 1,
+							createdAt: new Date(),
+							updatedAt: null
 						};
 						data.push(image_row);
 
@@ -197,8 +200,30 @@ module.exports = {
 				});
 			}
 		},
-		list: false,
-		get: false,
+		list: {
+			auth: "required",
+			async handler(ctx) {
+				let limit = 20;
+				let offset = 0;
+				const entities = await this.adapter.find({
+					sort: {createdAt: -1},
+					limit: limit,
+					offset: offset,
+					query: {user: new ObjectId(ctx.meta.user._id)}
+				});
+				return await this.transformResult(ctx, entities, ctx.meta.user);
+			}
+		},
+		get: {
+			auth: "required",
+			params: {
+				id: {type: "string"}
+			},
+			async handler(ctx) {
+				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
+				return {image: entity};
+			}
+		},
 		count: false,
 		insert: false,
 		update: false,
@@ -264,8 +289,8 @@ module.exports = {
 		 *
 		 * @results {Object} Promise<Article
 		 */
-		findByUser(user) {
-			return this.adapter.findOne({user});
+		async findByUser(user) {
+			return await this.adapter.find({query: {user: new ObjectId(user)}});
 		},
 
 		/**
