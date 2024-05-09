@@ -95,15 +95,7 @@ module.exports = {
 
 						this.bunnyUpload(image_row);
 
-						setTimeout(() => {
-							try {
-								fs.unlinkSync(path.join("./public", image_row.path, image_row.file));
-							} catch (e) {
-								console.log(e);
-							}
-						}, 1000 * 60);
-
-
+						this.broker.broadcast("image.created", {...image_row}, ["filemanager"]);
 					});
 					let entity = ctx.params;
 
@@ -111,7 +103,7 @@ module.exports = {
 					entity.createdAt = new Date();
 					entity.updatedAt = new Date();
 					const doc = await this.adapter.insertMany(data);
-
+					fileUrls.length = 0;
 					//let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
 
 					//json = await this.transformResult(ctx, json, ctx.meta.user);
