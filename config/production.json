@@ -10,7 +10,7 @@
 	},
 	"MONGODB": {
 		"is_active": true,
-		"URL": "mongodb://172.17.0.2:27017/signage_api"
+		"URL": "mongodb://127.0.0.1:27017/signage_api"
 	},
 	"JWT_SECRET": "5ca854e9a10491b53cab2d6a885aa9bc",
 	"JSON_SOCKET_PORT": 9838,
@@ -22,6 +22,15 @@
 			"api_key": "i22IBAnmnutgTESTQ2FcGVib72qZR5nR",
 			"api_secret": "yK5YUHTESTqlEHhu"
 
+		},
+		"bunny_net": {
+			"api_key": "0f7cf934-031e-4561-bc9bb9420448-a1ea-48ee",
+			"ro_api_key": "9eee22e1-0626-49a1-a9dca0abfbcc-ef82-46dc",
+			"username": "maiasignage",
+			"hostname": "storage.bunnycdn.com",
+			"port": 21,
+			"conn_type": "passive",
+			"region": null
 		}
 	}
 }
