@@ -93,23 +93,15 @@ module.exports = {
 		list: {
 			auth: "required",
 			async handler(ctx) {
-				return [
-					{
-						name: "Playlist",
-						alias: "playlist",
-						meta: {}
-					},
-					{
-						name: "Program",
-						alias: "program",
-						meta: {}
-					},
-					{
-						name: "Channel",
-						alias: "channel",
-						meta: {}
-					}
-				];
+				let limit = 20;
+				let offset = 0;
+				const entities = await this.adapter.find({
+					sort: {createdAt: -1},
+					limit: limit,
+					offset: offset,
+					query: {user: new ObjectId(ctx.meta.user._id)}
+				});
+				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
 		},
 		count: false,
@@ -142,13 +134,13 @@ module.exports = {
 		 */
 		async transformResult(ctx, entities, user) {
 			if (Array.isArray(entities)) {
-				const currency = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
+				const source = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
 				return {
-					currency
+					source
 				};
 			} else {
-				const currency = await this.transformEntity(ctx, entities);
-				return {currency};
+				const source = await this.transformEntity(ctx, entities);
+				return {source};
 			}
 		},
 
