@@ -28,7 +28,10 @@ module.exports = {
 			"name",
 			"source_type",
 			"layout",
-			"content"
+			"content",
+			"createdAt",
+			"updatedAt",
+			"status"
 		],
 
 		// Validator for the `create` & `insert` actions.
@@ -52,9 +55,9 @@ module.exports = {
 			 * @param {Context} ctx
 			 */
 			create(ctx) {
-				ctx.params.createddAt = new Date();
+				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = null;
-				ctx.params.user = new ObjectId(ctx.meta.user.id);
+				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -80,14 +83,9 @@ module.exports = {
 				// @todo: check screen
 				// @todo: check screen has device
 				// @todo: check screen has source
-				const layout = await ctx.call("v1.source.layout.get", {id: entity.layout});
-				return await this.adapter.insert({
-					user: new ObjectId(ctx.meta.user._id),
-					layout: layout,
-					name: entity.name,
-					content: [],
-					source_type: "playlist"
-				});
+				ctx.params.layout = await ctx.call("v1.source.layout.get", {id: entity.layout});
+
+				return await this.adapter.insert(ctx.params);
 			}
 		},
 		list: {
@@ -95,6 +93,7 @@ module.exports = {
 			async handler(ctx) {
 				let limit = 20;
 				let offset = 0;
+
 				const entities = await this.adapter.find({
 					sort: {createdAt: -1},
 					limit: limit,
