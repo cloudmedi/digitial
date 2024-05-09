@@ -9,8 +9,8 @@ const https = require("https");
 
 const DbMixin = require("../../../mixins/db.mixin");
 const config = require("config");
+const domains = config.get("DOMAINS");
 
-let fileUrls = [];
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -85,7 +85,7 @@ module.exports = {
 						const image_row = {
 							user: new ObjectId(res.meta.user._id),
 							path: val.path,
-							domain: val.domain,
+							domain: domains.pre_cdn,
 							name: val.name,
 							slug: this.randomName(),
 							provider: "local",
@@ -96,9 +96,9 @@ module.exports = {
 						};
 						data.push(image_row);
 
-						this.bunnyUpload(image_row);
-
-						this.broker.broadcast("image.created", {...image_row}, ["filemanager"]);
+						this.bunnyUpload(image_row).then(() => {
+							this.broker.broadcast("image.created", {...image_row}, ["filemanager"]);
+						});
 					});
 					let entity = ctx.params;
 
@@ -106,7 +106,6 @@ module.exports = {
 					entity.createdAt = new Date();
 					entity.updatedAt = new Date();
 					const doc = await this.adapter.insertMany(data);
-					fileUrls.length = 0;
 					//let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
 
 					//json = await this.transformResult(ctx, json, ctx.meta.user);
@@ -167,6 +166,8 @@ module.exports = {
 			},
 			async handler(ctx, req, res) {
 				return new this.Promise((resolve, reject) => {
+					let fileUrls = [];
+
 					let uploadDir = "./public/upload/" + ctx.meta.user._id.toString();
 
 					if (!fs.existsSync(uploadDir)) {
@@ -190,7 +191,6 @@ module.exports = {
 							path: uploadDir.replace("./public/", ""),
 							name: ctx.meta.filename,
 							file: fileName,
-							domain: "local"
 						});
 						resolve({fileUrls, meta: ctx.meta});
 					});
@@ -226,7 +226,9 @@ module.exports = {
 		},
 		count: false,
 		insert: false,
-		update: false,
+		update: {
+			auth: "required",
+		},
 		remove: false
 	},
 
@@ -235,19 +237,21 @@ module.exports = {
 	 */
 	methods: {
 		async bunnyUpload(file_info) {
-			console.log("bunny", file_info);
 			/*
+			console.log("bunny", file_info);
+
 				curl --request PUT --url https://storage.bunnycdn.com/maiasignage/layouts.png --header 'AccessKey: 0f7cf934-031e-4561-bc9bb9420448-a1ea-48ee' --header 'Content-Type: application/octet-stream' --header 'accept: application/json' --data-binary ./layouts.png
 				* */
 			const api_info = (config.get("provider_creds"))["bunny_net"];
 			const HOSTNAME = api_info.region ? `${api_info.region}.${api_info.hostname}` : api_info.hostname;
 			const STORAGE_ZONE_NAME = api_info.username;
 			const FILENAME_TO_UPLOAD = file_info.file;
-			const FILE_PATH = path.join("./public", file_info.path);
+			const FILE_PATH = path.join(file_info.path);
+			//const FILE_PATH = path.join("./public", file_info.path);
 			const ACCESS_KEY = api_info.api_key;
 			const filePath = path.join(FILE_PATH, FILENAME_TO_UPLOAD);
 
-			const readStream = fs.createReadStream("./" + filePath);
+			const readStream = fs.createReadStream("./public/" + filePath);
 
 			const options = {
 				method: "PUT",
