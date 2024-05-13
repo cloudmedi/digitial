@@ -80,7 +80,6 @@ module.exports = {
 			await this.updateImage(image_row);
 			setTimeout(() => {
 				try {
-					console.log("image_row", image_row,);
 					console.log("silme başladı");
 					const file = path.join(__dirname, "../../", "/public", image_row.path, image_row.file);
 					fs.unlinkSync(file);
@@ -151,6 +150,9 @@ module.exports = {
 				let folder = {};
 				if (check_folder.length === 0) {
 					folder = await this.adapter.insert(data);
+					// broadcast
+					this.broker.broadcast("default.folder.created", {folder, user: new ObjectId(ctx.meta.user._id)}, ["filemanager"]);
+
 				} else {
 					folder = await ctx.call("v1.filemanager.update", {id: check_folder[0]._id, ...data});
 				}
@@ -226,7 +228,6 @@ module.exports = {
 					files: null
 				};
 				let id = ctx.params?.id;
-				console.log(id);
 				let parent = null;
 				if (id !== undefined) {
 					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});

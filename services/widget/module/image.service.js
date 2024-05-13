@@ -118,6 +118,110 @@ module.exports = {
 		}
 	},
 
+	events: {
+		// Subscribe to `user.created` event
+		async "default.folder.created"(folder, user_id) {
+			const default_images = [
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "chalo-gallardo-6uCy44FbdqM-unsplash.jpg",
+					"slug": "HuQe7jZw",
+					"provider": "local",
+					"file": "YFfxuBOm.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				},
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "clay-banks-FPhpVpwUviA-unsplash.jpg",
+					"slug": "uXnwZdmw",
+					"provider": "local",
+					"file": "9EEi70Nz.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				},
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "anton-lammert-UH2V6BYBHtU-unsplash.jpg",
+					"slug": "PKBsfIal",
+					"provider": "local",
+					"file": "rGmMKbOc.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				},
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "omar-ram-z0VdFXfyhOk-unsplash.jpg",
+					"slug": "rzjd11C2",
+					"provider": "local",
+					"file": "NepYRUWx.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				},
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "wolfgang-hasselmann-R5hhJYZoBRA-unsplash.jpg",
+					"slug": "fwE59w3L",
+					"provider": "local",
+					"file": "0qaLpDSU.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				},
+				{
+					"user": user_id,
+					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+					"domain": "pre-cdn.maiasignage.com",
+					"folder": folder,
+					"name": "shiqi-zhao-18RECWIobXw-unsplash.jpg",
+					"slug": "vS5VG6KH",
+					"provider": "local",
+					"file": "PNepmkTf.jpg",
+					"status": 1,
+					"createdAt": new Date(),
+					"updatedAt": null,
+				}
+			];
+
+			await this.broker.adapter.insertMany(default_images);
+		},
+
+		"user.created"(user) {
+			//console.log("User created:", user);
+			const user_id = user.user._id;
+			this.broker.call("v1.filemanager.create", {
+				user: user_id,
+				name: "default",
+				parent: null,
+				left: 1,
+				right: 0,
+				createdAt: new Date(),
+				updatedAt: null,
+				status: true,
+
+			}).catch(e => console.log(e));
+
+		},
+	},
 	/**
 	 * Actions
 	 */
@@ -233,7 +337,6 @@ module.exports = {
 				if(ctx.params.folder) {
 					query.folder = new ObjectId(ctx.params.folder);
 				}
-				console.log(query);
 				const entities = await this.adapter.find({
 					sort: {createdAt: -1},
 					limit: limit,
