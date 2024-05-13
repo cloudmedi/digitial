@@ -43,7 +43,7 @@ module.exports = {
 			 * @param {Context} ctx
 			 */
 			create(ctx) {
-				ctx.params.createddAt = new Date();
+				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = null;
 				ctx.params.status = true;
 			}, update(ctx) {
