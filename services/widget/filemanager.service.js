@@ -151,7 +151,9 @@ module.exports = {
 				if (check_folder.length === 0) {
 					folder = await this.adapter.insert(data);
 					// broadcast
-					this.broker.broadcast("default.folder.created", {folder, user: new ObjectId(ctx.meta.user._id)}, ["filemanager"]);
+					setTimeout(()=> {
+						this.broker.broadcast("folder.created", {folder}, ["widget.image"]);
+					}, 1000 * 3);
 
 				} else {
 					folder = await ctx.call("v1.filemanager.update", {id: check_folder[0]._id, ...data});
