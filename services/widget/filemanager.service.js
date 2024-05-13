@@ -171,7 +171,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const parent = (ctx.params.parent === undefined ? null : new ObjectId(ctx.params.parent));
-				console.log("ctx.params.parent",ctx.params.parent);
+				console.log("ctx.params.parent", ctx.params.parent);
 				let limit = 20;
 				let offset = 0;
 				const entities = await this.adapter.find({
@@ -214,13 +214,31 @@ module.exports = {
 			}
 		},
 		get: {
+			rest: "GET /folder/:id?",
 			auth: "required",
 			params: {
-				id: {type: "string"}
+				id: {type: "string", optional: true}
 			},
 			async handler(ctx) {
-				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
-				return {image: entity};
+				const folder_data = {
+					folder: null,
+					folders: null,
+					files: null
+				};
+				let id = ctx.params?.id;
+				console.log(id);
+				let parent = null;
+				if (id !== undefined) {
+					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
+					const imgs = await ctx.call("v1.widget.image.listByFolder", {folder: ctx.params.id});
+					folder_data.images = {...imgs.images};
+
+					parent = new ObjectId(folder_data._id);
+				}
+
+				folder_data.folders = await this.adapter.find({query: {parent: parent}});
+
+				return folder_data;
 			}
 		},
 		count: false,

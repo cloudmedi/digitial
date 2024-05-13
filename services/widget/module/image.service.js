@@ -167,7 +167,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				let folder = null;
-				if(ctx.meta.$params.folder === undefined) {
+				if (ctx.meta.$params.folder === undefined) {
 					const folder_data = await ctx.call("v1.filemanager.getDefaultFolder");
 					folder = folder_data._id;
 				}
@@ -217,6 +217,28 @@ module.exports = {
 					limit: limit,
 					offset: offset,
 					query: {user: new ObjectId(ctx.meta.user._id)}
+				});
+				return await this.transformResult(ctx, entities, ctx.meta.user);
+			}
+		},
+		listByFolder: {
+			auth: "required",
+			params: {
+				folder: {type: "string", optional: true}
+			},
+			async handler(ctx) {
+				let limit = 20;
+				let offset = 0;
+				let query = {user: new ObjectId(ctx.meta.user._id)};
+				if(ctx.params.folder) {
+					query.folder = new ObjectId(ctx.params.folder);
+				}
+				console.log(query);
+				const entities = await this.adapter.find({
+					sort: {createdAt: -1},
+					limit: limit,
+					offset: offset,
+					query: query
 				});
 				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
