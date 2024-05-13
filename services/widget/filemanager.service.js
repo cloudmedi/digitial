@@ -100,7 +100,7 @@ module.exports = {
 				user: user_id,
 				name: "default",
 				parent: null,
-				left: 0,
+				left: 1,
 				right: 0,
 				createdAt: new Date(),
 				updatedAt: null,
@@ -195,7 +195,7 @@ module.exports = {
 					}
 				});
 				if (default_folder.length > 0) {
-					return default_folder;
+					return default_folder[0];
 				} else {
 					return await ctx.call("v1.filemanager.setDefaultFolder");
 				}

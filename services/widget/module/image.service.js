@@ -86,6 +86,7 @@ module.exports = {
 							user: new ObjectId(res.meta.user._id),
 							path: val.path,
 							domain: domains.pre_cdn,
+							folder: val.folder,
 							name: val.name,
 							slug: this.randomName(),
 							provider: "local",
@@ -164,11 +165,17 @@ module.exports = {
 					folder: {type: "string"}
 				}
 			},
-			async handler(ctx, req, res) {
+			async handler(ctx) {
+				let folder = null;
+				if(ctx.meta.$params.folder === undefined) {
+					const folder_data = await ctx.call("v1.filemanager.getDefaultFolder");
+					folder = folder_data._id;
+				}
+
 				return new this.Promise((resolve, reject) => {
 					let fileUrls = [];
 
-					let uploadDir = "./public/upload/" + ctx.meta.user._id.toString();
+					let uploadDir = `./public/upload/${ctx.meta.user._id.toString()}/${folder}`;
 
 					if (!fs.existsSync(uploadDir)) {
 						fs.mkdirSync(uploadDir, {recursive: true});
@@ -180,7 +187,6 @@ module.exports = {
 						.filter(Boolean) // removes empty extensions (e.g. `filename...txt`)
 						.slice(1)
 						.join(".");
-
 					// ctx.meta.filename ||
 					const fileName = this.randomName() + "." + ext;
 					const filePath = path.join(uploadDir, fileName);
@@ -191,6 +197,7 @@ module.exports = {
 							path: uploadDir.replace("./public/", ""),
 							name: ctx.meta.filename,
 							file: fileName,
+							folder: new ObjectId(folder)
 						});
 						resolve({fileUrls, meta: ctx.meta});
 					});
