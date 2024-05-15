@@ -56,7 +56,7 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
-				ctx.params.updatedAt = null;
+				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},

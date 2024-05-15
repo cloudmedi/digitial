@@ -62,7 +62,7 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
-				ctx.params.updatedAt = null;
+				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},
@@ -76,6 +76,7 @@ module.exports = {
 			 * It sets a default value for the quantity field.
 			 *
 			 * @param {Context} ctx
+			 * @param {Response} res
 			 */
 			async upload(ctx, res) {
 				if (res.fileUrls.length >= 1) {
@@ -218,7 +219,7 @@ module.exports = {
 				left: 1,
 				right: 0,
 				createdAt: new Date(),
-				updatedAt: null,
+				updatedAt: new Date(),
 				status: true,
 
 			}).catch(e => console.log(e));
@@ -277,6 +278,8 @@ module.exports = {
 				if (ctx.meta.$params.folder === undefined) {
 					const folder_data = await ctx.call("v1.filemanager.getDefaultFolder");
 					folder = folder_data._id;
+				} else {
+					folder = ctx.meta.$params.folder;
 				}
 
 				return new this.Promise((resolve, reject) => {
@@ -338,7 +341,7 @@ module.exports = {
 				let limit = 20;
 				let offset = 0;
 				let query = {user: new ObjectId(ctx.meta.user._id)};
-				if(ctx.params.folder) {
+				if (ctx.params.folder) {
 					query.folder = new ObjectId(ctx.params.folder);
 				}
 				const entities = await this.adapter.find({
