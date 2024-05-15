@@ -64,7 +64,7 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
-				ctx.params.updatedAt = null;
+				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},
@@ -102,7 +102,7 @@ module.exports = {
 				left: 1,
 				right: 0,
 				createdAt: new Date(),
-				updatedAt: null,
+				updatedAt: new Date(),
 				status: true,
 
 			}).catch(e => console.log(e));
@@ -227,8 +227,9 @@ module.exports = {
 			async handler(ctx) {
 				const folder_data = {
 					folder: null,
-					folders: null,
-					files: null
+					folders: [],
+					files: [],
+					images: []
 				};
 				let id = ctx.params?.id;
 				let parent = null;
@@ -237,10 +238,18 @@ module.exports = {
 					const imgs = await ctx.call("v1.widget.image.listByFolder", {folder: ctx.params.id});
 					folder_data.images = {...imgs.images};
 
-					parent = new ObjectId(folder_data._id);
+					parent = new ObjectId(folder_data.folder._id);
 				}
+				//folder_data.folders = await this.adapter.find({query: {parent: parent}});
+				folder_data.folders = await this.adapter.find({
+					query: {
+						user: new ObjectId(ctx.meta.user._id),
+						parent: parent
+					}
+				});
 
-				folder_data.folders = await this.adapter.find({query: {parent: parent}});
+				console.log(folder_data.folders);
+
 
 				return folder_data;
 			}

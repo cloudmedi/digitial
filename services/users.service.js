@@ -71,7 +71,7 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
-				ctx.params.updatedAt = null;
+				ctx.params.updatedAt = new Date();
 				ctx.params.is_admin = false;
 				ctx.params.is_merchant = false;
 				ctx.params.api_key = uuidv4().toString();
