@@ -105,7 +105,9 @@ module.exports = {
 		},
 		count: false,
 		insert: false,
-		update: false,
+		update: {
+			auth: "required",
+		},
 		remove: false
 	},
 
