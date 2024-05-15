@@ -315,6 +315,7 @@ module.exports = {
 			}
 		},
 		list: {
+			rest: "GET /list",
 			auth: "required",
 			async handler(ctx) {
 				let limit = 20;
