@@ -327,7 +327,7 @@ module.exports = {
 					sort: {createdAt: -1},
 					limit: limit,
 					offset: offset,
-					query: {user: new ObjectId(ctx.meta.user._id)}
+					query: {user: new ObjectId(ctx.meta.user._id), status: 1}
 				});
 				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
@@ -340,7 +340,7 @@ module.exports = {
 			async handler(ctx) {
 				let limit = 20;
 				let offset = 0;
-				let query = {user: new ObjectId(ctx.meta.user._id)};
+				let query = {user: new ObjectId(ctx.meta.user._id), status: 1};
 				if (ctx.params.folder) {
 					query.folder = new ObjectId(ctx.params.folder);
 				}
@@ -359,12 +359,23 @@ module.exports = {
 				id: {type: "string"}
 			},
 			async handler(ctx) {
-				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
+				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), status: 1});
 				return {image: entity};
 			}
 		},
 		count: false,
 		insert: false,
+		updateByFolder: {
+			rest: "PUT /update/byFolder",
+			auth: "required",
+			params: {
+				folder: "string",
+				entity: "object"
+			},
+			async handler(ctx) {
+				return await this.adapter.updateMany({folder: new ObjectId(ctx.params.folder)}, {$set: ctx.params.entity});
+			}
+		},
 		update: {
 			auth: "required",
 		},

@@ -183,7 +183,7 @@ module.exports = {
 					sort: {createdAt: -1},
 					limit: limit,
 					offset: offset,
-					query: {user: new ObjectId(ctx.meta.user._id), parent: parent}
+					query: {user: new ObjectId(ctx.meta.user._id), parent: parent, status: true}
 				});
 				console.log(entities);
 				return await this.transformResult(ctx, entities, ctx.meta.user);
@@ -234,17 +234,23 @@ module.exports = {
 				let id = ctx.params?.id;
 				let parent = null;
 				if (id !== undefined) {
-					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
+					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), status: true});
 					const imgs = await ctx.call("v1.widget.image.listByFolder", {folder: ctx.params.id});
 					folder_data.images = {...imgs.images};
-
+					if(!folder_data.folder) {
+						throw new MoleculerClientError("Folder Not Found", 404, "", [{
+							field: "folder",
+							message: "Not found"
+						}]);
+					}
 					parent = new ObjectId(folder_data.folder._id);
 				}
 				//folder_data.folders = await this.adapter.find({query: {parent: parent}});
 				folder_data.folders = await this.adapter.find({
 					query: {
 						user: new ObjectId(ctx.meta.user._id),
-						parent: parent
+						parent: parent,
+						status: true
 					}
 				});
 
@@ -259,7 +265,21 @@ module.exports = {
 		update: {
 			auth: "required",
 		},
-		remove: false
+		remove: {
+			params: {
+				id: "string"
+			},
+			async handler(ctx) {
+				const folder = new ObjectId(ctx.params.id);
+				await ctx.call("v1.widget.image.updateByFolder", {folder: ctx.params.id, entity: {status: 0}});
+				await this.adapter.updateMany({_id: folder}, {$set:{status: 0}});
+
+				return {
+					status: true,
+					message: "Deleted"
+				};
+			}
+		}
 	},
 	/**
 	 * Methods
