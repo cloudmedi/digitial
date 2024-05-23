@@ -1,7 +1,6 @@
 "use strict";
 
 const {MoleculerClientError} = require("moleculer").Errors;
-const {ForbiddenError} = require("moleculer-web").Errors;
 const fs = require("fs");
 const path = require("path");
 const {ObjectId} = require("mongodb");
