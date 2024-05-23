@@ -4,6 +4,7 @@ const {MoleculerClientError} = require("moleculer").Errors;
 const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
+const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -16,7 +17,11 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("sources")],
+	mixins: [DbMixin("sources"),
+		CacheCleanerMixin([
+			"cache.clean.sources",
+			"sources"
+		])],
 	whitelist: [],
 	/**
 	 * Settings
@@ -85,12 +90,22 @@ module.exports = {
 				// @todo: check screen has source
 				ctx.params.layout = await ctx.call("v1.source.layout.get", {id: entity.layout});
 
-				return await this.adapter.insert(ctx.params);
+				const new_source = await this.adapter.insert(ctx.params);
+				await this.entityChanged("updated", new_source, ctx);
+				return new_source;
 			}
 		},
 		list: {
 			auth: "required",
+			cache: {
+				keys: ["#userID"],
+				ttl: 60 * 5  // 5 minutes
+			},
 			async handler(ctx) {
+				if(!ctx.meta.user) {
+					return [];
+				}
+
 				let limit = 20;
 				let offset = 0;
 
@@ -100,6 +115,7 @@ module.exports = {
 					offset: offset,
 					query: {user: new ObjectId(ctx.meta.user._id)}
 				});
+
 				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
 		},

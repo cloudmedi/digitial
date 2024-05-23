@@ -159,6 +159,7 @@ module.exports = {
 				} else {
 					folder = await ctx.call("v1.filemanager.update", {id: check_folder[0]._id, ...data});
 				}
+				await this.entityChanged("updated", folder, ctx);
 
 				return folder;
 			}
@@ -272,7 +273,8 @@ module.exports = {
 			async handler(ctx) {
 				const folder = new ObjectId(ctx.params.id);
 				await ctx.call("v1.widget.image.updateByFolder", {folder: ctx.params.id, entity: {status: 0}});
-				await this.adapter.updateMany({_id: folder}, {$set:{status: 0}});
+				const updated_folder = await this.adapter.updateMany({_id: folder}, {$set:{status: 0}});
+				await this.entityChanged("updated", updated_folder, ctx);
 
 				return {
 					status: true,
