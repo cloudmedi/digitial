@@ -131,6 +131,9 @@ module.exports = {
 					const doc = await this.adapter.insert(ctx.params);
 					const screen = await this.transformEntity(ctx, doc);
 					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
+
+					await this.entityChanged("updated", screen, ctx);
+
 					return screen;
 				} else {
 					throw new MoleculerClientError(check_serial.message, 400, "", [{
@@ -156,6 +159,10 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
+			cache: {
+				keys: ["#userID"],
+				ttl: 60 * 5  // 5 minutes
+			},
 			async handler(ctx) {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
 			}
