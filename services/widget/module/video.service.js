@@ -90,33 +90,29 @@ module.exports = {
 						const video_row = {
 							user: new ObjectId(res.meta.user._id),
 							path: val.path,
-							domain: domains.pre_cdn,
+							domain: domains.stream,
 							folder: val.folder,
 							name: val.name,
 							slug: this.randomName(),
 							provider: "local",
 							file: val.file,
-							status: 1,
+							process_step: 0,
+							status: 0,
 							createdAt: new Date(),
-							updatedAt: null
+							updatedAt: new Date()
 						};
-						data.push(video_row);
 
-						this.bunnyUpload(video_row).then(() => {
-							this.broker.broadcast("video.created", {...video_row}, ["filemanager"]);
+						return this.adapter.insert(video_row).then((vid => {
+							data.push(vid);
+
+							this.broker.broadcast("video.create", {...video_row}, ["widget.video"]);
+
+							this.entityChanged("created", vid, ctx);
+							return data;
+						})).then(() => {
+							return data;
 						});
 					});
-					let entity = ctx.params;
-
-					//await this.validateEntity(entity);
-					entity.createdAt = new Date();
-					entity.updatedAt = new Date();
-					const doc = await this.adapter.insertMany(data);
-					//let json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
-
-					//json = await this.transformResult(ctx, json, ctx.meta.user);
-					await this.entityChanged("created", doc, ctx);
-					return doc.reverse()[0];
 				}
 			}
 
@@ -125,9 +121,14 @@ module.exports = {
 
 	events: {
 		// Subscribe to `user.created` event
+		async "video.create"(video_row) {
+			console.log("video_create event");
+			console.log(video_row);
+			this.bunnyUpload(video_row).then(() => {
+				this.broker.broadcast("video.created", {...video_row}, ["filemanager"]);
+			});
+		},
 		async "folder.created"(folder) {
-			console.log("event_fired");
-			console.log(folder.folder);
 			const user_id = folder.folder.user;
 			const default_videos = [
 				{
@@ -212,7 +213,6 @@ module.exports = {
 
 			//await this.adapter.insertMany(default_videos);
 		},
-
 		"user.created"(user) {
 			//console.log("User created:", user);
 			const user_id = user.user._id;
@@ -374,6 +374,18 @@ module.exports = {
 		},
 		remove: false,
 		create: false,
+		webhook: {
+			rest: "POST /webhook",
+			auth: false,
+			params: {
+				VideoLibraryId: "number",
+				VideoGuid: "string",
+				Status: "number"
+			},
+			async handler(ctx) {
+
+			}
+		}
 
 	},
 
@@ -381,6 +393,62 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		process_step(step = null) {
+			const steps = [
+				{step: 0, description: "Video uploaded"},
+				{step: 1, description: "Video meta created"},
+				{step: 2, description: "Video moved to cdn"},
+				{step: 3, description: "Transcoding"},
+				{step: 4, description: "Process done."}
+			];
+
+			if (step) {
+				return steps[Number(step)];
+			} else {
+				return steps;
+			}
+		},
+		bunny_process_step(step = null) {
+			const process_list = [
+				{step: 0, label: "Queued", description: "The video has been queued for encoding."},
+				{
+					step: 1,
+					label: "Processing",
+					description: "The video has begun processing the preview and format details."
+				},
+				{step: 2, label: "Encoding", description: "The video is encoding."},
+				{
+					step: 3,
+					label: "Finished",
+					description: "The video encoding has finished and the video is fully available."
+				},
+				{
+					step: 4,
+					label: "Resolution finished",
+					description: "The encoder has finished processing one of the resolutions. The first request also signals that the video is now playable.",
+				},
+				{
+					step: 5,
+					label: "Failed",
+					description: "The video encoding failed. The video has finished processing."
+				},
+				{step: 6, label: "PresignedUploadStarted", description: ": A pre-signed upload has been initiated."},
+				{step: 7, label: "PresignedUploadFinished", description: ": A pre-signed upload has been completed."},
+				{step: 8, label: "PresignedUploadFailed", description: ": A pre-signed upload has failed."},
+				{step: 9, label: "CaptionsGenerated", description: ": Automatic captions were generated."},
+				{
+					step: 10,
+					label: "TitleOrDescriptionGenerated",
+					description: ": Automatic generation of title or description has been completed.",
+				}
+
+			];
+			if(step) {
+				return process_list[Number(step)]
+			} else {
+				return process_list;
+			}
+		},
 		embed_code(video_id) {
 			const api_info = (config.get("provider_creds"))["bunny_net"];
 
@@ -394,10 +462,12 @@ module.exports = {
 
 			//const readStream = fs.createReadStream("./public/" + filePath);
 
-			const video_info = await this.createVideo(file_info);
+			const video_info = await JSON.parse(await this.createVideo(file_info));
 			const video_id = video_info.guid;
-
-			await this.uploadVideo(api_info.video.default_lib_id, video_id, filePath);
+			if (video_info) {
+				await this.updateVideoProcess(file_info, 1);
+				await this.uploadVideo(api_info.video.default_lib_id, video_id, filePath, file_info);
+			}
 		},
 		async createVideo(file_info) {
 			const api_info = (config.get("provider_creds"))["bunny_net"];
@@ -447,7 +517,10 @@ module.exports = {
 				req.end();
 			});
 		},
-		uploadVideo(libraryId, videoId, filePath) {
+		uploadVideo(libraryId, videoId, filePath, file_info) {
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const ACCESS_KEY = api_info.video.api_key;
+
 			return new Promise((resolve, reject) => {
 				const options = {
 					method: "PUT",
@@ -455,6 +528,7 @@ module.exports = {
 					port: null,
 					path: `/library/${libraryId}/videos/${videoId}`,
 					headers: {
+						"AccessKey": ACCESS_KEY,
 						"accept": "application/json"
 					}
 				};
@@ -469,6 +543,7 @@ module.exports = {
 					res.on("end", () => {
 						const body = Buffer.concat(chunks);
 						if (res.statusCode >= 200 && res.statusCode < 300) {
+							this.updateVideoProcess(file_info, 2);
 							resolve(body.toString());
 						} else {
 							reject(new Error(`Request failed with status code ${res.statusCode}: ${body.toString()}`));
@@ -480,7 +555,7 @@ module.exports = {
 					reject(new Error(`Problem with request: ${e.message}`));
 				});
 
-				const readStream = fs.createReadStream(path.join(__dirname, "public", filePath));
+				const readStream = fs.createReadStream(path.join(__dirname, "../../../", "public", filePath));
 				readStream.on("error", (err) => {
 					reject(new Error(`Problem with file stream: ${err.message}`));
 				});
@@ -488,6 +563,9 @@ module.exports = {
 				// Pipe the file stream to the request
 				readStream.pipe(req);
 			});
+		},
+		async updateVideoProcess(video, step) {
+			return await this.adapter.updateById(video._id, {$set: {process_step: step}});
 		},
 		randomName() {
 			let length = 8;
