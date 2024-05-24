@@ -319,6 +319,7 @@ module.exports = {
 		},
 		list: {
 			rest: "GET /list",
+			cache: false,
 			auth: "required",
 			async handler(ctx) {
 				let limit = 20;
@@ -334,6 +335,7 @@ module.exports = {
 		},
 		listByFolder: {
 			auth: "required",
+			cache: false,
 			params: {
 				folder: {type: "string", optional: true}
 			},
@@ -355,6 +357,7 @@ module.exports = {
 		},
 		get: {
 			auth: "required",
+			cache: false,
 			params: {
 				id: {type: "string"}
 			},
