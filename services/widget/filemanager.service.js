@@ -89,6 +89,22 @@ module.exports = {
 				}
 			}, 1000 * 60 * 2);
 
+		},	// Subscribe to `user.created` event
+		async "video.moved"(video_row) {
+			//console.log("User created:", user);
+			await this.updateVideo(video_row);
+			setTimeout(() => {
+				try {
+					console.log("silme başladı");
+					const file = path.join(__dirname, "../../", "/public", video_row.path, video_row.file);
+					fs.unlinkSync(file);
+
+					console.log(file, "deleted");
+				} catch (e) {
+					console.log(e);
+				}
+			}, 1000 * 60 * 2);
+
 		},
 
 		"user.created"(user) {
@@ -290,6 +306,13 @@ module.exports = {
 			await this.broker.call("v1.widget.image.update", {
 				id: image_row._id,
 				domain: domains.cdn,
+				provider: "bunny_net",
+				updatedAt: new Date()
+			});
+		},
+		async updateVideo(video_row) {
+			await this.broker.call("v1.widget.video.update", {
+				id: video_row._id,
 				provider: "bunny_net",
 				updatedAt: new Date()
 			});
