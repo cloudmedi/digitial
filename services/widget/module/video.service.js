@@ -125,7 +125,7 @@ module.exports = {
 			console.log("video_create event");
 			console.log(video_row);
 			this.bunnyUpload(video_row).then(() => {
-				this.broker.broadcast("video.created", {...video_row}, ["filemanager"]);
+				this.broker.broadcast("video.moved", {...video_row}, ["filemanager"]);
 			});
 		},
 		async "folder.created"(folder) {
@@ -465,6 +465,7 @@ module.exports = {
 			const video_info = await JSON.parse(await this.createVideo(file_info));
 			const video_id = video_info.guid;
 			if (video_info) {
+				await this.broker.call("v1.widget.video.update", {id: file_info._id, meta: {video_id}});
 				await this.updateVideoProcess(file_info, 1);
 				await this.uploadVideo(api_info.video.default_lib_id, video_id, filePath, file_info);
 			}
