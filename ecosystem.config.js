@@ -157,7 +157,7 @@ module.exports = {
 		{
 			name: "signage-widget",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js",
+			args: "services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js services/widget/module/video.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
