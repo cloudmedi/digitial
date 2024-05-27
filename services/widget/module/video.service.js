@@ -372,7 +372,7 @@ module.exports = {
 		update: {
 			auth: "required",
 		},
-		remove: false,
+		remove: true,
 		create: false,
 		webhook: {
 			rest: "POST /webhook",
@@ -558,7 +558,7 @@ module.exports = {
 
 				const readStream = fs.createReadStream(path.join(__dirname, "../../../", "public", filePath));
 				readStream.on("error", (err) => {
-					this.broker.call("v1.widget.video.delete", {id: file_info._id});
+					this.broker.call("v1.widget.video.remove", {id: file_info._id});
 					reject(new Error(`Problem with file stream: ${err.message}`));
 				});
 
