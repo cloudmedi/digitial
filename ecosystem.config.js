@@ -3,7 +3,7 @@ module.exports = {
 		{
 			name: "signage-apibase",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/api.service.js services/io.service.js services/lab.service.js services/profile.service.js services/room.service.js services/users.service.js services/wallet.service.js",
+			args: "services/api.service.js services/io.service.js services/room.service.js services/lab.service.js services/profile.service.js services/room.service.js services/users.service.js services/wallet.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
