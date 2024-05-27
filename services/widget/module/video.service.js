@@ -558,6 +558,7 @@ module.exports = {
 
 				const readStream = fs.createReadStream(path.join(__dirname, "../../../", "public", filePath));
 				readStream.on("error", (err) => {
+					this.broker.call("v1.widget.video.delete", {id: file_info._id});
 					reject(new Error(`Problem with file stream: ${err.message}`));
 				});
 
