@@ -321,7 +321,7 @@ module.exports = {
 					sort: {createdAt: -1},
 					limit: limit,
 					offset: offset,
-					query: {user: new ObjectId(ctx.meta.user._id), status: 1}
+					query: {user: new ObjectId(ctx.meta.user._id)}
 				});
 				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
@@ -353,7 +353,7 @@ module.exports = {
 				id: {type: "string"}
 			},
 			async handler(ctx) {
-				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), status: 1});
+				const entity = await this.adapter.findOne({_id: new ObjectId(ctx.params.id)});
 				return {video: entity};
 			}
 		},
