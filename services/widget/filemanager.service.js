@@ -9,6 +9,7 @@ const config = require("config");
 const domains = config.get("DOMAINS");
 
 const DbMixin = require("../../mixins/db.mixin");
+const _ = require("lodash");
 
 
 /**
@@ -185,8 +186,8 @@ module.exports = {
 		 * @returns
 		 */
 		list: {
-			auth: "required",
 			rest: "GET /list/:parent?",
+			auth: "required",
 			params: {
 				parent: {type: "string", default: null, optional: true}
 			},
@@ -206,8 +207,8 @@ module.exports = {
 			}
 		},
 		getDefaultFolder: {
-			auth: "required",
 			rest: "GET /folder/default",
+			auth: "required",
 			async handler(ctx) {
 				const default_folder = await ctx.call("v1.filemanager.find", {
 					query: {
@@ -223,8 +224,8 @@ module.exports = {
 			}
 		},
 		setDefaultFolder: {
-			auth: "required",
 			rest: "POST /folder/default",
+			auth: "required",
 			visible: "private",
 			async handler(ctx) {
 				const data = {
@@ -244,24 +245,23 @@ module.exports = {
 				const folder_data = {
 					folder: null,
 					folders: [],
-					files: [],
-					images: []
+					files: []
 				};
 				let id = ctx.params?.id;
 				let parent = null;
 				if (id !== undefined) {
 					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), status: true});
-					const imgs = await ctx.call("v1.widget.image.listByFolder", {folder: ctx.params.id});
-					folder_data.images = {...imgs.images};
-					if(!folder_data.folder) {
+					if (!folder_data.folder) {
 						throw new MoleculerClientError("Folder Not Found", 404, "", [{
 							field: "folder",
 							message: "Not found"
 						}]);
 					}
 					parent = new ObjectId(folder_data.folder._id);
+
+					folder_data.files = await ctx.call("v1.filemanager.getFiles", {folder: folder_data.folder._id.toString()});
 				}
-				//folder_data.folders = await this.adapter.find({query: {parent: parent}});
+
 				folder_data.folders = await this.adapter.find({
 					query: {
 						user: new ObjectId(ctx.meta.user._id),
@@ -270,10 +270,40 @@ module.exports = {
 					}
 				});
 
-				console.log(folder_data.folders);
-
-
 				return folder_data;
+			}
+		},
+		getFiles: {
+			rest: "GET /files",
+			auth: "required",
+			params: {
+				perPage: {type: "string", default: "10"},
+				page: {type: "string", default: "0"},
+				folder: {type: "string", optional: true}
+			},
+			async handler(ctx) {
+				const userId = new ObjectId(ctx.meta.user._id); // Değişken olarak kullanıcı ID'si
+				const limit = Number(ctx.params.perPage); // Sayfa başına gösterilecek kayıt sayısı
+				const offset = Number(ctx.params.page); // Başlangıç noktası (örneğin, 0: ilk sayfa, 10: ikinci sayfa)
+				if(ctx.params.folder) {
+					const widgets = await ctx.call("v1.widget.find");
+					let files = [];
+					for (const widget of widgets) {
+						const widget_resp = await ctx.call(`v1.widget.${widget.slug}.list`, {folder: ctx.params.folder});
+						const widget_values = Object.values(widget_resp)[0];
+						if(files.length === 0) {
+							files = widget_values;
+						} else {
+							files = _.union(files, widget_values);
+						}
+					}
+					return _.sortBy(files, ["updatedAt"]);
+				} else {
+					throw new MoleculerClientError("Provide a folder", 400, "", [{
+						field: "folder",
+						message: "cannot be empty"
+					}]);
+				}
 			}
 		},
 		count: false,
@@ -288,7 +318,7 @@ module.exports = {
 			async handler(ctx) {
 				const folder = new ObjectId(ctx.params.id);
 				await ctx.call("v1.widget.image.updateByFolder", {folder: ctx.params.id, entity: {status: 0}});
-				const updated_folder = await this.adapter.updateMany({_id: folder}, {$set:{status: 0}});
+				const updated_folder = await this.adapter.updateMany({_id: folder}, {$set: {status: 0}});
 				await this.entityChanged("updated", updated_folder, ctx);
 
 				return {
@@ -343,6 +373,83 @@ module.exports = {
 			if (!entity) return null;
 
 			return entity;
+		},
+		async backup_method(ctx) {
+			const userId = new ObjectId(ctx.meta.user._id); // Değişken olarak kullanıcı ID'si
+			const limit = Number(ctx.params.perPage); // Sayfa başına gösterilecek kayıt sayısı
+			const offset = Number(ctx.params.page); // Başlangıç noktası (örneğin, 0: ilk sayfa, 10: ikinci sayfa)
+
+			const db_pipeline = [
+				{
+					$match: { "user": userId }
+				},
+				{
+					$addFields: {
+						type: "video"
+					}
+				},
+				{
+					$unionWith: {
+						coll: "widget_image",
+						pipeline: [
+							{
+								$match: { "user": userId }
+							},
+							{
+								$addFields: {
+									type: "image"
+								}
+							}
+						]
+					}
+				},
+				{
+					$unionWith: {
+						coll: "widget_rss",
+						pipeline: [
+							{
+								$match: { "user": userId }
+							},
+							{
+								$addFields: {
+									type: "rss"
+								}
+							}
+						]
+					}
+				},
+				{
+					$group: {
+						_id: "$user",
+						items: { $push: "$$ROOT" }
+					}
+				},
+				{
+					$unwind: "$items"
+				},
+				{
+					$skip: offset
+				},
+				{
+					$limit: limit
+				},
+				{
+					$group: {
+						_id: "$_id",
+						items: { $push: "$items" }
+					}
+				},
+				{
+					$project: {
+						_id: 0,
+						user_id: "$_id",
+						items: 1
+					}
+				}
+			];
+
+			const responseCursor = await this.adapter.collection.aggregate(db_pipeline);
+			const responseArray = await responseCursor.toArray();
 		},
 		/**
 		 * Loading sample data to the collection.

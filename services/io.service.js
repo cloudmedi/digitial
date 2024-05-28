@@ -56,11 +56,8 @@ module.exports = {
 						"call": {
 							whitelist: [
 								"users.me",
-								"follows.list",
+								"screen.list",
 								"room.*",
-								"race-game.list",
-								"race-room.get",
-								"race-room.list"
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");

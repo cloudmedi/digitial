@@ -322,17 +322,28 @@ module.exports = {
 		},
 		list: {
 			rest: "GET /list",
-			cache: false,
 			auth: "required",
+			params: {
+				folder: {type: "string", default: null, optional: true},
+				limit: {type: "string", default: 20},
+				offset: {type: "string", default: 0}
+			},
 			async handler(ctx) {
-				let limit = 20;
-				let offset = 0;
-				const entities = await this.adapter.find({
+				let limit = ctx.params.limit;
+				let offset = ctx.params. offset;
+
+				let list_query = {
 					sort: {createdAt: -1},
 					limit: limit,
 					offset: offset,
 					query: {user: new ObjectId(ctx.meta.user._id)}
-				});
+				};
+
+				if(ctx.params.folder) {
+					list_query.query.folder = new ObjectId(ctx.params.folder);
+				}
+
+				const entities = await this.adapter.find(list_query);
 				return await this.transformResult(ctx, entities, ctx.meta.user);
 			}
 		},
@@ -497,6 +508,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		// await this.adapter.collection.createIndex({ name: 1 });
+		await this.adapter.collection.createIndex({ user: 1 });
 	}
 };
