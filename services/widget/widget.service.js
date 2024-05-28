@@ -149,7 +149,8 @@ module.exports = {
 		 */
 		async seedDB() {
 			const data = [
-				{icon: "fa-picture", name: "image", slug: "image", provider: "local", service: "image", meta: []}
+				{icon: "fa-picture", name: "image", slug: "image", provider: "local", service: "image", has_file: true, meta: []},
+				{icon: "fa-video", name: "video", slug: "video", provider: "local", service: "video", has_file: true, meta: []}
 			];
 			await this.adapter.insertMany(data);
 		}
@@ -159,6 +160,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		// await this.adapter.collection.createIndex({ name: 1 });
+		/*await this.adapter.collection.createIndex({ user: 1 });*/
 	}
 };

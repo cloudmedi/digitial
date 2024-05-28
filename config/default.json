@@ -8,7 +8,7 @@
 		"stream": "stream.maiasignage.com"
 	},
 	"REDIS": {
-		"host": "172.17.0.3",
+		"host": "localhost",
 		"port": "6379",
 		"password": "",
 		"db": 12
