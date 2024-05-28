@@ -32,16 +32,20 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
-			"name",
-			"provider",
-			"slug",
+			"user",
 			"path",
-			"type",
 			"domain",
-			"video_id",
-			"embed",
-			"thumb",
-			"thumb_video"
+			"folder",
+			"name",
+			"slug",
+			"provider",
+			"type",
+			"file",
+			"process_step",
+			"meta",
+			"status",
+			"createdAt",
+			"updatedAt",
 		],
 
 		// Validator for the `create` & `insert` actions.
@@ -70,6 +74,7 @@ module.exports = {
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.type = "video";
+				ctx.params.meta = {};
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -101,6 +106,7 @@ module.exports = {
 							type: "video",
 							process_step: 0,
 							status: 1,
+							meta: {},
 							createdAt: new Date(),
 							updatedAt: new Date()
 						};
@@ -136,80 +142,17 @@ module.exports = {
 				{
 					"user": user_id,
 					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
+					"domain": "stream.maiasignage.com",
 					"folder": new ObjectId(folder.folder._id),
-					"name": "chalo-gallardo-6uCy44FbdqM-unsplash.jpg",
-					"slug": "HuQe7jZw",
-					"provider": "local",
-					"file": "YFfxuBOm.jpg",
+					"name": "3320517-uhd_2160_3840_25fps.mp4",
+					"slug": "defvid1",
+					"provider": "bunny_net",
+					"file": "defvid1.jpg",
+					"type": "video",
+					"process_step": 0,
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "clay-banks-FPhpVpwUviA-unsplash.jpg",
-					"slug": "uXnwZdmw",
-					"provider": "local",
-					"file": "9EEi70Nz.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": null,
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "anton-lammert-UH2V6BYBHtU-unsplash.jpg",
-					"slug": "PKBsfIal",
-					"provider": "local",
-					"file": "rGmMKbOc.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": null,
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "omar-ram-z0VdFXfyhOk-unsplash.jpg",
-					"slug": "rzjd11C2",
-					"provider": "local",
-					"file": "NepYRUWx.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": null,
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "wolfgang-hasselmann-R5hhJYZoBRA-unsplash.jpg",
-					"slug": "fwE59w3L",
-					"provider": "local",
-					"file": "0qaLpDSU.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": null,
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "shiqi-zhao-18RECWIobXw-unsplash.jpg",
-					"slug": "vS5VG6KH",
-					"provider": "local",
-					"file": "PNepmkTf.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				}
 			];
 
@@ -315,6 +258,9 @@ module.exports = {
 		list: {
 			rest: "GET /list",
 			auth: "required",
+			cache: {
+				keys: ["#userID", "folder", "page", "perPage"]
+			},
 			params: {
 				folder: {type: "string", default: null, optional: true},
 				limit: {type: "string", default: 20},

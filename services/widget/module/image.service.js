@@ -32,12 +32,19 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
-			"name",
-			"provider",
-			"slug",
-			"type",
+			"user",
 			"path",
 			"domain",
+			"folder",
+			"name",
+			"slug",
+			"provider",
+			"type",
+			"file",
+			"meta",
+			"status",
+			"createdAt",
+			"updatedAt",
 		],
 
 		// Validator for the `create` & `insert` actions.
@@ -66,6 +73,7 @@ module.exports = {
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.type = "image";
+				ctx.params.meta = {};
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -95,6 +103,7 @@ module.exports = {
 							provider: "local",
 							type: "image",
 							file: val.file,
+							meta: {},
 							status: 1,
 							createdAt: new Date(),
 							updatedAt: null
@@ -151,9 +160,11 @@ module.exports = {
 					"slug": "uXnwZdmw",
 					"provider": "local",
 					"file": "9EEi70Nz.jpg",
+					"type": "image",
+					"meta": {},
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				},
 				{
 					"user": user_id,
@@ -164,9 +175,11 @@ module.exports = {
 					"slug": "PKBsfIal",
 					"provider": "local",
 					"file": "rGmMKbOc.jpg",
+					"type": "image",
+					"meta": {},
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				},
 				{
 					"user": user_id,
@@ -177,9 +190,11 @@ module.exports = {
 					"slug": "rzjd11C2",
 					"provider": "local",
 					"file": "NepYRUWx.jpg",
+					"type": "image",
+					"meta": {},
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				},
 				{
 					"user": user_id,
@@ -190,9 +205,11 @@ module.exports = {
 					"slug": "fwE59w3L",
 					"provider": "local",
 					"file": "0qaLpDSU.jpg",
+					"type": "image",
+					meta: {},
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				},
 				{
 					"user": user_id,
@@ -203,9 +220,11 @@ module.exports = {
 					"slug": "vS5VG6KH",
 					"provider": "local",
 					"file": "PNepmkTf.jpg",
+					"type": "image",
+					meta: {},
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				}
 			];
 
@@ -322,6 +341,9 @@ module.exports = {
 		},
 		list: {
 			rest: "GET /list",
+			cache: {
+				keys: ["#userID", "folder", "page", "perPage"]
+			},
 			auth: "required",
 			params: {
 				folder: {type: "string", default: null, optional: true},
@@ -330,7 +352,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				let limit = ctx.params.limit;
-				let offset = ctx.params. offset;
+				let offset = ctx.params.offset;
 
 				let list_query = {
 					sort: {createdAt: -1},
@@ -339,7 +361,7 @@ module.exports = {
 					query: {user: new ObjectId(ctx.meta.user._id)}
 				};
 
-				if(ctx.params.folder) {
+				if (ctx.params.folder) {
 					list_query.query.folder = new ObjectId(ctx.params.folder);
 				}
 
@@ -508,6 +530,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		await this.adapter.collection.createIndex({ user: 1 });
+		await this.adapter.collection.createIndex({user: 1});
 	}
 };

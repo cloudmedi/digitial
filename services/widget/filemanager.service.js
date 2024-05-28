@@ -169,7 +169,7 @@ module.exports = {
 					// broadcast
 					if (name === "default") {
 						setTimeout(() => {
-							this.broker.broadcast("folder.created", {folder}, ["widget.image"]);
+							this.broker.broadcast("folder.created", {folder}, ["widget.image", "widget.video"]);
 						}, 1000 * 3);
 					}
 				} else {
@@ -237,6 +237,9 @@ module.exports = {
 		},
 		get: {
 			rest: "GET /folder/:id?",
+			cache: {
+				keys: ["#userID", "id"]
+			},
 			auth: "required",
 			params: {
 				id: {type: "string", optional: true}
@@ -275,6 +278,9 @@ module.exports = {
 		},
 		getFiles: {
 			rest: "GET /files",
+			cache: {
+				keys: ["#userID", "folder", "page", "perPage"]
+			},
 			auth: "required",
 			params: {
 				perPage: {type: "string", default: "10"},
