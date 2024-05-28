@@ -84,7 +84,7 @@ module.exports = {
 		 * Events
 		 */
 		events: {
-			"orderbook.updated": {
+			"user.connected": {
 				handler(ctx) {
 					console.log("User: ",ctx.meta.user);
 					console.log("event fired");
