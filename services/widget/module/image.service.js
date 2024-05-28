@@ -93,6 +93,7 @@ module.exports = {
 							name: val.name,
 							slug: this.randomName(),
 							provider: "local",
+							type: "image",
 							file: val.file,
 							status: 1,
 							createdAt: new Date(),

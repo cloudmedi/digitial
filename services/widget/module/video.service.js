@@ -98,8 +98,9 @@ module.exports = {
 							slug: this.randomName(),
 							provider: "local",
 							file: val.file,
+							type: "video",
 							process_step: 0,
-							status: 0,
+							status: 1,
 							createdAt: new Date(),
 							updatedAt: new Date()
 						};
