@@ -36,6 +36,7 @@ module.exports = {
 			"provider",
 			"slug",
 			"path",
+			"type",
 			"domain",
 			"video_id",
 			"embed",
@@ -68,6 +69,7 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
+				ctx.params.type = "video";
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -102,15 +104,14 @@ module.exports = {
 							updatedAt: new Date()
 						};
 
-						return this.adapter.insert(video_row).then((vid => {
+						return this.adapter.insert(video_row).then(async vid => {
 							data.push(vid);
 
-							this.broker.broadcast("video.create", {...video_row}, ["widget.video"]);
+							await this.broker.broadcast("video.create", {...video_row}, ["widget.video"]);
 
 							this.entityChanged("created", vid, ctx);
-							return data;
-						})).then(() => {
-							return data;
+
+							return vid;
 						});
 					});
 				}

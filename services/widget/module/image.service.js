@@ -35,6 +35,7 @@ module.exports = {
 			"name",
 			"provider",
 			"slug",
+			"type",
 			"path",
 			"domain",
 		],
@@ -64,6 +65,7 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
+				ctx.params.type = "image";
 				ctx.params.status = true;
 			},
 			update(ctx) {
