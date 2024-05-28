@@ -259,7 +259,7 @@ module.exports = {
 					}
 					parent = new ObjectId(folder_data.folder._id);
 
-					folder_data.files = await ctx.call("v1.filemanager.getFiles", {folder: parent});
+					folder_data.files = await ctx.call("v1.filemanager.getFiles", {folder: folder_data.folder._id.toString()});
 				}
 
 				folder_data.folders = await this.adapter.find({
@@ -279,33 +279,32 @@ module.exports = {
 			params: {
 				perPage: {type: "string", default: "10"},
 				page: {type: "string", default: "0"},
+				folder: {type: "string", optional: true}
 			},
 			async handler(ctx) {
 				const userId = new ObjectId(ctx.meta.user._id); // Değişken olarak kullanıcı ID'si
 				const limit = Number(ctx.params.perPage); // Sayfa başına gösterilecek kayıt sayısı
 				const offset = Number(ctx.params.page); // Başlangıç noktası (örneğin, 0: ilk sayfa, 10: ikinci sayfa)
-
-				const widgets = await ctx.call("v1.widget.find");
-				let files = [];
-				for (const widget of widgets) {
-					//console.log(ctx.meta.user._id);
-					const widget_resp = await ctx.call(`v1.widget.${widget.slug}.list`);
-					const widget_values = Object.values(widget_resp)[0];
-					if(files.length === 0) {
-						files = widget_values;
-					} else {
-						files = _.union(files, widget_values);
+				if(ctx.params.folder) {
+					const widgets = await ctx.call("v1.widget.find");
+					let files = [];
+					for (const widget of widgets) {
+						const widget_resp = await ctx.call(`v1.widget.${widget.slug}.list`, {folder: ctx.params.folder});
+						const widget_values = Object.values(widget_resp)[0];
+						if(files.length === 0) {
+							files = widget_values;
+						} else {
+							files = _.union(files, widget_values);
+						}
 					}
+					return _.sortBy(files, ["updatedAt"]);
+				} else {
+					throw new MoleculerClientError("Provide a folder", 400, "", [{
+						field: "folder",
+						message: "cannot be empty"
+					}]);
 				}
-
-				return _.sortBy(files, ["updatedAt"]);
-
-
-
-
-
 			}
-
 		},
 		count: false,
 		insert: false,
