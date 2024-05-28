@@ -169,7 +169,7 @@ module.exports = {
 					// broadcast
 					if (name === "default") {
 						setTimeout(() => {
-							this.broker.broadcast("folder.created", {folder}, ["widget.image"]);
+							this.broker.broadcast("folder.created", {folder}, ["widget.image", "widget.video"]);
 						}, 1000 * 3);
 					}
 				} else {
