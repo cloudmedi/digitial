@@ -341,6 +341,9 @@ module.exports = {
 		},
 		list: {
 			rest: "GET /list",
+			cache: {
+				keys: ["#userID", "folder", "page", "perPage"]
+			},
 			auth: "required",
 			params: {
 				folder: {type: "string", default: null, optional: true},

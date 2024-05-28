@@ -237,6 +237,9 @@ module.exports = {
 		},
 		get: {
 			rest: "GET /folder/:id?",
+			cache: {
+				keys: ["#userID", "id"]
+			},
 			auth: "required",
 			params: {
 				id: {type: "string", optional: true}
@@ -275,6 +278,9 @@ module.exports = {
 		},
 		getFiles: {
 			rest: "GET /files",
+			cache: {
+				keys: ["#userID", "folder", "page", "perPage"]
+			},
 			auth: "required",
 			params: {
 				perPage: {type: "string", default: "10"},
