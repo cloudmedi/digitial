@@ -5,6 +5,8 @@ const SocketIOService = require("moleculer-io");
 const ApiGateway = require("moleculer-web");
 const {UnAuthorizedError} = ApiGateway.Errors;
 const config = require("config");
+const {ObjectId} = require("mongodb");
+const moment = require("moment");
 const RedisConfig = config.get("REDIS");
 
 /**
@@ -56,16 +58,18 @@ module.exports = {
 							whitelist: [
 								"users.ping",
 								"users.me",
-								"screen.list",
+								"v1.package.list",
+								"v1.screen.list",
 								"room.*",
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");
 							},
 							onAfterCall: async function (ctx, socket, res) { //after hook
-								this.logger.info("after socket hook");
 								ctx.meta.$join = ctx.meta.user._id.toString();
+
 								return {
+									data: res,
 									status: 200,
 									message: "ok"
 								};
@@ -76,20 +80,6 @@ module.exports = {
 				}
 			}
 
-		},
-		/**
-		 * Events
-		 */
-		events: {
-			"user.connected": {
-				handler(ctx) {
-					console.log("User: ",ctx.meta.user);
-					console.log("event fired");
-					let socket = this;
-					socket.emit("hello", "world");
-
-				}
-			},
 		},
 		onError(req, res, err) {
 			// Return with the error as JSON object
@@ -111,6 +101,26 @@ module.exports = {
 			this.logResponse(req, res, err ? err.ctx : null);
 		}
 	},
+	/**
+	 * Events
+	 */
+	events: {
+		// Subscribe to `user.created` event
+		"user.joined"(data) {
+			console.log("çalıştım");
+			/**
+			 * @todo: burada sokete bağlanan kullanıcıya ilk gönderilecek veriler gönderilir.
+			 * */
+			this.broker.call("io.broadcast", {
+				namespace: "/", //optional
+				event: "joined",
+				args: ["user", data.user], //optional
+				volatile: false, //optional
+				local: false, //optional
+				rooms: [`user.${data.user._id}`] //optional
+			});
+		},
+	},
 	actions: { // Write your actions here!
 
 	},
@@ -131,19 +141,25 @@ module.exports = {
 
 					socket.join("lobby");
 					socket.join(`${user_private_room}`);
-					console.log(socket.rooms);
+					/*console.log(socket.rooms);*/
 					//await this.broker.call("room.join", {room: user_private_room});
 
 					//ctx.meta.$join = ctx.params.room;
 					await this.broker.call("io.broadcast", {
-						namespace:"/", //optional
-						event:"hello",
-						args: ["user", "Joined","!"], //optional
+						namespace: "/", //optional
+						event: "hello",
+						args: ["user", "Joined", "!"], //optional
 						volatile: false, //optional
 						local: false, //optional
 						rooms: ["lobby"] //optional
 					});
 					console.log("welcome " + filtered_user.username);
+
+					try {
+						await this.broker.broadcast("user.joined", {user: filtered_user});
+					} catch (e) {
+						console.log(e);
+					}
 
 					return filtered_user;
 				} else {
@@ -164,6 +180,9 @@ module.exports = {
 		socketSaveMeta(socket, ctx) {
 			this.logger.info("Socket save meta for user: " + ctx.meta.user._id);
 			socket.client.user = ctx.meta.user;
+		},
+		listIOHandlers() {
+			return this.settings.io.handlers;
 		}
 	}
 };

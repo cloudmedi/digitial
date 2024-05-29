@@ -85,12 +85,7 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
-		create: {
-			auth: "required",
-			async handler(ctx) {
-				//
-			}
-		},
+		create: false,
 		getTrialPackage: {
 			rest: "GET /trial_package",
 			cache: {
@@ -112,12 +107,8 @@ module.exports = {
 		get: {
 			auth: "required"
 		},
-		list: {
-			auth: "required",
-		},
-		update: {
-			auth: "required"
-		},
+		list: true,
+		update: false,
 		find: {
 			auth: "required"
 		},

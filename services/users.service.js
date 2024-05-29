@@ -109,6 +109,8 @@ module.exports = {
 					local: false, //optional
 					rooms: [`user-${ctx.meta.user._id}`] //optional
 				});
+
+				return {message: "pong"};
 			}
 		},
 		/**

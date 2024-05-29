@@ -7,8 +7,11 @@
 </head>
 <body>
 <div id="list_of">
-	<button class="join">Join</button>
+	<button class="join">Rest Ping</button>
+	<button class="ping">Socket Ping</button>
+	<button class="screens">Screens</button>
 </div>
+<div id="res"></div>
 <div class="row" id="tables">
 
 </div>
@@ -43,10 +46,6 @@
 		socket.on("disconnect", () => {
 			console.log("disconnected",socket.id); // undefined
 		});
-		let i = 0;
-		let classList = "";
-		let room_stop = [];
-		let old = {};
 
 		socket.onAny((eventName, ...args) => {
 			let room = args[0];
@@ -132,10 +131,27 @@
 			});
 		});
 
-		function getRandomColor() {
-			let color = "hsl(" + Math.random() * 360 + ", 100%, 80%)";
-			return color;
-		}
+		$(".ping").on("click", (el) => {
+			socket.emit('call', 'users.ping', function(err, res){
+				if(err){
+					alert(JSON.stringify(err))
+				}else{
+					console.log(res);
+					document.getElementById("res").textContent += 'Join room success'+ '\n'
+				}
+			})
+		});
+
+		$(".screens").on("click", (el) => {
+			socket.emit('call', 'v1.screen.list', {token: token}, function(err, res){
+				if(err){
+					alert(JSON.stringify(err))
+				}else{
+					console.log(res);
+					document.getElementById("res").textContent += 'Join room success'+ '\n'
+				}
+			})
+		});
 	})();
 
 </script>
