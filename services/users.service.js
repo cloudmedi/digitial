@@ -92,13 +92,22 @@ module.exports = {
 			rest: "GET /ping",
 			params: {},
 			async handler(ctx) {
-				ctx.call("io.broadcast", {
+				await ctx.call("io.broadcast", {
 					namespace: "/", //optional
-					event: "hello",
+					event: "ping",
 					args: ["my", "friends", "!"], //optional
-					volatile: true, //optional
-					local: true, //optional
-					//rooms: ["room1", "room2"] //optional
+					volatile: false, //optional
+					local: false, //optional
+					rooms: ["lobby"] //optional
+				});
+
+				await ctx.call("io.broadcast", {
+					namespace: "/", //optional
+					event: "private",
+					args: ["private", "message", "!"], //optional
+					volatile: false, //optional
+					local: false, //optional
+					rooms: [`user-${ctx.meta.user._id}`] //optional
 				});
 			}
 		},

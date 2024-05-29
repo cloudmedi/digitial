@@ -5,7 +5,6 @@ const SocketIOService = require("moleculer-io");
 const ApiGateway = require("moleculer-web");
 const {UnAuthorizedError} = ApiGateway.Errors;
 const config = require("config");
-const {SocketMoleculerIO} = require("moleculer-io");
 const RedisConfig = config.get("REDIS");
 
 /**
@@ -55,6 +54,7 @@ module.exports = {
 					events: {
 						"call": {
 							whitelist: [
+								"users.ping",
 								"users.me",
 								"screen.list",
 								"room.*",
@@ -122,12 +122,23 @@ module.exports = {
 				if (user) {
 					let filtered_user = _.pick(user, ["_id", "username", "email", "image"]);
 					filtered_user.token = accessToken;
+
+					const user_private_room = `user-${filtered_user._id}`;
+
 					socket.client.user = filtered_user;
+
+					console.log("private room: ",`${user_private_room}`);
+
 					socket.join("lobby");
+					socket.join(`${user_private_room}`);
+					console.log(socket.rooms);
+					//await this.broker.call("room.join", {room: user_private_room});
+
+					//ctx.meta.$join = ctx.params.room;
 					await this.broker.call("io.broadcast", {
 						namespace:"/", //optional
 						event:"hello",
-						args: ["my", "friends","!"], //optional
+						args: ["user", "Joined","!"], //optional
 						volatile: false, //optional
 						local: false, //optional
 						rooms: ["lobby"] //optional
