@@ -128,6 +128,13 @@ module.exports = {
 		async socketAuthorize(socket, eventHandler) {
 			let accessToken = socket.handshake.query.token;
 			if (accessToken) {
+				try {
+					const device = await this.checkDevice(accessToken);
+					console.log(device);
+				} catch (e) {
+					console.log(e);
+				}
+
 				let user = await this.broker.call("users.resolveToken", {token: accessToken});
 				if (user) {
 					let filtered_user = _.pick(user, ["_id", "username", "email", "image"]);
@@ -137,7 +144,7 @@ module.exports = {
 
 					socket.client.user = filtered_user;
 
-					console.log("private room: ",`${user_private_room}`);
+					console.log("private room: ", `${user_private_room}`);
 
 					socket.join("lobby");
 					socket.join(`${user_private_room}`);
@@ -170,6 +177,22 @@ module.exports = {
 				// anonymous user
 				return;
 			}
+		},
+		async checkDevice(serial) {
+			if (serial.length < 16) {
+				const device = await this.broker.call("v1.device.check_serial", {serial: serial});
+				console.log(device);
+				if(device) {
+					return device;
+				} else {
+					throw new MoleculerClientError("This Device haven't Recognized", 404, "", [{
+						field: "device",
+						message: "Not found"
+					}]);
+				}
+			}
+
+			return true;
 		},
 		socketGetMeta(socket) {
 			return {

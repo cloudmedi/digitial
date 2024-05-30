@@ -101,14 +101,17 @@ module.exports = {
 					rooms: ["lobby"] //optional
 				});
 
-				await ctx.call("io.broadcast", {
-					namespace: "/", //optional
-					event: "private",
-					args: ["private", "message", "!"], //optional
-					volatile: false, //optional
-					local: false, //optional
-					rooms: [`user-${ctx.meta.user._id}`] //optional
-				});
+				if (ctx.meta?.user?._id) {
+
+					await ctx.call("io.broadcast", {
+						namespace: "/", //optional
+						event: "private",
+						args: ["private", "message", "!"], //optional
+						volatile: false, //optional
+						local: false, //optional
+						rooms: [`user-${ctx.meta.user._id}`] //optional
+					});
+				}
 
 				return {message: "pong"};
 			}
@@ -171,7 +174,7 @@ module.exports = {
 
 				const json = await this.transformEntity(user, true, ctx.meta.token);
 				await this.entityChanged("created", json, ctx);
-				await this.broker.broadcast("user.created", {user}, ["email","wallet", "package", "filemanager"]);
+				await this.broker.broadcast("user.created", {user}, ["email", "wallet", "package", "filemanager"]);
 
 				return json;
 			}
@@ -202,15 +205,15 @@ module.exports = {
 				const user = await this.adapter.findOne({email});
 				let login_error = false;
 				if (!user) {
-					login_error=true;
+					login_error = true;
 				} else {
 					const res = await bcrypt.compare(password, user.password);
 					if (!res) {
-						login_error=true;
+						login_error = true;
 					}
 				}
 
-				if(login_error) {
+				if (login_error) {
 					throw new MoleculerClientError("Email or password is invalid!", 422, "", [{
 						field: "User",
 						message: "is not found"
@@ -358,7 +361,13 @@ module.exports = {
 			async handler(ctx) {
 				console.log(ctx.params);
 				const {subscription, subscription_expire, updatedAt} = ctx.params;
-				return await this.adapter.updateById(ctx.params.id, {"$set": {subscription: new ObjectId(subscription), subscription_expire, updatedAt}});
+				return await this.adapter.updateById(ctx.params.id, {
+					"$set": {
+						subscription: new ObjectId(subscription),
+						subscription_expire,
+						updatedAt
+					}
+				});
 			}
 		},
 

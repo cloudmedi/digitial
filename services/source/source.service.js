@@ -124,6 +124,7 @@ module.exports = {
 		update: {
 			auth: "required",
 		},
+		get:  true,
 		remove: false
 	},
 

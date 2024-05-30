@@ -32,6 +32,7 @@ module.exports = {
 			"_id",
 			"user",
 			"device",
+			"source",
 			"name",
 			"direction",
 			"serial",
@@ -46,7 +47,17 @@ module.exports = {
 			direction: "string",
 			place: "string"
 		},
-		populates: {}
+		populates: {
+			user: {
+				action: "users.get"
+			},
+			device: {
+				action: "v1.device.get"
+			},
+			source: {
+				action: "v1.source.get"
+			}
+		}
 	},
 
 	/**
@@ -127,7 +138,8 @@ module.exports = {
 				}
 
 				if (check_serial.status === true) {
-					ctx.params.device = new ObjectId(check_serial._id);
+					const device = await ctx.call("v1.device.get_device_by_seraial", {serial: entity.serial});
+					ctx.params.device = new ObjectId(device._id);
 					const doc = await this.adapter.insert(ctx.params);
 					const screen = await this.transformEntity(ctx, doc);
 					await this.broker.broadcast("screen.created", {screen: doc, user: ctx.meta.user}, ["mail"]);
@@ -176,9 +188,6 @@ module.exports = {
 				return !!screen;
 			}
 		},
-		insert: false,
-		update: false,
-		remove: false,
 		findByName: {
 			rest: "POST /search",
 			auth: "required",
@@ -193,7 +202,43 @@ module.exports = {
 					return doc;
 				}
 			}
-		}
+		},
+		findByDeviceSerial: {
+			rest: "POST /find_by_device_serial",
+			params: {
+				serial: "string"
+			},
+			async handler(ctx) {
+				const serial = ctx.params.serial;
+
+				const doc = await this.adapter.findOne({serial});
+				const screen = await this.transformDocuments(ctx, {populate: ["user", "device", "source"]}, doc);
+				console.log(serial);
+				return screen;
+			}
+		},
+		"add.source": {
+			rest: "POST /add/source",
+			params: {
+				screens: {type: "array"},
+				source: {type: "string"}
+			},
+			async handler(ctx){
+				/* entity */
+				const e = ctx.params;
+				for (const screen of e.screens) {
+					await ctx.call("v1.screen.update", {id: screen, source: new ObjectId(e.source)});
+				}
+				console.log(e);
+
+
+			}
+		},
+		update: {
+			visibility: "protected"
+		},
+		insert: false,
+		remove: false,
 	},
 
 	/**
@@ -255,6 +300,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		// await this.adapter.collection.createIndex({ name: 1 });
+		 //await this.adapter.collection.createIndex({ name: 1 });
 	}
 };

@@ -8,8 +8,8 @@
 <body>
 <div id="list_of">
 	<button class="join">Rest Ping</button>
-	<button class="ping">Socket Ping</button>
-	<button class="screens">Screens</button>
+	<button class="ping" id="ping">Socket Ping</button>
+	<button class="screens" id="screens">Screens</button>
 </div>
 <div id="res"></div>
 <div class="row" id="tables">
@@ -27,7 +27,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
 <script>
 	(() => {
-		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNTEzNjYsImlhdCI6MTcxNzA2NzM2Nn0.nxAw-0yXSqHYO7ZVWQmOopC1KBN-fyH5lkuBkI7bY2c";
+		const token = "7040-ace7";
 		const socket = io("http://0.0.0.0:3001", {
 			reconnectionDelayMax: 10000,
 			upgrades: ["websocket"],
@@ -44,7 +44,7 @@
 		});
 
 		socket.on("disconnect", () => {
-			console.log("disconnected",socket.id); // undefined
+			console.log("disconnected", socket.id); // undefined
 		});
 
 		socket.onAny((eventName, ...args) => {
@@ -117,7 +117,7 @@
 				"method": "GET",
 				"timeout": 0,
 				"headers": {
-					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNTEzNjYsImlhdCI6MTcxNzA2NzM2Nn0.nxAw-0yXSqHYO7ZVWQmOopC1KBN-fyH5lkuBkI7bY2c",
+					"Authorization": "Bearer 7040-ace7",
 					"Content-Type": "application/json"
 				},
 				"data": {
@@ -131,26 +131,26 @@
 			});
 		});
 
-		$(".ping").on("click", (el) => {
-			socket.emit('call', 'users.ping', function(err, res){
-				if(err){
-					alert(JSON.stringify(err))
-				}else{
+		$("#ping").on("click", (el) => {
+			socket.emit("call", "users.ping", function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
 					console.log(res);
-					document.getElementById("res").textContent += 'Join room success'+ '\n'
+					document.getElementById("res").textContent += "Join room success" + "\n";
 				}
-			})
+			});
 		});
 
-		$(".screens").on("click", (el) => {
-			socket.emit('call', 'v1.screen.list', {token: token}, function(err, res){
-				if(err){
-					alert(JSON.stringify(err))
-				}else{
+		$("#screens").on("click", (el) => {
+			socket.emit("call", "v1.screen.list", {token: token}, function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
 					console.log(res);
-					document.getElementById("res").textContent += 'Join room success'+ '\n'
+					document.getElementById("res").textContent += "Join room success" + "\n";
 				}
-			})
+			});
 		});
 	})();
 
