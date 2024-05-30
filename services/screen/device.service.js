@@ -211,6 +211,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		// await this.adapter.collection.createIndex({ name: 1 });
+		await this.adapter.collection.createIndex({ serial: 1 });
 	}
 };

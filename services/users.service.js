@@ -102,7 +102,6 @@ module.exports = {
 				});
 
 				if (ctx.meta?.user?._id) {
-
 					await ctx.call("io.broadcast", {
 						namespace: "/", //optional
 						event: "private",
@@ -111,6 +110,17 @@ module.exports = {
 						local: false, //optional
 						rooms: [`user-${ctx.meta.user._id}`] //optional
 					});
+
+					await ctx.call("io.broadcast", {
+						namespace: "/", //optional
+						event: "update-device",
+						args: ["private", "message", "!"], //optional
+						volatile: false, //optional
+						local: false, //optional
+						rooms: [ctx.params.users_devices, ctx.params.device] //optional
+					});
+
+
 				}
 
 				return {message: "pong"};

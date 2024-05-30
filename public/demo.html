@@ -27,7 +27,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
 <script>
 	(() => {
-		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNTEzNjYsImlhdCI6MTcxNzA2NzM2Nn0.nxAw-0yXSqHYO7ZVWQmOopC1KBN-fyH5lkuBkI7bY2c";
+		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNzg3NDAsImlhdCI6MTcxNzA5NDc0MH0.2Tga_NBpj8x18SmNL3X3_KVYkAgWlFgMYQclmCIx5jc";
 		const socket = io("http://0.0.0.0:3001", {
 			reconnectionDelayMax: 10000,
 			upgrades: ["websocket"],
@@ -117,12 +117,12 @@
 				"method": "GET",
 				"timeout": 0,
 				"headers": {
-					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNTEzNjYsImlhdCI6MTcxNzA2NzM2Nn0.nxAw-0yXSqHYO7ZVWQmOopC1KBN-fyH5lkuBkI7bY2c",
+					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNzg3NDAsImlhdCI6MTcxNzA5NDc0MH0.2Tga_NBpj8x18SmNL3X3_KVYkAgWlFgMYQclmCIx5jc",
 					"Content-Type": "application/json"
 				},
 				"data": {
-					"room": "63973ae350ec3a746ff230f2",
-					"game": "6398403a3f95d437cf8c6085"
+					"users_devices": "user-664e4d205805d5301d515c97-devices",
+					"device": "device-664e4d6817c4cc3060144bd0"
 				},
 			};
 
