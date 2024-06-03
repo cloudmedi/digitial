@@ -3,7 +3,6 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Demo</title>
-
 </head>
 <body>
 <div id="list_of">
@@ -52,72 +51,13 @@
 			console.log(eventName, args);
 		});
 
-		/*setTimeout(() => {
-
-			socket.onAny((eventName, ...args) => {
-				let room = args[0];
-				let data = JSON.parse(args[1]);
-				if(typeof old[room] === "undefined") {
-					old[room] = data;
-				}
-				let room_place = $("#a" + room);
-				if (room_place.length) {
-					/!*console.log(room_stop, room, room_stop.includes(room));*!/
-					if (!room_stop.includes(room)) {
-						Object.keys(data).forEach(key => {
-							let room_data_old = old[room];
-							let speed = Number(data[key].speed);
-							let duration = Number(data[key].duration);
-							console.log(key + " Speed Diff:", Number(room_data_old[key].speed), speed);
-							if (Number(room_data_old[key].change) < Number(data[key].change)) {
-								//movement
-								let current = Number(document.getElementById(key).value);
-								document.getElementById(key).value = current + 3 + Math.random() * 10;
-								// finish check
-								if (document.getElementById(key).value >= 480) {
-									document.getElementById(key).style.background = "green";
-									room_stop.push(room);
-								}
-							}
-						});
-					}
-				} else {
-					// insert
-					let color = getRandomColor();
-					let table = "<hr>";
-					table += "<table id='a" + room + "' style='width: 95%; background: " + color + "'>";
-
-					let im = 1;
-					Object.keys(data).forEach(key => {
-						table += "<tr>";
-						table += "<td style='width: 150px; padding: 4px'>" + key + "</td>";
-						table += "<td>";
-						table += "<input id=\"" + key + "\" type=\"range\" min=\"1\" max=\"480\" value=\"0\" class=\"slider slider_car" + im + "\" disabled='disabled'>";
-						table += "</td>";
-						table += "</tr>";
-						im++;
-					});
-
-					table += "</table>";
-					table += "";
-
-					$("#tables").append(table);
-				}
-
-				(async () => {
-					old[room] = await data;
-				})();
-
-			});
-		}, 3000);*/
-
 		$(".join").on("click", (el) => {
 			let settings = {
 				"url": "http://0.0.0.0:4001/api/ping",
 				"method": "GET",
 				"timeout": 0,
 				"headers": {
-					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNzg3NDAsImlhdCI6MTcxNzA5NDc0MH0.2Tga_NBpj8x18SmNL3X3_KVYkAgWlFgMYQclmCIx5jc",
+					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjI1OTA3MDAsImlhdCI6MTcxNzQwNjcwMH0.9kcDYLiPdnW6FV5OhUdONw5hTk7bW7w-Vgvpv0Vv9Y4",
 					"Content-Type": "application/json"
 				},
 				"data": {

@@ -106,19 +106,21 @@ module.exports = {
 	 */
 	events: {
 		// Subscribe to `user.created` event
-		"user.joined"(data) {
-			console.log("çalıştım");
+		async "user.joined"(data) {
 			/**
 			 * @todo: burada sokete bağlanan kullanıcıya ilk gönderilecek veriler gönderilir.
 			 * */
-			this.broker.call("io.broadcast", {
-				namespace: "/", //optional
-				event: "joined",
-				args: ["user", data.user], //optional
-				volatile: false, //optional
-				local: false, //optional
-				rooms: [`user.${data.user._id}`] //optional
-			});
+
+			setTimeout(() => {
+				this.broker.call("io.broadcast", {
+					namespace: "/", //optional
+					event: "joined",
+					args: ["user", data.user], //optional
+					volatile: false, //optional
+					local: false, //optional
+					rooms: ["lobby", `user-${data.user._id}`] //optional
+				});
+			}, 1000);
 		},
 	},
 	actions: { // Write your actions here!
@@ -129,6 +131,9 @@ module.exports = {
 			let accessToken = socket.handshake.query.token;
 			if (accessToken) {
 				try {
+					/**
+					 * @description: token 16 haneden küçükse device serialdir.
+					 * */
 					if (accessToken.length < 16) {
 						const device = await this.checkDevice(accessToken);
 						try {
@@ -137,24 +142,15 @@ module.exports = {
 							socket.join(`user-${device.user._id}-devices`);
 							console.log(`device-${device._id}`);
 
-							this.broker.call("io.broadcast", {
+							await this.broker.call("io.broadcast", {
 								namespace: "/", //optional
 								event: "device",
 								args: ["device", device], //optional
 								volatile: false, //optional
 								local: false, //optional
 								rooms: [`user-${device.user._id}-devices`, `user-${device.user._id}`] //optional
-							}).then(() =>  {
-								console.log({
-									namespace: "/", //optional
-									event: "device",
-									args: ["device", device], //optional
-									volatile: false, //optional
-									local: false, //optional
-									rooms: [`user-${device.user._id}-devices`, `device-${device._id}`, `user-${device.user._id}`] //optional
-								});
 							});
-
+							socket.emit("device", device);
 
 						} catch (e) {
 							console.log(e);
