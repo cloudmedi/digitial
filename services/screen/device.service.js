@@ -35,7 +35,9 @@ module.exports = {
 			"fingerprint",
 			"serial",
 			"meta",
-			"status"
+			"status",
+			"createdAt",
+			"updatedAt"
 		],
 
 		// Validator for the `create` & `insert` actions.
@@ -72,7 +74,7 @@ module.exports = {
 		pre_create: {
 			rest: "POST /pre_create",
 			params: {
-				fingerprint: { type: "string", min: 3, max: 255 },
+				fingerprint: {type: "string", min: 3, max: 255},
 				meta: {type: "object", required: true}
 			},
 			async handler(ctx) {
@@ -80,7 +82,7 @@ module.exports = {
 				await this.validateEntity(entity);
 
 				const is_recorded_before = await this.broker.cacher.get(`new_device:fingerprint:${entity.fingerprint}`);
-				if(is_recorded_before) {
+				if (is_recorded_before) {
 					return await this.transformDocuments(ctx, is_recorded_before, is_recorded_before);
 				} else {
 					const serial_number_first_part = crypto.randomBytes(2).toString("hex");
@@ -93,26 +95,25 @@ module.exports = {
 
 					return await this.transformDocuments(ctx, device_data, device_data);
 				}
-
 			}
 		},
 		check_serial: {
 			rest: "POST /check_serial",
 			params: {
-				serial: { type: "string", min: 9, max: 16 }
+				serial: {type: "string", min: 9, max: 16}
 			},
 			async handler(ctx) {
 				await this.validateEntity(ctx.params);
 
 				const is_serial_binded = await ctx.call("v1.screen.is_serial_binded", {serial: ctx.params.serial});
-				if(is_serial_binded) {
+				if (is_serial_binded) {
 					return {status: false, message: "Used Serial Number", data: null};
 				}
 
 				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
 				if (pre_register_data) {
 					const check_device = await this.adapter.findOne({serial: pre_register_data.serial});
-					if(check_device) {
+					if (check_device) {
 						return {status: true, message: "Correct serial number", data: pre_register_data};
 					} else {
 						await this.adapter.insert(pre_register_data);
@@ -122,7 +123,7 @@ module.exports = {
 				} else {
 					const check_db = await this.adapter.findOne({serial: ctx.params.serial});
 
-					if(check_db) {
+					if (check_db) {
 						return check_db;
 					} else {
 						return {status: false, message: "Wrong serial number", data: null};
@@ -130,16 +131,25 @@ module.exports = {
 				}
 			}
 		},
-		create: false,
 		list: {
 			auth: "required",
 			async handler(ctx) {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
 			}
 		},
+		get_device_by_seraial: {
+			rest: "GET by_serial/:serial",
+			params: {
+				serial: {type: "string"}
+			},
+			async handler(ctx) {
+				return this.adapter.findOne({serial: ctx.params.serial});
+			}
+		},
+		create: false,
 		insert: false,
 		update: false,
-		remove: false,
+		remove: false
 	},
 
 	/**
@@ -201,6 +211,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		// await this.adapter.collection.createIndex({ name: 1 });
+		await this.adapter.collection.createIndex({ serial: 1 });
 	}
 };

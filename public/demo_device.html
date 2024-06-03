@@ -5,11 +5,11 @@
 	<title>Demo</title>
 
 </head>
-<body>
+<body bgcolor="black">
 <div id="list_of">
 	<button class="join">Rest Ping</button>
-	<button class="ping">Socket Ping</button>
-	<button class="screens">Screens</button>
+	<button class="ping" id="ping">Socket Ping</button>
+	<button class="screens" id="screens">Screens</button>
 </div>
 <div id="res"></div>
 <div class="row" id="tables">
@@ -27,7 +27,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
 <script>
 	(() => {
-		const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNzg3NDAsImlhdCI6MTcxNzA5NDc0MH0.2Tga_NBpj8x18SmNL3X3_KVYkAgWlFgMYQclmCIx5jc";
+		const token = "19da-6cf2";
 		const socket = io("http://0.0.0.0:3001", {
 			reconnectionDelayMax: 10000,
 			upgrades: ["websocket"],
@@ -44,7 +44,7 @@
 		});
 
 		socket.on("disconnect", () => {
-			console.log("disconnected",socket.id); // undefined
+			console.log("disconnected", socket.id); // undefined
 		});
 
 		socket.onAny((eventName, ...args) => {
@@ -117,12 +117,12 @@
 				"method": "GET",
 				"timeout": 0,
 				"headers": {
-					"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2NGU0ZDIwNTgwNWQ1MzAxZDUxNWM5NyIsInVzZXJuYW1lIjoiQWx5c3Nvbl9SeWFuIiwiaXNfbWVyY2hhbnQiOmZhbHNlLCJpc19hZG1pbiI6ZmFsc2UsInN1YnNjcmlwdGlvbiI6IjY1ZmVmY2QyMmM3N2E4NTBlNDdjMWUzNiIsInN1YnNjcmlwdGlvbl9leHBpcmUiOiIyMDI0LTA1LTI5VDE5OjUzOjA0LjM3MloiLCJleHAiOjE3MjIyNzg3NDAsImlhdCI6MTcxNzA5NDc0MH0.2Tga_NBpj8x18SmNL3X3_KVYkAgWlFgMYQclmCIx5jc",
+					"Authorization": "Bearer 7040-ace7",
 					"Content-Type": "application/json"
 				},
 				"data": {
-					"users_devices": "user-664e4d205805d5301d515c97-devices",
-					"device": "device-664e4d6817c4cc3060144bd0"
+					"room": "63973ae350ec3a746ff230f2",
+					"game": "6398403a3f95d437cf8c6085"
 				},
 			};
 
@@ -131,26 +131,26 @@
 			});
 		});
 
-		$(".ping").on("click", (el) => {
-			socket.emit('call', 'users.ping', function(err, res){
-				if(err){
-					alert(JSON.stringify(err))
-				}else{
+		$("#ping").on("click", (el) => {
+			socket.emit("call", "users.ping", function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
 					console.log(res);
-					document.getElementById("res").textContent += 'Join room success'+ '\n'
+					document.getElementById("res").textContent += "Join room success" + "\n";
 				}
-			})
+			});
 		});
 
-		$(".screens").on("click", (el) => {
-			socket.emit('call', 'v1.screen.list', {token: token}, function(err, res){
-				if(err){
-					alert(JSON.stringify(err))
-				}else{
+		$("#screens").on("click", (el) => {
+			socket.emit("call", "v1.screen.list", {token: token}, function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
 					console.log(res);
-					document.getElementById("res").textContent += 'Join room success'+ '\n'
+					document.getElementById("res").textContent += "Join room success" + "\n";
 				}
-			})
+			});
 		});
 	})();
 
