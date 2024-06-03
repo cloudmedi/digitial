@@ -1,5 +1,6 @@
 "use strict";
 
+const {MoleculerClientError} = require("moleculer").Errors;
 const _ = require("lodash");
 const SocketIOService = require("moleculer-io");
 const ApiGateway = require("moleculer-web");
@@ -135,28 +136,28 @@ module.exports = {
 					 * @description: token 16 haneden küçükse device serialdir.
 					 * */
 					if (accessToken.length < 16) {
-						const device = await this.checkDevice(accessToken);
+						const screen = await this.checkDevice(accessToken);
 						try {
 							socket.client.user = null;
-							socket.client.device = device;
-							socket.join(`user-${device.user._id}-devices`);
-							console.log(`device-${device._id}`);
+							socket.client.device = screen;
+							socket.join(`user-${screen.user._id}-devices`);
+							socket.join(`device-${screen.device._id}`);
 
 							await this.broker.call("io.broadcast", {
 								namespace: "/", //optional
 								event: "device",
-								args: ["device", device], //optional
+								args: ["device", screen], //optional
 								volatile: false, //optional
 								local: false, //optional
-								rooms: [`user-${device.user._id}-devices`, `user-${device.user._id}`] //optional
+								rooms: [`user-${screen.user._id}-devices`, `user-${screen.user._id}`] //optional
 							});
-							socket.emit("device", device);
+							socket.emit("device", screen);
 
 						} catch (e) {
 							console.log(e);
 						}
 
-						return device;
+						return screen;
 					}
 				} catch (e) {
 					console.log(e);
@@ -207,6 +208,7 @@ module.exports = {
 		},
 		async checkDevice(serial) {
 			if (serial.length < 16) {
+				console.log(serial);
 				const device = await this.broker.call("v1.screen.findByDeviceSerial", {serial: serial});
 				//this.logger.info(device);
 				if (device) {

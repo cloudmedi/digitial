@@ -31,7 +31,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
 <script>
 	(() => {
-		const token = "19da-6cf2";
+		const token = "48d6-63c7";
 		const socket = io("http://0.0.0.0:3001", {
 			reconnectionDelayMax: 10000,
 			upgrades: ["websocket"],
@@ -53,7 +53,7 @@
 
 		socket.onAny((eventName, ...args) => {
 			let room = args[0];
-			document.getElementById("res").textContent += JSON.stringify(args, undefined, 2) + "\n\n";
+			$('#res').append('<pre>'+JSON.stringify(args, undefined, 2)+'</pre>')
 			console.log("event", eventName, args);
 		});
 
