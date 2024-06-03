@@ -146,6 +146,7 @@ module.exports = {
 				return this.adapter.findOne({serial: ctx.params.serial});
 			}
 		},
+		get:true,
 		create: false,
 		insert: false,
 		update: false,
