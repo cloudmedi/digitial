@@ -220,6 +220,7 @@ module.exports = {
 		},
 		"add.source": {
 			rest: "POST /add/source",
+			cache: false,
 			params: {
 				screens: {type: "array"},
 				source: {type: "string"}
@@ -231,8 +232,7 @@ module.exports = {
 					const screen_detail = await ctx.call("v1.screen.update", {id: screen, source: new ObjectId(e.source)});
 
 					const screen_full_detail = await this.broker.call("v1.screen.findByDeviceSerial", {serial: screen_detail.serial});
-
-
+					console.log(screen_full_detail);
 					try {
 						console.log(screen, `device-${screen_full_detail.device._id}`);
 
