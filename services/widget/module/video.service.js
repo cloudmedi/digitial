@@ -6,6 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const {ObjectId} = require("mongodb");
 const https = require("https");
+const {videoDuration} = require("@numairawan/video-duration");
 
 const DbMixin = require("../../../mixins/db.mixin");
 const config = require("config");
@@ -130,7 +131,6 @@ module.exports = {
 		// Subscribe to `user.created` event
 		async "video.create"(video_row) {
 			console.log("video_create event");
-			console.log(video_row);
 			this.bunnyUpload(video_row).then(() => {
 				this.broker.broadcast("video.moved", {...video_row}, ["filemanager"]);
 			});
@@ -419,12 +419,16 @@ module.exports = {
 			const FILE_PATH = path.join(file_info.path);
 			const filePath = path.join(FILE_PATH, FILENAME_TO_UPLOAD);
 
-			//const readStream = fs.createReadStream("./public/" + filePath);
-
 			const video_info = await JSON.parse(await this.createVideo(file_info));
 			const video_id = video_info.guid;
 			if (video_info) {
-				await this.broker.call("v1.widget.video.update", {id: file_info._id, meta: {video_id}});
+				const bvideo_detail = await videoDuration(path.join(__dirname, "../../../", "public", filePath));
+				file_info.meta = {...file_info.meta, video_id: video_id, duration: bvideo_detail.duration};
+
+				await this.broker.call("v1.widget.video.update", {
+					id: file_info._id,
+					meta: {video_id: video_id, duration: bvideo_detail.duration}
+				});
 				await this.updateVideoProcess(file_info, 1);
 				await this.uploadVideo(api_info.video.default_lib_id, video_id, filePath, file_info);
 			}
@@ -536,7 +540,7 @@ module.exports = {
 			return new Promise((resolve, reject) => {
 				const options = {
 					hostname: HOSTNAME,
-					path: `/library/${api_info.video.default_lib_id}/videos`,
+					path: `/library/${api_info.video.default_lib_id}/videos/${file_info.meta?.video_id}`,
 					method: "GET",
 					headers: {
 						"AccessKey": ACCESS_KEY,
