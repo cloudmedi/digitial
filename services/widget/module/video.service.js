@@ -93,7 +93,7 @@ module.exports = {
 				if (res.fileUrls.length >= 1) {
 
 					const data = [];
-					res.fileUrls.forEach((val, key) => {
+					for (const val of res.fileUrls) {
 						const video_row = {
 							user: new ObjectId(res.meta.user._id),
 							path: val.path,
@@ -111,16 +111,15 @@ module.exports = {
 							updatedAt: new Date()
 						};
 
-						return this.adapter.insert(video_row).then(async vid => {
-							data.push(vid);
+						const vid = await this.adapter.insert(video_row);
+						data.push(vid);
 
-							await this.broker.broadcast("video.create", {...video_row}, ["widget.video"]);
+						await this.broker.broadcast("video.create", {...video_row}, ["widget.video"]);
 
-							this.entityChanged("created", vid, ctx);
+						this.entityChanged("created", vid, ctx);
 
-							return vid;
-						});
-					});
+					}
+					return data[0];
 				}
 			}
 
@@ -268,7 +267,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				let limit = ctx.params.limit;
-				let offset = ctx.params. offset;
+				let offset = ctx.params.offset;
 
 				let list_query = {
 					sort: {createdAt: -1},
@@ -277,7 +276,7 @@ module.exports = {
 					query: {user: new ObjectId(ctx.meta.user._id)}
 				};
 
-				if(ctx.params.folder) {
+				if (ctx.params.folder) {
 					list_query.query.folder = new ObjectId(ctx.params.folder);
 				}
 
@@ -528,6 +527,45 @@ module.exports = {
 		},
 		async updateVideoProcess(video, step) {
 			return await this.adapter.updateById(video._id, {$set: {process_step: step}});
+		},
+		async getVideo(file_info) {
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const HOSTNAME = `${api_info.video.api_base}`;
+			const ACCESS_KEY = api_info.video.api_key;
+
+			return new Promise((resolve, reject) => {
+				const options = {
+					hostname: HOSTNAME,
+					path: `/library/${api_info.video.default_lib_id}/videos`,
+					method: "GET",
+					headers: {
+						"AccessKey": ACCESS_KEY,
+						"Accept": "application/json",
+						"Content-Type": "application/json"
+					}
+				};
+
+				const req = https.request(options, function (res) {
+					const chunks = [];
+
+					res.on("data", function (chunk) {
+						chunks.push(chunk);
+					});
+
+					res.on("end", function () {
+						const body = Buffer.concat(chunks);
+						if (res.statusCode >= 200 && res.statusCode < 300) {
+							resolve(body.toString());
+						} else {
+							reject(new Error(`Request failed with status code ${res.statusCode}: ${body.toString()}`));
+						}
+
+					});
+				});
+
+				req.end();
+			});
+
 		},
 		randomName() {
 			let length = 8;
