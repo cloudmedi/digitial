@@ -205,6 +205,7 @@ module.exports = {
 		},
 		findByDeviceSerial: {
 			rest: "POST /find_by_device_serial",
+			cache: false,
 			params: {
 				serial: "string"
 			},
