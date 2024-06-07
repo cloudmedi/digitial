@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const {ObjectId} = require("mongodb");
 const https = require("https");
-const {videoDuration} = require("@numairawan/video-duration");
+const ffmpeg = require("fluent-ffmpeg");
 
 const DbMixin = require("../../../mixins/db.mixin");
 const config = require("config");
@@ -352,6 +352,17 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		getVideoDuration(videoPath) {
+			return new Promise((resolve, reject) => {
+				ffmpeg.ffprobe(videoPath, (err, metadata) => {
+					if (err) {
+						return reject(err);
+					}
+					console.log(metadata.format.duration);
+					resolve(metadata.format.duration);
+				});
+			});
+		},
 		process_step(step = null) {
 			const steps = [
 				{step: 0, description: "Video uploaded"},
@@ -422,12 +433,15 @@ module.exports = {
 			const video_info = await JSON.parse(await this.createVideo(file_info));
 			const video_id = video_info.guid;
 			if (video_info) {
-				const bvideo_detail = await videoDuration(path.join(__dirname, "../../../", "public", filePath));
-				file_info.meta = {...file_info.meta, video_id: video_id, duration: bvideo_detail.duration};
+				const video_path = path.join(__dirname, "../../../", "public", filePath);
 
+				//const bvideo_detail = await videoDuration(video_path);
+				let video_duration = await this.getVideoDuration(video_path);
+
+				file_info.meta = {...file_info.meta, video_id: video_id, duration: video_duration};
 				await this.broker.call("v1.widget.video.update", {
 					id: file_info._id,
-					meta: {video_id: video_id, duration: bvideo_detail.duration}
+					meta: file_info.meta
 				});
 				await this.updateVideoProcess(file_info, 1);
 				await this.uploadVideo(api_info.video.default_lib_id, video_id, filePath, file_info);
