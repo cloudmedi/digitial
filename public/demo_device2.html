@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Demo</title>
+	<style>
+		div {
+			color: white;
+		}
+	</style>
+</head>
+<body bgcolor="black">
+<div id="list_of">
+	<button class="join">Rest Ping</button>
+	<button class="ping" id="ping">Socket Ping</button>
+	<button class="screens" id="screens">Screens</button>
+</div>
+<div id="res"></div>
+<div class="row" id="tables">
+
+</div>
+
+<ul id="list">
+
+</ul>
+<!-- Scripts -->
+<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"
+		integrity="sha384-/KNQL8Nu5gCHLqwqfQjA689Hhoqgi2S84SNUxC3roTe4EhJ9AfLkp8QiQcU8AMzI"
+		crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
+<script>
+	(() => {
+		const token = "8282-b8ea";
+		const socket = io("http://0.0.0.0:3001", {
+			reconnectionDelayMax: 10000,
+			upgrades: ["websocket"],
+			auth: {
+				token: token
+			},
+			query: {
+				"token": token
+			}
+		});
+
+		socket.on("connect", () => {
+			console.log("connected with:", socket.id);
+		});
+
+		socket.on("disconnect", () => {
+			console.log("disconnected", socket.id); // undefined
+		});
+
+		socket.onAny((eventName, ...args) => {
+			let room = args[0];
+			$('#res').append('<pre>'+JSON.stringify(args, undefined, 2)+'</pre>')
+			console.log("event", eventName, args);
+		});
+
+		$(".join").on("click", (el) => {
+			let settings = {
+				"url": "http://0.0.0.0:4001/api/ping",
+				"method": "GET",
+				"timeout": 0,
+				"headers": {
+					"Authorization": "Bearer 7040-ace7",
+					"Content-Type": "application/json"
+				},
+				"data": {
+					"room": "63973ae350ec3a746ff230f2",
+					"game": "6398403a3f95d437cf8c6085"
+				},
+			};
+
+			$.ajax(settings).done(function (response) {
+				console.log(response);
+			});
+		});
+
+		$("#ping").on("click", (el) => {
+			socket.emit("call", "users.ping", function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
+					console.log(res);
+					document.getElementById("res").textContent += "Join room success" + "\n";
+				}
+			});
+		});
+
+		$("#screens").on("click", (el) => {
+			socket.emit("call", "v1.screen.list", {token: token}, function (err, res) {
+				if (err) {
+					alert(JSON.stringify(err));
+				} else {
+					console.log(res);
+					document.getElementById("res").textContent += "Join room success" + "\n";
+				}
+			});
+		});
+	})();
+
+</script>
+
+</body>
+</html>

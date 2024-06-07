@@ -232,9 +232,8 @@ module.exports = {
 					const screen_detail = await ctx.call("v1.screen.update", {id: screen, source: new ObjectId(e.source)});
 
 					const screen_full_detail = await this.broker.call("v1.screen.findByDeviceSerial", {serial: screen_detail.serial});
-					console.log(screen_full_detail);
 					try {
-						console.log(screen, `device-${screen_full_detail.device._id}`);
+						console.log(`device-${screen_full_detail.device._id}`);
 
 						await this.broker.call("io.broadcast", {
 							namespace: "/", //optional
@@ -242,7 +241,7 @@ module.exports = {
 							args: [screen_full_detail], //optional
 							volatile: false, //optional
 							local: false, //optional
-							rooms: [`device-${screen_full_detail.device._id}`, `user-${screen_full_detail.user._id}`] //optional
+							rooms: [`device-${screen_full_detail.device._id}`] //optional
 						});
 					} catch (e) {
 						console.log(e);

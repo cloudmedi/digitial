@@ -140,7 +140,7 @@ module.exports = {
 						try {
 							socket.client.user = null;
 							socket.client.device = screen;
-							socket.join(`user-${screen.user._id}-devices`);
+							//socket.join(`user-${screen.user._id}-devices`);
 							socket.join(`device-${screen.device._id}`);
 
 							await this.broker.call("io.broadcast", {
