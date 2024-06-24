@@ -143,7 +143,7 @@ module.exports = {
 					right = 0;
 					setted_parent = (parent === "" ? null : new ObjectId(parent));
 				}
-console.log(user);
+
 				const data = {
 					name,
 					parent: setted_parent,
