@@ -214,7 +214,6 @@ module.exports = {
 
 				const doc = await this.adapter.findOne({serial});
 				const screen = await this.transformDocuments(ctx, {populate: ["user", "device", "source"]}, doc);
-				console.log(serial);
 				return screen;
 			}
 		},

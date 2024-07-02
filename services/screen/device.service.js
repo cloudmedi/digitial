@@ -71,6 +71,27 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
+		status: {
+			rest: "POST /status",
+			params: {
+				serial: "string",
+				state: "string"
+			},
+			async handler(ctx) {
+				const device = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
+				if (device) {
+					console.log("device", device);
+					await ctx.call("io.broadcast", {
+						namespace: "/", //optional
+						event: "device-status",
+						args: ["device-status", {status: ctx.params.state, device: {...device}}], //optional
+						volatile: false, //optional
+						local: true, //optional
+						rooms: ["lobby", `user-${device.user._id}-devices`] //optional
+					});
+				}
+			}
+		},
 		pre_create: {
 			rest: "POST /pre_create",
 			params: {
@@ -146,7 +167,7 @@ module.exports = {
 				return this.adapter.findOne({serial: ctx.params.serial});
 			}
 		},
-		get:true,
+		get: true,
 		create: false,
 		insert: false,
 		update: false,
@@ -212,6 +233,6 @@ module.exports = {
 	 * Fired after database connection establishing.
 	 */
 	async afterConnected() {
-		await this.adapter.collection.createIndex({ serial: 1 });
+		await this.adapter.collection.createIndex({serial: 1});
 	}
 };

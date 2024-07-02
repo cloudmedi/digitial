@@ -65,7 +65,6 @@ module.exports = {
 			create(ctx) {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
-				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -111,10 +110,11 @@ module.exports = {
 		"user.created"(user) {
 			//console.log("User created:", user);
 			const user_id = user.user._id;
+
 			this.broker.call("v1.filemanager.create", {
 				user: user_id,
 				name: "default",
-				parent: null,
+				parent: "",
 				left: 1,
 				right: 0,
 				createdAt: new Date(),
@@ -158,7 +158,7 @@ module.exports = {
 				const check_folder = await ctx.call("v1.filemanager.find", {
 					query: {
 						name: name,
-						user: new ObjectId(ctx.meta.user._id),
+						user: new ObjectId(user),
 						parent: setted_parent,
 					}
 				});
