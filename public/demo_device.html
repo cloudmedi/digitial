@@ -95,7 +95,7 @@
 		setInterval(async () => {
 			sendStatus();
 			//clearInterval(ref);
-		}, 1000)
+		}, 1000 * 20)
 
 		$("#ping").on("click", (el) => {
 			socket.emit("call", "users.ping", function (err, res) {

@@ -78,9 +78,11 @@ module.exports = {
 								// res: The respose data.
 							}
 						},
-						"disconnect": {
-							handler(socket) {
+						disconnect: {
+							async handler(socket) {
+								console.log(socket.client.id);
 								console.log("disconnect");
+								process.exit();
 								// Bağlantı koptuğunda mesaj gönderme
 								/*this.broker.call("io.broadcast", {
 									namespace: "/", //optional
