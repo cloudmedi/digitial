@@ -31,7 +31,7 @@
 <script src="https://code.jquery.com/jquery-3.6.1.min.js" crossorigin="anonymous"></script>
 <script>
 	(() => {
-		const token = "48d6-63c7";
+		const token = "1963-4ed5";
 		const socket = io("http://0.0.0.0:3001", {
 			reconnectionDelayMax: 10000,
 			upgrades: ["websocket"],
@@ -52,8 +52,7 @@
 		});
 
 		socket.onAny((eventName, ...args) => {
-			let room = args[0];
-			$('#res').append('<pre>'+JSON.stringify(args, undefined, 2)+'</pre>')
+			$('#res').append('<pre>' + JSON.stringify(args, undefined, 2) + '</pre>')
 			console.log("event", eventName, args);
 		});
 
@@ -63,12 +62,12 @@
 				"method": "GET",
 				"timeout": 0,
 				"headers": {
-					"Authorization": "Bearer 7040-ace7",
+					"Authorization": "Bearer " + token,
 					"Content-Type": "application/json"
 				},
 				"data": {
-					"room": "63973ae350ec3a746ff230f2",
-					"game": "6398403a3f95d437cf8c6085"
+					"device-serial": token,
+					"device-status": "online"
 				},
 			};
 
@@ -77,13 +76,33 @@
 			});
 		});
 
+		const sendStatus = () => {
+			try {
+				socket.emit("call", "v1.device.status", {token: token, serial: token,
+					state: "online"}, function (err, res) {
+					if (err) {
+						console.log("error", err);
+					} else {
+						console.log("status-sent",res);
+						//document.getElementById("res").textContent += "Join room success" + "\n";
+					}
+				});
+			} catch (e) {
+				console.log(e);
+			}
+		}
+
+		setInterval(async () => {
+			sendStatus();
+			//clearInterval(ref);
+		}, 1000)
+
 		$("#ping").on("click", (el) => {
 			socket.emit("call", "users.ping", function (err, res) {
 				if (err) {
 					alert(JSON.stringify(err));
 				} else {
-					console.log(res);
-					document.getElementById("res").textContent += "Join room success" + "\n";
+					//console.log(res);
 				}
 			});
 		});

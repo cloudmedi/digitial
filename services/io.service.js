@@ -62,6 +62,7 @@ module.exports = {
 								"v1.package.list",
 								"v1.screen.list",
 								"room.*",
+								"v1.device.status"
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");
@@ -75,6 +76,20 @@ module.exports = {
 									message: "ok"
 								};
 								// res: The respose data.
+							}
+						},
+						"disconnect": {
+							handler(socket) {
+								console.log("disconnect");
+								// Bağlantı koptuğunda mesaj gönderme
+								/*this.broker.call("io.broadcast", {
+									namespace: "/", //optional
+									event: "device-status",
+									args: ["device-status", "offline"], //optional
+									volatile: false, //optional
+									local: false, //optional
+									rooms: ["lobby"] //optional
+								});*/
 							}
 						}
 					}
@@ -140,8 +155,13 @@ module.exports = {
 						try {
 							socket.client.user = null;
 							socket.client.device = screen;
-							//socket.join(`user-${screen.user._id}-devices`);
-							socket.join(`device-${screen.device._id}`);
+							const device_private_channel = `device-${screen.device._id}`;
+							const all_devices_of_user_channel = `user-${screen.user._id}-devices`;
+							// Cihaza özel mesajlar
+							socket.join(device_private_channel);
+
+							// kullanıcının tüm cihazlarının olduğu kanal
+							socket.join(all_devices_of_user_channel);
 
 							await this.broker.call("io.broadcast", {
 								namespace: "/", //optional
@@ -149,8 +169,14 @@ module.exports = {
 								args: ["device", screen], //optional
 								volatile: false, //optional
 								local: false, //optional
-								rooms: [`user-${screen.user._id}-devices`, `user-${screen.user._id}`] //optional
+								rooms: [device_private_channel] //optional
 							});
+
+							await this.broker.call("v1.device.status", {
+								serial: accessToken,
+								state: "online"
+							});
+
 							socket.emit("device", screen);
 
 						} catch (e) {
@@ -174,8 +200,14 @@ module.exports = {
 
 					console.log("private room: ", `${user_private_room}`);
 
+					// Herkese gidecek mesajlar
 					socket.join("lobby");
+
+					// Kullanıcıya Özel Gidecek Mesajlar
 					socket.join(`${user_private_room}`);
+
+					// Kullanıcının Cihazlarına gidecek ve cihazdan gelecek mesajlar için
+					socket.join(`user-${filtered_user._id}-devices`);
 					/*console.log(socket.rooms);*/
 					//await this.broker.call("room.join", {room: user_private_room});
 
@@ -186,7 +218,7 @@ module.exports = {
 						args: ["user", "Joined", "!"], //optional
 						volatile: false, //optional
 						local: false, //optional
-						rooms: ["lobby"] //optional
+						rooms: ["lobby", `user-${filtered_user._id}-devices`] //optional
 					});
 					console.log("welcome " + filtered_user.username, socket.id);
 
