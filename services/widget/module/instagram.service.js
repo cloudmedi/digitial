@@ -56,6 +56,7 @@ module.exports = {
 				ctx.params.type = "instagram";
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.meta = {};
+				ctx.params.content = [];
 				ctx.params.status = true;
 			},
 			update(ctx) {
@@ -104,7 +105,12 @@ module.exports = {
 
 			}
 		},
-		list: false,
+		list: {
+			auth: "required",
+			async handler(ctx) {
+				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+			}
+		},
 		get: false,
 		count: false,
 		insert: false,
