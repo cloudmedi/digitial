@@ -106,9 +106,16 @@ module.exports = {
 				if (is_recorded_before) {
 					return await this.transformDocuments(ctx, is_recorded_before, is_recorded_before);
 				} else {
-					const serial_number_first_part = crypto.randomBytes(2).toString("hex");
-					const serial_number_second_part = crypto.randomBytes(2).toString("hex");
-					const serial = `${serial_number_first_part}-${serial_number_second_part}`;
+					let serial = "";
+					const check_device_has = await this.adapter.findOne({fingerprint: entity.fingerprint});
+
+					if(check_device_has) {
+						serial = check_device_has.serial;
+					} else {
+						const serial_number_first_part = crypto.randomBytes(2).toString("hex");
+						const serial_number_second_part = crypto.randomBytes(2).toString("hex");
+						serial = `${serial_number_first_part}-${serial_number_second_part}`;
+					}
 
 					const device_data = {...entity, serial};
 					await this.broker.cacher.set(`new_device:${serial}`, device_data, 60 * 100);
