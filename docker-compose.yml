@@ -5,7 +5,7 @@ services:
   api:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: api
