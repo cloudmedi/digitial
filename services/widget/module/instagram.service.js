@@ -1,6 +1,7 @@
 "use strict";
 const {ObjectId} = require("mongodb");
 const DbMixin = require("../../../mixins/db.mixin");
+const _ = require("lodash");
 const {MoleculerClientError} = require("moleculer").Errors;
 
 /**
@@ -69,8 +70,7 @@ module.exports = {
 		// Subscribe to `user.created` event
 		async "instagram.created"(entity) {
 			console.log("Instagram created:", entity);
-
-
+			await this.upsertCheckList(entity);
 
 		},	// Subscribe to `user.created` event
 	},	// Subscribe to `user.created` event
@@ -89,7 +89,7 @@ module.exports = {
 			async handler(ctx) {
 				const entity = ctx.params;
 				const check = await this.adapter.findOne({username: entity.username, user: entity.user});
-				if(!check) {
+				if (!check) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("instagram.created", {...doc}, ["widget.instagram"]);
 
@@ -100,7 +100,6 @@ module.exports = {
 						message: "Duplicated Record"
 					}]);
 				}
-
 
 
 			}
@@ -121,7 +120,33 @@ module.exports = {
 	/**
 	 * Methods
 	 */
-	methods: {},
+	methods: {
+		async upsertCheckList(entity) {
+			const check_list = await this.broker.cacher.get("widget:instagram:check");
+			if (check_list?.length > 0) {
+				// gelen veri checklist'de var mı?
+				const has_inserted = _.find(check_list, {_id: entity._id});
+				let data = [...check_list];
+				if(!has_inserted) {
+					data.push(entity);
+					await this.broker.cacher.set("widget:instagram:check", data);
+				}
+			} else {
+				// checklist hiç oluşmamışsa, oluştur
+				const list = await this.adapter.find();
+				let data = [];
+				if(list.length > 0) {
+					data = list;
+				} else {
+					data = [entity];
+				}
+
+				await this.broker.cacher.set("widget:instagram:check", data);
+			}
+
+			return true;
+		}
+	},
 
 	/**
 	 * Fired after database connection establishing.
