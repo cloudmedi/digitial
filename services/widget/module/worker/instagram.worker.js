@@ -1,7 +1,10 @@
 "use strict";
 const {ObjectId} = require("mongodb");
-const DbMixin = require("../../../mixins/db.mixin");
+const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
+//const Cron = require("moleculer-cron");
+const Cron = require("@r2d2bzh/moleculer-cron");
+
 const {MoleculerClientError} = require("moleculer").Errors;
 
 /**
@@ -11,12 +14,54 @@ const {MoleculerClientError} = require("moleculer").Errors;
 module.exports = {
 	name: "widget.instagram.worker",
 	version: 1,
-
+	dependencies: [
+		"v1.widget", // shorthand w/o version
+		"v1.widget.instagram", // shorthand w/o version
+	],
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("widget_instagram")],
-	whitelist: [],
+	mixins: [DbMixin("widget_instagram"), Cron],
+	crons: [
+		{
+			name: "JobHelloWorld",
+			cronTime: "*/30 * * * * *",
+			onTick: function () {
+
+				console.log("JobHelloWorld ticked");
+
+				this.getLocalService("v1.widget.instagram.worker")
+					.actions.say()
+					.then((data) => {
+						console.log("Oh!", data);
+					});
+			},
+			runOnInit: function () {
+				console.log("JobHelloWorld is created");
+			},
+			manualStart: true,
+		},
+		{
+			name: "JobWhoStartAnother",
+			cronTime: "* * * * *",
+			onTick: function () {
+
+				console.log("JobWhoStartAnother ticked");
+
+				const job = this.getJob("JobHelloWorld");
+				console.log("job.lastDate()", job.lastDate());
+				if (!job.lastDate()) {
+					job.start();
+				} else {
+					console.log("JobHelloWorld is already started!");
+				}
+
+			},
+			runOnInit: function () {
+				console.log("JobWhoStartAnother is created");
+			},
+		}
+	],
 	/**
 	 * Settings
 	 */
@@ -38,23 +83,28 @@ module.exports = {
 		populates: {}
 	},
 
-	events: {
+	/*events: {
 		// Subscribe to `user.created` event
 		async "instagram.created"(entity) {
 			console.log("Instagram created:", entity);
 			await this.upsertCheckList(entity);
 		},	// Subscribe to `user.created` event
-	},	// Subscribe to `user.created` event
+	},*/	// Subscribe to `user.created` event
 	/**
 	 * Actions
 	 */
 	actions: {
-		create: false,
+		say: {
+			handler(ctx) {
+				return "HelloWorld!";
+			}
+		},
 		list: {
 			async handler(ctx) {
 				return await this.adapter.find({query: {status: true}});
 			}
 		},
+		create: false,
 		get: false,
 		count: false,
 		insert: false,
