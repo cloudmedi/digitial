@@ -100,8 +100,6 @@ module.exports = {
 						message: "Duplicated Record"
 					}]);
 				}
-
-
 			}
 		},
 		list: {
