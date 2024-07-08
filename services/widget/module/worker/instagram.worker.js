@@ -9,7 +9,7 @@ const {MoleculerClientError} = require("moleculer").Errors;
  */
 
 module.exports = {
-	name: "widget.instagram",
+	name: "widget.instagram.worker",
 	version: 1,
 
 	/**
@@ -35,77 +35,24 @@ module.exports = {
 			"updatedAt"
 		],
 
-		// Validator for the `create` & `insert` actions.
-		entityValidator: {
-			username: {type: "string", required: true},
-			meta: {type: "object", required: true},
-			limit: {type: "number", required: true, default: 5},
-			content: {type: "array", required: false, default: []},
-			type: {type: "string", required: false, default: "instagram"},
-		},
 		populates: {}
 	},
 
-	/**
-	 * Action Hooks
-	 */
-	hooks: {
-		before: {
-			create(ctx) {
-				ctx.params.createdAt = new Date();
-				ctx.params.updatedAt = new Date();
-				ctx.params.type = "instagram";
-				ctx.params.user = new ObjectId(ctx.meta.user._id);
-				ctx.params.meta = {};
-				ctx.params.content = [];
-				ctx.params.status = true;
-			},
-			update(ctx) {
-				ctx.params.updatedAt = new Date();
-
-			}
-		}
-	},
 	events: {
 		// Subscribe to `user.created` event
 		async "instagram.created"(entity) {
 			console.log("Instagram created:", entity);
 			await this.upsertCheckList(entity);
-
 		},	// Subscribe to `user.created` event
 	},	// Subscribe to `user.created` event
 	/**
 	 * Actions
 	 */
 	actions: {
-		create: {
-			rest: "POST /",
-			auth: "required",
-			params: {
-				username: {type: "string", required: true},
-				meta: {type: "object", required: true},
-				limit: {type: "number", required: true, default: 5},
-			},
-			async handler(ctx) {
-				const entity = ctx.params;
-				const check = await this.adapter.findOne({username: entity.username, user: entity.user});
-				if (!check) {
-					const doc = await this.adapter.insert(entity);
-					await this.broker.broadcast("instagram.created", {...doc}, ["widget.instagram"]);
-
-					return {"instagram": {...doc}};
-				} else {
-					throw new MoleculerClientError(`Duplicated Record for IG user @${entity.username}`, 409, "", [{
-						field: "widget.instagram",
-						message: "Duplicated Record"
-					}]);
-				}
-			}
-		},
+		create: false,
 		list: {
-			auth: "required",
 			async handler(ctx) {
-				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+				return await this.adapter.find({query: {status: true}});
 			}
 		},
 		get: false,
@@ -125,7 +72,7 @@ module.exports = {
 				// gelen veri checklist'de var mı?
 				const has_inserted = _.find(check_list, {_id: entity._id});
 				let data = [...check_list];
-				if(!has_inserted) {
+				if (!has_inserted) {
 					data.push(entity);
 					await this.broker.cacher.set("widget:instagram:check", data);
 				}
@@ -133,7 +80,7 @@ module.exports = {
 				// checklist hiç oluşmamışsa, oluştur
 				const list = await this.adapter.find();
 				let data = [];
-				if(list.length > 0) {
+				if (list.length > 0) {
 					data = list;
 				} else {
 					data = [entity];
