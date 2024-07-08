@@ -31,7 +31,7 @@ module.exports = {
 				console.log("JobHelloWorld ticked");
 
 				this.getLocalService("v1.widget.instagram.worker")
-					.actions.say()
+					.actions.check_account({username: "lazysickartist", limit: 5})
 					.then((data) => {
 						console.log("Oh!", data);
 					});
@@ -97,6 +97,17 @@ module.exports = {
 		say: {
 			handler(ctx) {
 				return "HelloWorld!";
+			}
+		},
+		check_account: {
+			params: {
+				"username": "string",
+				"limit": "number",
+			},
+			async handler(ctx) {
+				// istek gidecek
+				this.logger.info("Checking account");
+				console.log(ctx.params);
 			}
 		},
 		list: {
