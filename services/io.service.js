@@ -84,15 +84,6 @@ module.exports = {
 								console.log(socket.client.id);
 								console.log("disconnect");
 								process.exit();
-								// Bağlantı koptuğunda mesaj gönderme
-								/*this.broker.call("io.broadcast", {
-									namespace: "/", //optional
-									event: "device-status",
-									args: ["device-status", "offline"], //optional
-									volatile: false, //optional
-									local: false, //optional
-									rooms: ["lobby"] //optional
-								});*/
 							}
 						}
 					}
