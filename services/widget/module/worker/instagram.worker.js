@@ -4,6 +4,7 @@ const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
 //const Cron = require("moleculer-cron");
 const Cron = require("@r2d2bzh/moleculer-cron");
+const config = require("config");
 
 const {MoleculerClientError} = require("moleculer").Errors;
 
@@ -25,7 +26,7 @@ module.exports = {
 	crons: [
 		{
 			name: "JobHelloWorld",
-			cronTime: "* */15 * * * *",
+			cronTime: "*/30 * * * * *",
 			onTick: function () {
 
 				console.log("JobHelloWorld ticked");
@@ -105,8 +106,9 @@ module.exports = {
 				"limit": "number",
 			},
 			async handler(ctx) {
+				const api_info = (config.get("provider_creds"))["instagram"];
 				// istek gidecek
-				this.logger.info("Checking account");
+				this.logger.info("Checking account", api_info);
 				console.log(ctx.params);
 			}
 		},
