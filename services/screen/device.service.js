@@ -80,11 +80,11 @@ module.exports = {
 			async handler(ctx) {
 				const device = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
 				if (device) {
-					console.log("device", device);
+					console.log("device", {status: ctx.params.state, screen: {...device}});
 					await ctx.call("io.broadcast", {
 						namespace: "/", //optional
 						event: "device-status",
-						args: ["device-status", {status: ctx.params.state, device: {...device}}], //optional
+						args: ["device-status", {status: ctx.params.state, screen: {...device}}], //optional
 						volatile: false, //optional
 						local: true, //optional
 						rooms: [`user-${device.user._id}-devices`] //optional
