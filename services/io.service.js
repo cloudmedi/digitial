@@ -62,7 +62,7 @@ module.exports = {
 								"v1.package.list",
 								"v1.screen.list",
 								"room.*",
-								"v1.device.status"
+								"v1.device.check_serial"
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");
