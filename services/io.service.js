@@ -62,7 +62,8 @@ module.exports = {
 								"v1.package.list",
 								"v1.screen.list",
 								"room.*",
-								"v1.device.check_serial"
+								"v1.device.check_serial",
+								"v1.device.status"
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");
@@ -78,7 +79,7 @@ module.exports = {
 								// res: The respose data.
 							}
 						},
-						disconnect: {
+						"disconnect": {
 							async handler(socket) {
 								console.log(socket.client.id);
 								console.log("disconnect");
@@ -220,7 +221,7 @@ module.exports = {
 						args: ["user", "Joined", "!"], //optional
 						volatile: false, //optional
 						local: false, //optional
-						rooms: ["lobby", `user-${filtered_user._id}-devices`] //optional
+						rooms: ["lobby"] //optional , `user-${filtered_user._id}-devices`
 					});
 					console.log("welcome " + filtered_user.username, socket.id);
 
@@ -269,6 +270,6 @@ module.exports = {
 		},
 		listIOHandlers() {
 			return this.settings.io.handlers;
-		}
+		},
 	}
 };

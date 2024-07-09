@@ -87,7 +87,7 @@ module.exports = {
 						args: ["device-status", {status: ctx.params.state, device: {...device}}], //optional
 						volatile: false, //optional
 						local: true, //optional
-						rooms: ["lobby", `user-${device.user._id}-devices`] //optional
+						rooms: [`user-${device.user._id}-devices`] //optional
 					});
 				}
 			}

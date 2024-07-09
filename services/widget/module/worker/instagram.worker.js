@@ -25,7 +25,7 @@ module.exports = {
 	crons: [
 		{
 			name: "JobHelloWorld",
-			cronTime: "*/30 * * * * *",
+			cronTime: "* */15 * * * *",
 			onTick: function () {
 
 				console.log("JobHelloWorld ticked");
