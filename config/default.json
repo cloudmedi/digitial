@@ -46,7 +46,7 @@
 			}
 		},
 		"instagram": {
-			"api_base": "http://localhost:8080/",
+			"api_base": "https://ig.rpd.ink/api/",
 			"api_user": "",
 			"api_pass": "",
 			"api_key": null,

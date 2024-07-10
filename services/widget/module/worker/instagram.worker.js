@@ -1,12 +1,9 @@
 "use strict";
-const {ObjectId} = require("mongodb");
 const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
-//const Cron = require("moleculer-cron");
 const Cron = require("@r2d2bzh/moleculer-cron");
+const QueueService = require("moleculer-bull");
 const config = require("config");
-
-const {MoleculerClientError} = require("moleculer").Errors;
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -22,7 +19,7 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("widget_instagram"), Cron],
+	mixins: [DbMixin("widget_instagram"), Cron, QueueService()],
 	crons: [
 		{
 			name: "JobHelloWorld",
@@ -31,11 +28,18 @@ module.exports = {
 
 				console.log("JobHelloWorld ticked");
 
-				this.getLocalService("v1.widget.instagram.worker")
-					.actions.check_account({username: "lazysickartist", limit: 5})
-					.then((data) => {
-						console.log("Oh!", data);
+				this.getLocalService("v1.widget.instagram.worker").broker.cacher.get("widget:instagram:check").then((checklist) => {
+					checklist.map(r => {
+						console.log(r);
 					});
+					/*this.getLocalService("v1.widget.instagram.worker")
+						.actions.check_account({username: "lazysickartist", limit: 5})
+						.then((data) => {
+							console.log("Oh!", data);
+						});*/
+				});
+
+
 			},
 			runOnInit: function () {
 				console.log("JobHelloWorld is created");
@@ -153,6 +157,17 @@ module.exports = {
 			}
 
 			return true;
+		},
+		addCheckItemToQueue(entity) {
+			this.createJob("check.instagram", "important", entity, {});
+
+			this.getQueue("mail.send").on("global:progress", (jobID, progress) => {
+				this.logger.info(`Job #${jobID} progress is ${progress}%`);
+			});
+
+			this.getQueue("mail.send").on("global:completed", (job, res) => {
+				this.logger.info(`Job #${job.id} completed!. Result:`, res);
+			});
 		}
 	},
 

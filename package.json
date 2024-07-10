@@ -51,6 +51,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "moleculer": "^0.14.33",
+    "moleculer-bull": "^0.3.1",
     "moleculer-db": "^0.8.25",
     "moleculer-db-adapter-mongo": "^0.4.19",
     "moleculer-io": "^2.2.0",

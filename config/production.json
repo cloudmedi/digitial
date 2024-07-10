@@ -36,6 +36,13 @@
 			"port": 21,
 			"conn_type": "passive",
 			"region": null
+		},
+		"instagram": {
+			"api_base": "https://ig.rpd.ink/api/",
+			"api_user": "",
+			"api_pass": "",
+			"api_key": null,
+			"api_secret": null
 		}
 	}
 }
