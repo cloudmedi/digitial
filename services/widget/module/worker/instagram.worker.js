@@ -2,7 +2,6 @@
 const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
 const Cron = require("@r2d2bzh/moleculer-cron");
-const QueueService = require("moleculer-bull");
 const config = require("config");
 
 /**
@@ -19,34 +18,33 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("widget_instagram"), Cron, QueueService()],
+	mixins: [DbMixin("widget_instagram"), Cron],
 	crons: [
 		{
-			name: "JobHelloWorld",
+			name: "JobIGCheckList",
 			cronTime: "*/30 * * * * *",
 			onTick: function () {
 
-				console.log("JobHelloWorld ticked");
+				this.logger.info("JobIGCheckList ticked");
 
 				this.getLocalService("v1.widget.instagram.worker").broker.cacher.get("widget:instagram:check").then((checklist) => {
-					checklist.map(r => {
-						console.log(r);
+					checklist.map(ig_profile => {
+						this.getLocalService("v1.widget.instagram.worker")
+							.actions.startProcess({ig_profile})
+							.then((data) => {
+								this.logger.info("Job Added to Queue", data);
+							});
 					});
-					/*this.getLocalService("v1.widget.instagram.worker")
-						.actions.check_account({username: "lazysickartist", limit: 5})
-						.then((data) => {
-							console.log("Oh!", data);
-						});*/
 				});
 
 
 			},
 			runOnInit: function () {
-				console.log("JobHelloWorld is created");
+				console.log("JobIGCheckList created");
 			},
-			manualStart: true,
+			manualStart: false,
 		},
-		{
+		/*{
 			name: "JobWhoStartAnother",
 			cronTime: "* * * * *",
 			onTick: function () {
@@ -65,7 +63,7 @@ module.exports = {
 			runOnInit: function () {
 				console.log("JobWhoStartAnother is created");
 			},
-		}
+		}*/
 	],
 	/**
 	 * Settings
@@ -104,16 +102,21 @@ module.exports = {
 				return "HelloWorld!";
 			}
 		},
-		check_account: {
+		startProcess: {
 			params: {
-				"username": "string",
-				"limit": "number",
+				"ig_profile": "object",
 			},
 			async handler(ctx) {
-				const api_info = (config.get("provider_creds"))["instagram"];
-				// istek gidecek
-				this.logger.info("Checking account", api_info);
-				console.log(ctx.params);
+				//const api_info = (config.get("provider_creds"))["instagram"];
+				//this.logger.info("Checking account", api_info);
+				try {
+					this.addCheckItemToQueue(ctx.params.ig_profile);
+					return true;
+				} catch (e) {
+					console.error(e);
+					return false;
+				}
+
 			}
 		},
 		list: {
@@ -158,16 +161,11 @@ module.exports = {
 
 			return true;
 		},
+		/**
+		 * Add Queue
+		 * */
 		addCheckItemToQueue(entity) {
-			this.createJob("check.instagram", "important", entity, {});
-
-			this.getQueue("mail.send").on("global:progress", (jobID, progress) => {
-				this.logger.info(`Job #${jobID} progress is ${progress}%`);
-			});
-
-			this.getQueue("mail.send").on("global:completed", (job, res) => {
-				this.logger.info(`Job #${job.id} completed!. Result:`, res);
-			});
+			console.log("entity", entity);
 		}
 	},
 

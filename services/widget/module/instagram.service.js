@@ -88,8 +88,9 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
+				const count = await this.adapter.count({user: ObjectId(entity.user)});
 				const check = await this.adapter.findOne({username: entity.username, user: entity.user});
-				if (!check) {
+				if (!check && count < 3 ) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("instagram.created", {...doc}, ["widget.instagram"]);
 
@@ -112,7 +113,9 @@ module.exports = {
 		count: false,
 		insert: false,
 		update: false,
-		remove: false
+		remove: {
+			auth: "required",
+		}
 	},
 
 	/**
@@ -125,7 +128,7 @@ module.exports = {
 				// gelen veri checklist'de var mı?
 				const has_inserted = _.find(check_list, {_id: entity._id});
 				let data = [...check_list];
-				if(!has_inserted) {
+				if (!has_inserted) {
 					data.push(entity);
 					await this.broker.cacher.set("widget:instagram:check", data);
 				}
@@ -133,7 +136,7 @@ module.exports = {
 				// checklist hiç oluşmamışsa, oluştur
 				const list = await this.adapter.find();
 				let data = [];
-				if(list.length > 0) {
+				if (list.length > 0) {
 					data = list;
 				} else {
 					data = [entity];
