@@ -269,21 +269,28 @@ module.exports = {
 				const screen = await this.transformDocuments(ctx, {populate: ["user", "device", "source"]}, doc);
 
 				if (screen) {
-					console.log("screen", screen);
-					await this.broker.call("v1.device.status", {
-						serial: screen.device.serial,
-						state: "deleting"
-					});
+					if (screen.device) {
+						await this.broker.call("v1.device.status", {
+							serial: screen.device.serial,
+							state: "deleting"
+						});
 
-					await this.broker.call("v1.device.status", {
-						serial: screen.device.serial,
-						state: "offline"
-					});
+						await this.broker.call("v1.device.status", {
+							serial: screen.device.serial,
+							state: "offline"
+						});
 
-					await ctx.call("v1.device.remove", {id: screen.device._id});
-					await ctx.call("v1.source.remove", {id: screen.source._id});
+						await ctx.call("v1.device.remove", {id: screen.device._id});
+					}
+					if (screen.source) {
+						await ctx.call("v1.source.remove", {id: screen.source._id});
+					}
+
+					await this.adapter.removeById(screen._id);
 
 					await this.broker.broadcast("screen.removed", {screen: doc, user: ctx.meta.user}, ["mail"]);
+
+					return {status: true, message: "Screen removed successfully", id: screen._id};
 
 				} else {
 					throw new MoleculerClientError("Restricted access ", 400, "Unauthorized", [{
