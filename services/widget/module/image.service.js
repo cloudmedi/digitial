@@ -78,7 +78,7 @@ module.exports = {
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
-			}
+			},
 		},
 		after: {
 			/**
@@ -418,7 +418,29 @@ module.exports = {
 		update: {
 			auth: "required",
 		},
-		remove: false
+		remove: {
+			auth: "required",
+			params: {
+				id: {type: "string"}
+			},
+			async handler(ctx) {
+				const image = await this.adapter.findOne({
+					_id: new ObjectId(ctx.params.id),
+					user: new ObjectId(ctx.meta.user._id)
+				});
+				if (image) {
+					console.log(image);
+					console.log("deleted");
+					await this.bunnyDelete(image);
+					await this.adapter.removeById( image._id);
+				} else {
+					throw new MoleculerClientError("Delete restriction", 400, "", [{
+						field: "Widget.Image.delete",
+						message: "This is not your entity or This is not an entity"
+					}]);
+				}
+			}
+		}
 	},
 
 	/**
@@ -463,6 +485,40 @@ module.exports = {
 			});
 			//fs.unlinkSync(filePath);
 			readStream.pipe(req);
+		},
+		async bunnyDelete(file_info) {
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const HOSTNAME = api_info.region ? `${api_info.region}.${api_info.hostname}` : api_info.hostname;
+			const STORAGE_ZONE_NAME = api_info.username;
+			const FILENAME_TO_UPLOAD = file_info.file;
+			const FILE_PATH = path.join(file_info.path);
+			//const FILE_PATH = path.join("./public", file_info.path);
+			const ACCESS_KEY = api_info.api_key;
+			const filePath = path.join(FILE_PATH, FILENAME_TO_UPLOAD);
+
+
+			const options = {
+				method: "DELETE",
+				host: HOSTNAME,
+				path: `/${STORAGE_ZONE_NAME}/${FILE_PATH}/${FILENAME_TO_UPLOAD}`,
+				headers: {
+					AccessKey: ACCESS_KEY,
+				},
+			};
+			const req = https.request(options, function (res) {
+				const chunks = [];
+
+				res.on("data", function (chunk) {
+					chunks.push(chunk);
+				});
+
+				res.on("end", function () {
+					const body = Buffer.concat(chunks);
+					console.log(body.toString());
+				});
+			});
+
+			req.end();
 		},
 		randomName() {
 			let length = 8;
