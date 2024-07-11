@@ -97,7 +97,22 @@ module.exports = {
 			]
 		}
 	},
-
+	events: {
+		// Subscribe to `user.created` event
+		"source.removed"(data) {
+			this.adapter.updateMany({source: new ObjectId(data.source)}, {
+				$set: {
+					source: null
+				}
+			});
+		},
+		// Subscribe to all internal events
+		/*
+		"$**"(payload, sender, event) {
+			console.log(`Event '${event}' received from ${sender} node:`, payload);
+		}
+		 */
+	},
 	/**
 	 * Actions
 	 */

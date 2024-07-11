@@ -64,7 +64,7 @@ module.exports = {
 			const mail_subject = "user_welcome";
 
 			this.broker.call("v1.email.find", {slug: mail_subject}).then((mail_template) => {
-				if(mail_template) {
+				if (mail_template) {
 					this.broker.call("v1.email.send", {
 						user: user.user,
 						template: mail_template[0]
@@ -75,6 +75,10 @@ module.exports = {
 		},
 		"user.subscribed"(user, subscription) {
 			this.logger.info("user subscription email");
+
+		},
+		"screen.removed"(user, screen) {
+			this.logger.info("screen removed");
 
 		},
 
@@ -98,13 +102,13 @@ module.exports = {
 			rest: "POST /send",
 			params: {
 				user: {type: "object"},
-				template:{ type: "object"},
+				template: {type: "object"},
 			},
 			async handler(ctx) {
 				const user = ctx.params.user;
 				const template = ctx.params.template;
 				let to = ctx.params.user.email;
-				if(env === "test") {
+				if (env === "test") {
 					to = "murat.backend@maiasignage.com";
 				}
 

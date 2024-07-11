@@ -28,13 +28,18 @@ module.exports = {
 				this.logger.info("JobIGCheckList ticked");
 
 				this.getLocalService("v1.widget.instagram.worker").broker.cacher.get("widget:instagram:check").then((checklist) => {
-					checklist.map(ig_profile => {
-						this.getLocalService("v1.widget.instagram.worker")
-							.actions.startProcess({ig_profile})
-							.then((data) => {
-								this.logger.info("Job Added to Queue", data);
-							});
-					});
+					if(checklist) {
+
+						checklist.map(ig_profile => {
+							this.getLocalService("v1.widget.instagram.worker")
+								.actions.startProcess({ig_profile})
+								.then((data) => {
+									this.logger.info("Job Added to Queue", data);
+								});
+						});
+					} else {
+						console.log(checklist);
+					}
 				});
 
 

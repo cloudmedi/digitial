@@ -139,7 +139,27 @@ module.exports = {
 		get: {cache: false},
 		remove: {
 			auth: "required",
-			visibility: "public"
+			visibility: null,
+			params: {
+				id: "string"
+			},
+			async handler(ctx) {
+				const id = String(ctx.params.id);
+
+				const removed = await this.adapter.removeById(id);
+
+				await this.broker.broadcast(
+					"source.removed",
+					{source: id, user: ctx.meta.user},
+					["mail", "screen"]
+				);
+
+				return {
+					status: "success",
+					message: "Source Removed successfully",
+					id: id,
+				};
+			}
 		}
 	},
 
