@@ -1,11 +1,8 @@
 "use strict";
-const {ObjectId} = require("mongodb");
 const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
-//const Cron = require("moleculer-cron");
 const Cron = require("@r2d2bzh/moleculer-cron");
-
-const {MoleculerClientError} = require("moleculer").Errors;
+const config = require("config");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -24,24 +21,30 @@ module.exports = {
 	mixins: [DbMixin("widget_instagram"), Cron],
 	crons: [
 		{
-			name: "JobHelloWorld",
-			cronTime: "* */15 * * * *",
+			name: "JobIGCheckList",
+			cronTime: "*/30 * * * * *",
 			onTick: function () {
 
-				console.log("JobHelloWorld ticked");
+				this.logger.info("JobIGCheckList ticked");
 
-				this.getLocalService("v1.widget.instagram.worker")
-					.actions.check_account({username: "lazysickartist", limit: 5})
-					.then((data) => {
-						console.log("Oh!", data);
+				this.getLocalService("v1.widget.instagram.worker").broker.cacher.get("widget:instagram:check").then((checklist) => {
+					checklist.map(ig_profile => {
+						this.getLocalService("v1.widget.instagram.worker")
+							.actions.startProcess({ig_profile})
+							.then((data) => {
+								this.logger.info("Job Added to Queue", data);
+							});
 					});
+				});
+
+
 			},
 			runOnInit: function () {
-				console.log("JobHelloWorld is created");
+				console.log("JobIGCheckList created");
 			},
-			manualStart: true,
+			manualStart: false,
 		},
-		{
+		/*{
 			name: "JobWhoStartAnother",
 			cronTime: "* * * * *",
 			onTick: function () {
@@ -60,7 +63,7 @@ module.exports = {
 			runOnInit: function () {
 				console.log("JobWhoStartAnother is created");
 			},
-		}
+		}*/
 	],
 	/**
 	 * Settings
@@ -99,15 +102,21 @@ module.exports = {
 				return "HelloWorld!";
 			}
 		},
-		check_account: {
+		startProcess: {
 			params: {
-				"username": "string",
-				"limit": "number",
+				"ig_profile": "object",
 			},
 			async handler(ctx) {
-				// istek gidecek
-				this.logger.info("Checking account");
-				console.log(ctx.params);
+				//const api_info = (config.get("provider_creds"))["instagram"];
+				//this.logger.info("Checking account", api_info);
+				try {
+					this.addCheckItemToQueue(ctx.params.ig_profile);
+					return true;
+				} catch (e) {
+					console.error(e);
+					return false;
+				}
+
 			}
 		},
 		list: {
@@ -151,6 +160,12 @@ module.exports = {
 			}
 
 			return true;
+		},
+		/**
+		 * Add Queue
+		 * */
+		addCheckItemToQueue(entity) {
+			console.log("entity", entity);
 		}
 	},
 

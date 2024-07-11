@@ -110,8 +110,6 @@ module.exports = {
 						res.subscription_detail = detail;
 						return res;
 					});
-					//await this.entityChanged("created", res, ctx);
-
 				},
 			},
 			async handler(ctx) {
@@ -228,7 +226,10 @@ module.exports = {
 				/* entity */
 				const e = ctx.params;
 				for (const screen of e.screens) {
-					const screen_detail = await ctx.call("v1.screen.update", {id: screen, source: new ObjectId(e.source)});
+					const screen_detail = await ctx.call("v1.screen.update", {
+						id: screen,
+						source: new ObjectId(e.source)
+					});
 
 					const screen_full_detail = await this.broker.call("v1.screen.findByDeviceSerial", {serial: screen_detail.serial});
 					try {
@@ -251,10 +252,54 @@ module.exports = {
 			}
 		},
 		update: {
-			visibility: "protected"
+			auth: "required",
+			visibility: "public"
 		},
 		insert: false,
-		remove: false,
+		remove: {
+			auth: "required",
+			params: {
+				id: "string"
+			},
+			async handler(ctx) {
+				const doc = await this.adapter.findOne({
+					_id: new ObjectId(ctx.params.id),
+					user: new ObjectId(ctx.meta.user._id)
+				});
+				const screen = await this.transformDocuments(ctx, {populate: ["user", "device", "source"]}, doc);
+
+				if (screen) {
+					if (screen.device) {
+						await this.broker.call("v1.device.status", {
+							serial: screen.device.serial,
+							state: "deleting"
+						});
+
+						await this.broker.call("v1.device.status", {
+							serial: screen.device.serial,
+							state: "offline"
+						});
+
+						await ctx.call("v1.device.remove", {id: screen.device._id});
+					}
+					if (screen.source) {
+						await ctx.call("v1.source.remove", {id: screen.source._id});
+					}
+
+					await this.adapter.removeById(screen._id);
+
+					await this.broker.broadcast("screen.removed", {screen: doc, user: ctx.meta.user}, ["mail"]);
+
+					return {status: true, message: "Screen removed successfully", id: screen._id};
+
+				} else {
+					throw new MoleculerClientError("Restricted access ", 400, "Unauthorized", [{
+						field: "Screen",
+						message: "Restricted access"
+					}]);
+				}
+			}
+		},
 	},
 
 	/**

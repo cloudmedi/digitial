@@ -78,16 +78,16 @@ module.exports = {
 				state: "string"
 			},
 			async handler(ctx) {
-				const device = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
-				if (device) {
-					console.log("device", {status: ctx.params.state, screen: {...device}});
+				const screen = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
+				if (screen) {
+					console.log("device", {status: ctx.params.state, screen: {...screen}});
 					await ctx.call("io.broadcast", {
 						namespace: "/", //optional
 						event: "device-status",
-						args: ["device-status", {status: ctx.params.state, screen: {...device}}], //optional
+						args: ["device-status", {status: ctx.params.state, screen: {...screen}}], //optional
 						volatile: false, //optional
-						local: true, //optional
-						rooms: [`user-${device.user._id}-devices`] //optional
+						local: false, //optional
+						rooms: [`user-${screen.user._id}-devices`] //optional
 					});
 				}
 			}
@@ -109,7 +109,7 @@ module.exports = {
 					let serial = "";
 					const check_device_has = await this.adapter.findOne({fingerprint: entity.fingerprint});
 
-					if(check_device_has) {
+					if (check_device_has) {
 						serial = check_device_has.serial;
 					} else {
 						const serial_number_first_part = crypto.randomBytes(2).toString("hex");
@@ -178,7 +178,10 @@ module.exports = {
 		create: false,
 		insert: false,
 		update: false,
-		remove: false
+		remove: {
+			auth: "required",
+			visibility: "public"
+		}
 	},
 
 	/**

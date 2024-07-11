@@ -67,6 +67,18 @@ module.exports = {
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
+			},
+			async remove(ctx) {
+				const source = this.adapter.findOne({
+					_id: new ObjectId(ctx.params.id),
+					user: new ObjectId(ctx.meta.user._id)
+				});
+				if (!source) {
+					throw new MoleculerClientError("Restricted access to delete ", 400, "Unauthorized", [{
+						field: "Source",
+						message: "Restricted access"
+					}]);
+				}
 			}
 		}
 	},
@@ -102,7 +114,7 @@ module.exports = {
 				ttl: 60 * 5  // 5 minutes
 			},
 			async handler(ctx) {
-				if(!ctx.meta.user) {
+				if (!ctx.meta.user) {
 					return [];
 				}
 
@@ -125,7 +137,10 @@ module.exports = {
 			auth: "required",
 		},
 		get: {cache: false},
-		remove: false
+		remove: {
+			auth: "required",
+			visibility: "public"
+		}
 	},
 
 	/**

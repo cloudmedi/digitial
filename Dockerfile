@@ -1,4 +1,4 @@
-FROM node:current-alpine
+FROM keymetrics/pm2:latest-alpine
 
 ENV NODE_ENV=production
 
@@ -11,4 +11,4 @@ RUN npm install --production
 
 COPY . .
 
-CMD ["npm", "start"]
+CMD ["pm2", "start", "ecosystem.config.js", "--env=production"]
