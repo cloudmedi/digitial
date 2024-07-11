@@ -430,9 +430,13 @@ module.exports = {
 				});
 				if (image) {
 					console.log(image);
-					console.log("deleted");
-					await this.bunnyDelete(image);
-					await this.adapter.removeById( image._id);
+
+					/*
+					* todo: görsellerin kullanıldığı source bulunup buralardan da temizlenmeli.
+					* */
+
+					//await this.bunnyDelete(image);
+					//await this.adapter.removeById( image._id);
 				} else {
 					throw new MoleculerClientError("Delete restriction", 400, "", [{
 						field: "Widget.Image.delete",
