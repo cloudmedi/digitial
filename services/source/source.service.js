@@ -5,6 +5,7 @@ const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
+const _ = require("lodash");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -81,6 +82,29 @@ module.exports = {
 				}
 			}
 		}
+	},
+	events: {
+		// Subscribe to `user.created` event
+		async "image.removed"(image) {
+			this.adapter.find({query: {"content.playlist._id": image._id}}).then(sources => {
+				sources.map(source => {
+					const content = _.find(source.content, "playlist");
+					try {
+						const newPlaylist = content.playlist.filter(playlist => playlist._id !== image._id);
+						console.log("newPlaylist", newPlaylist);
+						/**
+						 *  todo: layout'un birden fazla penceresi olursa content alanındaki
+						 * n. eleman oluyor. buna göre güncelleme ve bulmayı yapması lazım.
+						 *
+						 * */
+					} catch (e) {
+						console.log(e);
+						console.log("playlist", playlist);
+					}
+				});
+			});
+
+		},
 	},
 
 	/**

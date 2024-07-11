@@ -102,6 +102,7 @@ module.exports = {
 				const entity = ctx.params;
 				const check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
 				if(check_module) {
+					console.log(entity.id);
 					return await ctx.call(`v1.widget.${check_module.slug}.remove`, {id: entity.id});
 				} else {
 					throw new MoleculerClientError("There is no widget like you want ", 404, "no-content", [{
