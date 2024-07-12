@@ -2,6 +2,7 @@
 
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
+const {MoleculerClientError} = require("moleculer").Errors;
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -91,7 +92,26 @@ module.exports = {
 		count: false,
 		insert: false,
 		update: false,
-		remove: false
+		remove: {
+			auth: "required",
+			params: {
+				widget: {type: "string"},
+				id: {type: "string"}
+			},
+			async handler(ctx) {
+				const entity = ctx.params;
+				const check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
+				if(check_module) {
+					console.log(entity.id);
+					return await ctx.call(`v1.widget.${check_module.slug}.remove`, {id: entity.id});
+				} else {
+					throw new MoleculerClientError("There is no widget like you want ", 404, "no-content", [{
+						field: "Widget.*.remove",
+						message: "Restricted access"
+					}]);
+				}
+			}
+		}
 	},
 
 	/**
