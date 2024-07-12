@@ -435,8 +435,8 @@ module.exports = {
 
 					await this.broker.broadcast("image.removed", {...image}, ["source"]);
 
-					//await this.adapter.removeById( image._id);
-					//await this.bunnyDelete(image);
+					await this.adapter.removeById( image._id);
+					await this.bunnyDelete(image);
 				} else {
 					throw new MoleculerClientError("Delete restriction", 400, "", [{
 						field: "Widget.Image.delete",
