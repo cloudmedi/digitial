@@ -429,14 +429,16 @@ module.exports = {
 					user: new ObjectId(ctx.meta.user._id)
 				});
 				if (image) {
-
-					console.log("widget:image",
-						image);
+					await this.adapter.removeById( image._id);
+					await this.bunnyDelete(image);
 
 					await this.broker.broadcast("image.removed", {...image}, ["source"]);
 
-					await this.adapter.removeById( image._id);
-					await this.bunnyDelete(image);
+					return {
+						status: "success",
+						message: "Source Removed successfully",
+						id: image._id,
+					};
 				} else {
 					throw new MoleculerClientError("Delete restriction", 400, "", [{
 						field: "Widget.Image.delete",
