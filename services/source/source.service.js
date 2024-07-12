@@ -88,19 +88,29 @@ module.exports = {
 		async "image.removed"(image) {
 			this.adapter.find({query: {"content.playlist._id": image._id}}).then(sources => {
 				sources.map(source => {
-					const content = _.find(source.content, "playlist");
-					try {
-						const newPlaylist = content.playlist.filter(playlist => playlist._id !== image._id);
-						console.log("newPlaylist", newPlaylist);
-						/**
+					// console.log(source);
+					source.content.map((content, ci) => {
+						let new_source = {...source};
+						new_source.content[ci].playlist = content.playlist.filter(playlist => playlist._id !== image._id);
+						console.log("source", source.content);
+						console.log("new_source",new_source.content);
+						//delete new_source._id;
+						this.adapter.updateById(new_source._id, {$set: new_source}, {upsert: true}).then((r) => {
+							console.log(r);
+						}).catch((err) => { console.log(err); });
+					});
+					/*try {
+
+						//console.log("newPlaylist", newPlaylist);
+						/!**
 						 *  todo: layout'un birden fazla penceresi olursa content alanındaki
 						 * n. eleman oluyor. buna göre güncelleme ve bulmayı yapması lazım.
 						 *
-						 * */
+						 * *!/
 					} catch (e) {
 						console.log(e);
-						console.log("playlist", playlist);
-					}
+						//console.log("playlist", playlist);
+					}*/
 				});
 			});
 
