@@ -73,7 +73,7 @@ module.exports = {
 				const entity = ctx.params;
 				const count = await this.adapter.count({user: ObjectId(entity.user)});
 				const check = await this.adapter.findOne({timezone: entity.timezone, user: ctx.meta.user._id});
-				if (!check && count < 6 ) {
+				if (!check && count < 6) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("Time.created", {...doc}, ["widget.time"]);
 
@@ -119,9 +119,7 @@ module.exports = {
 	/**
 	 * Methods
 	 */
-	methods: {
-
-	},
+	methods: {},
 
 	/**
 	 * Fired after database connection establishing.
