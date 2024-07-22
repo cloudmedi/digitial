@@ -45,6 +45,9 @@ module.exports = {
 		},
 		populates: {}
 	},
+	dependencies: [
+		"v1.widget", // shorthand w/o version
+	],
 
 	/**
 	 * Action Hooks

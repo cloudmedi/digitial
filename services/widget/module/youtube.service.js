@@ -1,5 +1,7 @@
 "use strict";
 const {ObjectId} = require("mongodb");
+const DbMixin = require("../../../mixins/db.mixin");
+const {MoleculerClientError} = require("moleculer").Errors;
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -12,14 +14,22 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	/*mixins: [DbMixin("widget_image")],*/
+	mixins: [DbMixin("widget_youtube")],
 	whitelist: [],
 	/**
 	 * Settings
 	 */
 	settings: {
 		// Available fields in the responses
-		fields: [],
+		fields: [
+			"_id",
+			"title",
+			"link",
+			"thumb",
+			"meta",
+			"createdAt",
+			"updatedAt",
+		],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {},
@@ -37,8 +47,14 @@ module.exports = {
 			 *
 			 * @param {Context} ctx
 			 */
-			create(ctx) {},
-			update(ctx) {}
+			create(ctx) {
+				ctx.params.createdAt = new Date();
+				ctx.params.updatedAt = new Date();
+				ctx.params.user = new ObjectId(ctx.meta.user._id);
+			},
+			update(ctx) {
+				ctx.params.updatedAt = new Date();
+			}
 		}
 	},
 
@@ -46,7 +62,32 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
-		create: false,
+		create: {
+			rest: "POST /",
+			auth: "required",
+			params: {
+				link: {type: "string", required: true},
+				title: {type: "string", required: false},
+				thumb: {type: "string", required: false, default: null},
+				meta: {type: "object", required: false}
+			},
+			async handler(ctx) {
+				const entity = ctx.params;
+				const count = await this.adapter.count({user: ObjectId(entity.user)});
+				const check = await this.adapter.findOne({link: entity.link, user: ctx.meta.user._id});
+				if (!check && count < 12 ) {
+					const doc = await this.adapter.insert(entity);
+					await this.broker.broadcast("youtube.created", {...doc}, ["widget.youtube"]);
+
+					return {"youtube": {...doc}};
+				} else {
+					throw new MoleculerClientError(`Duplicated Record for Youtube @${entity.link}`, 409, "", [{
+						field: "widget.youtube",
+						message: "Duplicated Record"
+					}]);
+				}
+			}
+		},
 		list: false,
 		get: false,
 		count: false,
