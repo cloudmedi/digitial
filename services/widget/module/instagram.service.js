@@ -45,6 +45,9 @@ module.exports = {
 		},
 		populates: {}
 	},
+	dependencies: [
+		"v1.widget", // shorthand w/o version
+	],
 
 	/**
 	 * Action Hooks
@@ -88,7 +91,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const count = await this.adapter.count({user: ObjectId(entity.user)});
+				const count = await this.adapter.count({user: new ObjectId(entity.user)});
 				const check = await this.adapter.findOne({username: entity.username, user: entity.user});
 				if (!check && count < 3 ) {
 					const doc = await this.adapter.insert(entity);

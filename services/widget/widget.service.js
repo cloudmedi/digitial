@@ -169,7 +169,9 @@ module.exports = {
 			const data = [
 				{icon: "fa-picture", name: "image", slug: "image", provider: "local", service: "image", has_file: true, meta: {}},
 				{icon: "fa-video", name: "video", slug: "video", provider: "local", service: "video", has_file: true, meta: {}},
-				{icon: "fa-instagram", name: "instagram", slug: "instagram", provider: "local", service: "instagram", has_file: false, meta: {}}
+				{icon: "fa-instagram", name: "instagram", slug: "instagram", provider: "local", service: "instagram", has_file: false, meta: {}},
+				{icon: "fa-clock", name: "time", slug: "time", provider: "local", service: "time", has_file: false, meta: {}},
+				{icon: "fa-youtube", name: "youtube", slug: "youtube", provider: "local", service: "youtube", has_file: false, meta: {}}
 			];
 			await this.adapter.insertMany(data);
 		}

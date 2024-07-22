@@ -22,7 +22,7 @@ services:
   users:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: users
@@ -34,7 +34,7 @@ services:
   follows:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: follows
@@ -46,7 +46,7 @@ services:
   wallet:
       build:
         context: .
-      image: user-service
+      image: signage-api
       env_file: docker-compose.env
       environment:
         SERVICES: wallet
@@ -58,7 +58,7 @@ services:
   kyc:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: kyc
@@ -70,7 +70,7 @@ services:
   binnum:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: binnum
@@ -82,7 +82,7 @@ services:
   products:
     build:
       context: .
-    image: user-service
+    image: signage-api
     env_file: docker-compose.env
     environment:
       SERVICES: products

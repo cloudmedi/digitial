@@ -18,7 +18,7 @@ data:
   
   
   CACHER: redis://redis:6379
-  MONGO_URI: mongodb://mongo/user-service
+  MONGO_URI: mongodb://mongo/signage_api
 
 ---
 #########################################################
