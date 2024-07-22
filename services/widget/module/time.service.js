@@ -98,7 +98,7 @@ module.exports = {
 				const check = await this.adapter.findOne({_id: ObjectId(entity.id), user: ctx.meta.user._id});
 				if (check) {
 					const doc = await this.adapter.updateById(entity);
-					await this.broker.broadcast("Time.created", {...doc}, ["widget.time"]);
+					await this.broker.broadcast("time.created", {...doc}, ["widget.time"]);
 
 					return {"time": {...doc}};
 				} else {
@@ -113,7 +113,9 @@ module.exports = {
 		get: false,
 		count: false,
 		insert: false,
-		remove: false
+		remove: {
+			auth: "required",
+		}
 	},
 
 	/**

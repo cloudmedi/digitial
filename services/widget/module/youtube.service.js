@@ -73,9 +73,9 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const count = await this.adapter.count({user: ObjectId(entity.user)});
+				const count = await this.adapter.count({user: new ObjectId(entity.user)});
 				const check = await this.adapter.findOne({link: entity.link, user: ctx.meta.user._id});
-				if (!check && count < 12 ) {
+				if (!check && count < 24 ) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("youtube.created", {...doc}, ["widget.youtube"]);
 
@@ -88,12 +88,38 @@ module.exports = {
 				}
 			}
 		},
+		update: {
+			auth: "required",
+			params: {
+				id: {type: "string", required: true},
+				link: {type: "string", required: true},
+				title: {type: "string", required: false},
+				thumb: {type: "string", required: false, default: null},
+				meta: {type: "object", required: false}
+			},
+			async handler(ctx) {
+				const entity = ctx.params;
+				const check = await this.adapter.findOne({_id: new ObjectId(entity.id), user: ctx.meta.user._id});
+				if (check) {
+					const doc = await this.adapter.updateById(entity);
+					await this.broker.broadcast("youtube.updated", {...doc}, ["widget.youtube"]);
+
+					return {"time": {...doc}};
+				} else {
+					throw new MoleculerClientError("Restricted", 409, "", [{
+						field: "widget.youtube",
+						message: "Restricted Record"
+					}]);
+				}
+			}
+		},
 		list: false,
 		get: false,
 		count: false,
 		insert: false,
-		update: false,
-		remove: false
+		remove: {
+			auth: "required",
+		}
 	},
 
 	/**
