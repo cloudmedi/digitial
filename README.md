@@ -13,5 +13,29 @@ Maia Signage Rest/WS API Framework with moleculer.services
 
 ## ToDo
 
-- [ ] rewrite ecosystem file
-- [ ] Write API Docs
+- [x] rewrite ecosystem file
+- [x] Write API Docs
+- [ ] Widgets
+  - [x] Image
+  - [x] Video
+  - [ ] Instagram
+  - [ ] Date & Time
+  - [ ] Youtube
+  - [ ] rss
+  - [ ] Twitter
+  - [ ] Weather
+  - [ ] Webpage
+- [ ] Sources
+    - [x] Layouts
+    - [x] Playlist
+    - [ ] Program
+    - [ ] Channel
+- [x] Screen
+  - [x] Device
+  - [x] Screen
+- [x] Package
+- [x] Email
+- [ ] Partials
+  - [x] Country
+  - [x] Currency
+  - [x] Ip2Country
