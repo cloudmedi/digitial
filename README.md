@@ -15,6 +15,8 @@ Maia Signage Rest/WS API Framework with moleculer.services
 
 - [x] rewrite ecosystem file
 - [x] Write API Docs
+- [x] REST API
+- [x] WebSocket API
 - [ ] Widgets
   - [x] Image
   - [x] Video
