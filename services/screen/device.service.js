@@ -81,6 +81,14 @@ module.exports = {
 				const screen = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
 				if (screen) {
 					console.log("device", {status: ctx.params.state, screen: {...screen}});
+					console.log("screen._id", screen._id);
+					await this.broker.cacher.set(`device:status:${screen._id}`,
+						{
+							status: ctx.params.state,
+							screen: {...screen}
+						},
+						60 * 5);
+
 					await ctx.call("io.broadcast", {
 						namespace: "/", //optional
 						event: "device-status",
