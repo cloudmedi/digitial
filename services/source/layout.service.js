@@ -122,7 +122,7 @@ module.exports = {
 					properties: {
 						container: "flex-col",
 						boxes: [
-							{cell: 0, classes: "layout-single-01", meta: {}}
+							{cell: 0, classes: "layout-single-01", meta: {}, resolution: "1920x1080"}
 						],
 
 					}, meta: {}
@@ -134,8 +134,8 @@ module.exports = {
 					properties: {
 						container: "flex-col",
 						boxes: [
-							{cell: 0, classes: "layout-two-row-01", meta: {}},
-							{cell: 1, classes: "layout-two-row-02", meta: {}}
+							{cell: 0, classes: "layout-two-row-01", meta: {}, resolution: "1920x960"},
+							{cell: 1, classes: "layout-two-row-02", meta: {},resolution: "1920x120"}
 						]
 					}, meta: {}
 				},
@@ -143,8 +143,8 @@ module.exports = {
 					name: "two-col", image: "", order: 30, properties: {
 						container: "flex-col",
 						boxes: [
-							{cell: 0, classes: "layout-two-col-01", meta: {}},
-							{cell: 1, classes: "layout-two-col-02", meta: {}}
+							{cell: 0, classes: "layout-two-col-01", meta: {}, resolution: "1385x1080"},
+							{cell: 1, classes: "layout-two-col-02", meta: {},resolution: "535x1080"}
 						],
 					}, meta: {}
 				}];
