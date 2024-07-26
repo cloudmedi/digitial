@@ -24,7 +24,7 @@ module.exports = {
 			"cache.clean.logs",
 			"logs"
 		])],
-	whitelist: [],
+	whitelist: ["io"],
 	/**
 	 * Settings
 	 */
@@ -89,6 +89,7 @@ module.exports = {
 			async handler(ctx) {
 				const entity = ctx.params;
 
+				return await this.adapter.insert({...entity});
 			}
 		},
 		count_for_me: {
