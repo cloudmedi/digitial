@@ -180,50 +180,7 @@ module.exports = {
 			auth: "required",
 		},
 		insert: false,
-		remove: {
-			auth: "required",
-			params: {
-				id: "string"
-			},
-			async handler(ctx) {
-				const doc = await this.adapter.findOne({
-					_id: new ObjectId(ctx.params.id),
-					user: new ObjectId(ctx.meta.user._id)
-				});
-				const screen = await this.transformDocuments(ctx, {populate: ["user", "device", "source"]}, doc);
-
-				if (screen) {
-					if (screen.device) {
-						await this.broker.call("v1.device.status", {
-							serial: screen.device.serial,
-							state: "deleting"
-						});
-
-						await this.broker.call("v1.device.status", {
-							serial: screen.device.serial,
-							state: "offline"
-						});
-
-						await ctx.call("v1.device.remove", {id: screen.device._id});
-					}
-					if (screen.source) {
-						await ctx.call("v1.source.remove", {id: screen.source._id});
-					}
-
-					await this.adapter.removeById(screen._id);
-
-					await this.broker.broadcast("screen.removed", {screen: doc, user: ctx.meta.user}, ["mail"]);
-
-					return {status: true, message: "Screen removed successfully", id: screen._id};
-
-				} else {
-					throw new MoleculerClientError("Restricted access ", 400, "Unauthorized", [{
-						field: "Screen",
-						message: "Restricted access"
-					}]);
-				}
-			}
-		},
+		remove: false,
 	},
 
 	/**
@@ -250,13 +207,13 @@ module.exports = {
 		 */
 		async transformResult(ctx, entities, user) {
 			if (Array.isArray(entities)) {
-				const currency = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item, user)));
+				const logs = await this.Promise.all(entities.map(item => this.transformEntity(ctx, item)));
 				return {
-					currency
+					logs
 				};
 			} else {
-				const currency = await this.transformEntity(ctx, entities);
-				return {currency};
+				const logs = await this.transformEntity(ctx, entities);
+				return {logs};
 			}
 		},
 
@@ -278,6 +235,21 @@ module.exports = {
 		 * connection establishing & the collection is empty.
 		 */
 		async seedDB() {
+			await this.adapter.db.createCollection("logs", {
+				timeseries: {
+					timeField: "createdAt", // Zaman damgasını belirten alan
+					metaField: "meta", // (Opsiyonel) Meta veriler için alan
+					granularity: "seconds" // (Opsiyonel) Veri granülaritesini belirler (seconds, minutes, hours)
+				}
+			});
+
+			return await this.adapter.insert({
+				module: "v1.log",
+				action: "initial",
+				meta: {},
+				createdAt: new Date(),
+			});
+
 		},
 	},
 
