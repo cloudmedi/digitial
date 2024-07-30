@@ -149,13 +149,11 @@ module.exports = {
 				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
 				if (pre_register_data) {
 					const check_device = await this.adapter.findOne({serial: pre_register_data.serial});
-					if (check_device) {
-						return {status: true, message: "Correct serial number", data: pre_register_data};
-					} else {
+					if (!check_device) {
 						await this.adapter.insert(pre_register_data);
-						return {status: true, message: "Correct serial number", data: pre_register_data};
 					}
 
+					return {status: true, message: "Correct serial number", data: pre_register_data};
 				} else {
 					const check_db = await this.adapter.findOne({serial: ctx.params.serial});
 
