@@ -5,6 +5,8 @@ const {ForbiddenError} = require("moleculer-web").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const {ObjectId} = require("mongodb");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
+const {offer} = require("../../lib/ripple-0.22.0");
+const _ = require("lodash");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -184,12 +186,41 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
-			cache: {
+			cache: false /*{
 				keys: ["#userID"],
 				ttl: 60 * 5  // 5 minutes
+			}*/,
+			params: {
+				limit: {type: "string", required: false, default: "25"},
+				page: {type: "string", required: false, default: "1"},
 			},
 			async handler(ctx) {
-				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+				const limit = Number(ctx.params.limit);
+				const page = Number(ctx.params.page) - 1;
+				const offset = limit * page;
+
+				let screens = await this.adapter.find({
+					query: {user: new ObjectId(ctx.meta.user._id)},
+					limit: limit,
+					offset: offset
+				});
+
+				let total = await this.adapter.count({
+					query: {user: new ObjectId(ctx.meta.user._id)}
+				});
+
+				let screen_copy = await Promise.all(screens.map(async (screen) => {
+					const device_status = await this.broker.cacher.get(`device:status:${screen._id}`) ?? "offline";
+					return { ...screen, device_status };
+				}));
+
+				const total_page = Math.round(total / limit);
+				return {
+					limit: limit,
+					page: page + 1,
+					total_page: total_page,
+					rows: [...screen_copy]
+				};
 			}
 		},
 		is_serial_binded: {
@@ -268,7 +299,6 @@ module.exports = {
 		},
 		update: {
 			auth: "required",
-			visibility: "public"
 		},
 		insert: false,
 		remove: {

@@ -81,6 +81,14 @@ module.exports = {
 				const screen = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.serial});
 				if (screen) {
 					console.log("device", {status: ctx.params.state, screen: {...screen}});
+					console.log("screen._id", screen._id);
+					await this.broker.cacher.set(`device:status:${screen._id}`,
+						{
+							status: ctx.params.state,
+							screen: {...screen}
+						},
+						60 * 5);
+
 					await ctx.call("io.broadcast", {
 						namespace: "/", //optional
 						event: "device-status",
@@ -141,13 +149,11 @@ module.exports = {
 				const pre_register_data = await this.broker.cacher.get(`new_device:${ctx.params.serial}`);
 				if (pre_register_data) {
 					const check_device = await this.adapter.findOne({serial: pre_register_data.serial});
-					if (check_device) {
-						return {status: true, message: "Correct serial number", data: pre_register_data};
-					} else {
+					if (!check_device) {
 						await this.adapter.insert(pre_register_data);
-						return {status: true, message: "Correct serial number", data: pre_register_data};
 					}
 
+					return {status: true, message: "Correct serial number", data: pre_register_data};
 				} else {
 					const check_db = await this.adapter.findOne({serial: ctx.params.serial});
 

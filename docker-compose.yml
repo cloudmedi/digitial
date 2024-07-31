@@ -1,126 +1,120 @@
-version: "3.3"
+version: '3'
 
 services:
-
-  api:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: api
-      PORT: 3000
-    depends_on:
-      - redis
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.api-gw.rule=PathPrefix(`/`)"
-      - "traefik.http.services.api-gw.loadbalancer.server.port=3000"
-    networks:
-      - internal
-
-  users:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: users
-    depends_on:
-      - redis
-    networks:
-      - internal
-
-  follows:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: follows
-    depends_on:
-      - redis
-    networks:
-      - internal
-
-  wallet:
-      build:
-        context: .
-      image: signage-api
-      env_file: docker-compose.env
-      environment:
-        SERVICES: wallet
-      depends_on:
-        - redis
-      networks:
-        - internal
-
-  kyc:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: kyc
-    depends_on:
-      - redis
-    networks:
-      - internal
-
-  binnum:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: binnum
-    depends_on:
-      - redis
-    networks:
-      - internal
-
-  products:
-    build:
-      context: .
-    image: signage-api
-    env_file: docker-compose.env
-    environment:
-      SERVICES: products
-    depends_on:
-      - mongo
-      - redis
-    networks:
-      - internal
-
-  mongo:
-    image: mongo:4
-    volumes:
-      - data:/data/db
-    networks:
-      - internal
-
   redis:
-    image: redis:alpine
-    networks:
-      - internal
-
-  traefik:
-    image: traefik:v2.1
-    command:
-      - "--api.insecure=true" # Don't do that in production!
-      - "--providers.docker=true"
-      - "--providers.docker.exposedbydefault=false"
+    image: redis:latest
     ports:
-      - 3000:80
-      - 3001:8080
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - internal
-      - default
+      - "6379:6379"
 
-networks:
-  internal:
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
 
-volumes:
-  data:
+  apibase:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/api.service.js services/io.service.js services/room.service.js services/lab.service.js services/profile.service.js services/room.service.js services/users.service.js services/wallet.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=apibase
+    ports:
+      - "4001:4001"
+      - "3001:3001"
+      - "3210:3210"
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  partials:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/_partial/currency.service.js services/_partial/ip_location.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=partials
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  admin:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/admin/country.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=admin
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  screens:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/screen/screen.service.js services/screen/device.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=screens
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  package:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/package/packages.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=package
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  email:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/email/email.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=email
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  source:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/source/source.service.js services/source/layout.service.js services/source/channel.service.js services/source/playlist.service.js services/source/program.service.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=source
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1
+
+  widget:
+    build: .
+    command: ./node_modules/.bin/moleculer-runner services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js services/widget/module/video.service.js services/widget/module/instagram.service.js services/widget/module/worker/instagram.worker.js
+    env_file:
+      - ./docker-compose.env
+    environment:
+      - NODE_ID=widget
+    depends_on:
+      - redis
+      - mongodb
+    deploy:
+      replicas: 1

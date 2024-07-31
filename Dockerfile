@@ -1,14 +1,20 @@
-FROM keymetrics/pm2:latest-alpine
+# Base image
+FROM node:20-alpine
 
-ENV NODE_ENV=production
-
-RUN mkdir /app
+# Set the working directory
 WORKDIR /app
 
-COPY package.json package-lock.json ./
+# Copy package.json and package-lock.json files
+COPY package*.json ./
 
-RUN npm install --production
+# Install dependencies
+RUN npm install
 
+# Copy the rest of the application code
 COPY . .
 
-CMD ["pm2", "start", "ecosystem.config.js", "--env=production"]
+# Expose the port the app runs on
+EXPOSE 4001
+
+# Define default command
+CMD ["node"]
