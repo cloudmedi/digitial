@@ -1,5 +1,8 @@
 "use strict";
 const {ObjectId} = require("mongodb");
+/**
+ * @todo: https://www.npmjs.com/package/twitter-api-v2 modülü kullanılacak
+ * */
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
