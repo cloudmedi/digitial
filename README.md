@@ -46,7 +46,7 @@ pm2 start ecosystem.config.js --env=production
 - [ ] Widgets
   - [x] Image
   - [x] Video
-  - [ ] Instagram
+  - [ ] Instagram (in progress)
   - [ ] Date & Time
   - [ ] Youtube
   - [ ] rss

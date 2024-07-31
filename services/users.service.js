@@ -55,7 +55,8 @@ module.exports = {
 		populates: {
 			profile: {
 				action: "user_profile.getWUser"
-			}
+			},
+			subscription: {action: "v1.package.get"}
 		}
 	},
 	/**
@@ -231,7 +232,7 @@ module.exports = {
 				}
 
 				// Transform user entity (remove password and all protected fields)
-				const doc = await this.transformDocuments(ctx, {}, user);
+				const doc = await this.transformDocuments(ctx, {populate: ["subscription"]}, user);
 				if (doc.status) {
 					ctx.meta.$join = doc._id;
 					ctx.meta.$join = "lobby";
