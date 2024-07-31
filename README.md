@@ -14,6 +14,7 @@ npm i pm2 --global
 
 ```shell
 git clone git@github.com:cloudmedi/signage_api.git
+git checkout Production-v1.1
 ```
 ```shell
 cd signage_api && npm i
