@@ -128,10 +128,10 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
-			cache: {
+			cache: false /*{
 				keys: ["#userID"],
 				ttl: 60 * 5  // 5 minutes
-			},
+			}*/,
 			async handler(ctx) {
 				if (!ctx.meta.user) {
 					return [];
