@@ -8,16 +8,34 @@ Maia Signage Rest/WS API Framework with moleculer.services
 
 ## Installation
 
-``$ npm pm2 --global``
+```shell 
+npm i pm2 --global
+```
 
-``$ git clone git@github.com:cloudmedi/signage_api.git``
+```shell
+git clone git@github.com:cloudmedi/signage_api.git
+git checkout Production-v1.1
+```
+```shell
+cd signage_api && npm i
+mkdir -P ./public/upload/
+chmod -R 777 ./public/upload
+```
 
-``cd signage_api && npm i``
+```shell
+sudo nano /etc/hosts
+```
+add these lines for redis and mongodb
 
-``mkdir -P ./public/upload/``
-``chmod -R 777 ./public/upload``
+```
+127.0.0.1       mongo
+127.0.0.1       redis
+```
+then save & exit
 
-``pm2 start ecosystem.config.js``
+```shell
+pm2 start ecosystem.config.js --env=production
+```
 
 ## ToDo
 
