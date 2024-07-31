@@ -9,7 +9,7 @@ Maia Signage Rest/WS API Framework with moleculer.services
 ## Installation
 
 ```shell 
-npm pm2 --global
+npm i pm2 --global
 ```
 
 ```shell
