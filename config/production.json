@@ -37,6 +37,13 @@
 			"conn_type": "passive",
 			"region": null
 		},
+		"twitter": {
+			"api_key": "hNg1peaBiiTZQhBJp9GkGX9Q1",
+			"api_secret": "cBmqHazKK33RRsP6I7DQvaAPogdsELvERP2oB1IU4rbToILtsV",
+			"bearer": "AAAAAAAAAAAAAAAAAAAAAD1vugEAAAAAfzepTjtEalrYAQ3TOXQA0fKMgKQ%3DnrNrsN9yTVYqM0oafeQxkwgeV0CIscVsoB2FlaQsnjsi1uwgRR",
+			"access_token": "55778509-55OYuTUoSuk7dBFILOeMbKQ882G2ZVmJubSx2DLRC",
+			"access_token_secret": "YFY0mKcI2WkmtYRLMfpIIotxKPgVw5YrgGpqWoYOhqNEX"
+		},
 		"instagram": {
 			"api_base": "https://ig.rpd.ink/api/",
 			"api_user": "",
