@@ -278,9 +278,9 @@ module.exports = {
 		},
 		getFiles: {
 			rest: "GET /files",
-			cache: {
+			cache: false /* {
 				keys: ["#userID", "folder", "page", "perPage"]
-			},
+			} */,
 			auth: "required",
 			params: {
 				perPage: {type: "string", default: "10"},
