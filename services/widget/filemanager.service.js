@@ -295,7 +295,6 @@ module.exports = {
 					const widgets = await ctx.call("v1.widget.find", {query: {has_file: true}});
 					let files = [];
 					for (const widget of widgets) {
-
 						const widget_resp = await ctx.call(`v1.widget.${widget.slug}.list`, {folder: ctx.params.folder});
 						const widget_values = Object.values(widget_resp)[0];
 						if(files.length === 0) {
