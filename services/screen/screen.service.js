@@ -327,8 +327,6 @@ module.exports = {
 							serial: screen.device.serial,
 							state: "offline"
 						});
-
-						await ctx.call("v1.device.remove", {id: screen.device._id});
 					}
 					if (screen.source) {
 						await ctx.call("v1.source.remove", {id: screen.source._id});
