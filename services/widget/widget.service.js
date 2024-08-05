@@ -27,6 +27,7 @@ module.exports = {
 			"icon",
 			"name",
 			"slug",
+			"has_file",
 			"provider",
 			"service"
 		],

@@ -297,12 +297,19 @@ module.exports = {
 			},
 			async handler(ctx) {
 				let folder = null;
-				if (ctx.meta.$params.folder === undefined) {
+
+				const folderParam = ctx.meta.$params.folder;
+
+				if (folderParam === undefined || folderParam === "") {
+					console.log(`"${folderParam}"`);
 					const folder_data = await ctx.call("v1.filemanager.getDefaultFolder");
 					folder = folder_data._id;
-				} else {
-					folder = ctx.meta.$params.folder;
+				} else if (folderParam !== "" && folderParam !== null) {
+					console.log("burası");
+					await ctx.call("v1.filemanager.get", {id: folderParam});
+					folder = folderParam;
 				}
+
 
 				return new this.Promise((resolve, reject) => {
 					let fileUrls = [];

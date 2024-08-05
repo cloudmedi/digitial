@@ -112,7 +112,7 @@ module.exports = {
 			const user_id = user.user._id;
 
 			this.broker.call("v1.filemanager.create", {
-				user: user_id,
+				user: new ObjectId(user_id),
 				name: "default",
 				parent: "",
 				left: 1,
@@ -253,7 +253,7 @@ module.exports = {
 				let id = ctx.params?.id;
 				let parent = null;
 				if (id !== undefined) {
-					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), status: true});
+					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), user: new ObjectId(ctx.meta.user._id), status: true});
 					if (!folder_data.folder) {
 						throw new MoleculerClientError("Folder Not Found", 404, "", [{
 							field: "folder",
@@ -292,9 +292,10 @@ module.exports = {
 				const limit = Number(ctx.params.perPage); // Sayfa başına gösterilecek kayıt sayısı
 				const offset = Number(ctx.params.page); // Başlangıç noktası (örneğin, 0: ilk sayfa, 10: ikinci sayfa)
 				if(ctx.params.folder) {
-					const widgets = await ctx.call("v1.widget.find");
+					const widgets = await ctx.call("v1.widget.find", {query: {has_file: true}});
 					let files = [];
 					for (const widget of widgets) {
+
 						const widget_resp = await ctx.call(`v1.widget.${widget.slug}.list`, {folder: ctx.params.folder});
 						const widget_values = Object.values(widget_resp)[0];
 						if(files.length === 0) {
