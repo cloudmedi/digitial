@@ -153,7 +153,7 @@ module.exports = {
 					createdAt,
 					updatedAt,
 					status,
-					user
+					user: new ObjectId(user)
 				};
 
 				const check_folder = await ctx.call("v1.filemanager.find", {
