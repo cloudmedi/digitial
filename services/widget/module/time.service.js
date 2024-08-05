@@ -109,7 +109,7 @@ module.exports = {
 				}
 			}
 		},
-		list: false,
+		list: true,
 		get: false,
 		count: false,
 		insert: false,
