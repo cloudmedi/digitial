@@ -23,8 +23,18 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
+			"user",
+			"path",
+			"domain",
+			"folder",
+			"name",
+			"slug",
+			"provider",
+			"type",
+			"file",
 			"url",
 			"meta",
+			"status",
 			"createdAt",
 			"updatedAt",
 		],
@@ -45,6 +55,14 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
+				ctx.params.status = true;
+				ctx.params.path = "";
+				ctx.params.domain = "";
+				ctx.params.folder = "";
+				ctx.params.slug = this.randomName();
+				ctx.params.provider = "webpage";
+				ctx.params.type = "url";
+				ctx.params.file = "";
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -61,6 +79,7 @@ module.exports = {
 			auth: "required",
 			params: {
 				url: {type: "string", required: true},
+				name: {type: "string", required: true},
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
@@ -87,14 +106,12 @@ module.exports = {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
 			}
 		},
-		get: false,
-		count: false,
-		insert: false,
 		update: {
 			auth: "required",
 			params: {
 				id: {type: "string", required: true},
 				url: {type: "string", required: true},
+				name: {type: "string", required: true},
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
@@ -118,14 +135,27 @@ module.exports = {
 		},
 		remove: {
 			auth: "required"
-		}
+		},
+		get: false,
+		count: false,
+		insert: false
 	},
 
 	/**
 	 * Methods
 	 */
 	methods: {
-
+		randomName() {
+			let length = 8;
+			let result = "";
+			const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			let charactersLength = characters.length;
+			for (let i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() *
+					charactersLength));
+			}
+			return result;
+		},
 	},
 
 	/**
