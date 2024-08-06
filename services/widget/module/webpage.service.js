@@ -73,7 +73,7 @@ module.exports = {
 
 					return {"webpage": {...doc}};
 				} else {
-					return check;
+					return {"webpage": {...check}};
 					/*throw new MoleculerClientError(`Duplicated Record for URL @${entity.url}`, 409, "", [{
 						field: "widget.webpage",
 						message: "Duplicated Record"
