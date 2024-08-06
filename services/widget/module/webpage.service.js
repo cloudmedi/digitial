@@ -116,7 +116,9 @@ module.exports = {
 				}
 			}
 		},
-		remove: false
+		remove: {
+			auth: "required"
+		}
 	},
 
 	/**
