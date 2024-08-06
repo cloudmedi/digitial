@@ -59,7 +59,6 @@ module.exports = {
 				ctx.params.path = "";
 				ctx.params.domain = "";
 				ctx.params.folder = "";
-				ctx.params.slug = this.randomName();
 				ctx.params.provider = "webpage";
 				ctx.params.type = "url";
 				ctx.params.file = "";
@@ -83,6 +82,8 @@ module.exports = {
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
+				ctx.params.slug = this.randomName();
+
 				const entity = ctx.params;
 				const count = await this.adapter.count({user: new ObjectId(entity.user)});
 				const check = await this.adapter.findOne({url: entity.url, user: ctx.meta.user._id});

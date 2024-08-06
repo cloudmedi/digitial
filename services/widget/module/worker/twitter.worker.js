@@ -3,6 +3,7 @@ const DbMixin = require("../../../../mixins/db.mixin");
 const _ = require("lodash");
 const Cron = require("@r2d2bzh/moleculer-cron");
 const config = require("config");
+const {TwitterApi} = require("twitter-api-v2");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -25,19 +26,19 @@ module.exports = {
 			cronTime: "*/30 * * * * *",
 			onTick: function () {
 
-				this.logger.info("JobIGCheckList ticked");
+				this.logger.info("JobTWCheckList ticked");
 
 				this.getLocalService("v1.widget.twitter.worker").broker.cacher.get("widget:twitter:check").then((checklist) => {
-					if(checklist) {
-						checklist.map(ig_profile => {
-							this.getLocalService("v1.widget.instagram.worker")
-								.actions.startProcess({ig_profile})
+					if (checklist) {
+						checklist.map(twitter_profile => {
+							this.getLocalService("v1.widget.twitter.worker")
+								.actions.startProcess({twitter_profile})
 								.then((data) => {
 									this.logger.info("Job Added to Queue", data);
 								});
 						});
 					} else {
-						console.log(checklist);
+						console.log("TW checklist", checklist);
 					}
 				});
 
@@ -47,27 +48,7 @@ module.exports = {
 				console.log("JobIGCheckList created");
 			},
 			manualStart: false,
-		},
-		/*{
-			name: "JobWhoStartAnother",
-			cronTime: "* * * * *",
-			onTick: function () {
-
-				console.log("JobWhoStartAnother ticked");
-
-				const job = this.getJob("JobHelloWorld");
-				console.log("job.lastDate()", job.lastDate());
-				if (!job.lastDate()) {
-					job.start();
-				} else {
-					console.log("JobHelloWorld is already started!");
-				}
-
-			},
-			runOnInit: function () {
-				console.log("JobWhoStartAnother is created");
-			},
-		}*/
+		}
 	],
 	/**
 	 * Settings
@@ -90,13 +71,6 @@ module.exports = {
 		populates: {}
 	},
 
-	/*events: {
-		// Subscribe to `user.created` event
-		async "instagram.created"(entity) {
-			console.log("Instagram created:", entity);
-			await this.upsertCheckList(entity);
-		},	// Subscribe to `user.created` event
-	},*/	// Subscribe to `user.created` event
 	/**
 	 * Actions
 	 */
@@ -108,13 +82,11 @@ module.exports = {
 		},
 		startProcess: {
 			params: {
-				"ig_profile": "object",
+				"twitter_profile": "object",
 			},
 			async handler(ctx) {
-				//const api_info = (config.get("provider_creds"))["instagram"];
-				//this.logger.info("Checking account", api_info);
 				try {
-					this.addCheckItemToQueue(ctx.params.ig_profile);
+					this.addCheckItemToQueue(ctx.params.twitter_profile);
 					return true;
 				} catch (e) {
 					console.error(e);
@@ -140,36 +112,23 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-		async upsertCheckList(entity) {
-			const check_list = await this.broker.cacher.get("widget:instagram:check");
-			if (check_list?.length > 0) {
-				// gelen veri checklist'de var mı?
-				const has_inserted = _.find(check_list, {_id: entity._id});
-				let data = [...check_list];
-				if (!has_inserted) {
-					data.push(entity);
-					await this.broker.cacher.set("widget:instagram:check", data);
-				}
-			} else {
-				// checklist hiç oluşmamışsa, oluştur
-				const list = await this.adapter.find();
-				let data = [];
-				if (list.length > 0) {
-					data = list;
-				} else {
-					data = [entity];
-				}
-
-				await this.broker.cacher.set("widget:instagram:check", data, 3600 * 12);
-			}
-
-			return true;
-		},
 		/**
 		 * Add Queue
 		 * */
-		addCheckItemToQueue(entity) {
-			console.log("entity", entity);
+		async addCheckItemToQueue(entity) {
+			const api_info = (config.get("provider_creds"))["twitter"];
+
+			const twitterClient = new TwitterApi(api_info.bearer);
+			//const readOnlyClient = twitterClient.readOnly;
+
+			//const user_profile = await readOnlyClient.v2.userByUsername("bulentalkan");
+			const user_profile = await twitterClient.v2.me();
+			console.log("user_profile", user_profile);
+
+			/*const user_timeline = await client.v2.userTimeline('12', {
+				expansions: ['attachments.media_keys', 'attachments.poll_ids', 'referenced_tweets.id'],
+				'media.fields': ['url'],
+			});*/
 		}
 	},
 

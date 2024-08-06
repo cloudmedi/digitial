@@ -1,6 +1,9 @@
 "use strict";
 const {ObjectId} = require("mongodb");
 const _ = require("lodash");
+const DbMixin = require("../../../mixins/db.mixin");
+const {MoleculerClientError} = require("moleculer").Errors;
+
 /**
  * @todo: https://www.npmjs.com/package/twitter-api-v2 modülü kullanılacak
  * */
@@ -16,7 +19,7 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	/*mixins: [DbMixin("widget_image")],*/
+	mixins: [DbMixin("widget_twitter")],
 	whitelist: [],
 	/**
 	 * Settings
@@ -35,6 +38,7 @@ module.exports = {
 			"type",
 			"file",
 			"twitter_username",
+			"limit",
 			"meta",
 			"status",
 			"createdAt",
@@ -66,7 +70,6 @@ module.exports = {
 				ctx.params.path = "";
 				ctx.params.domain = "";
 				ctx.params.folder = "";
-				ctx.params.slug = this.randomName();
 				ctx.params.provider = "twitter";
 				ctx.params.type = "username";
 				ctx.params.file = "";
@@ -92,13 +95,21 @@ module.exports = {
 			auth: "required",
 			params: {
 				twitter_username: {type: "string", required: true},
+				limit: {type: "number", required: false, default: 5},
 				name: {type: "string", required: true},
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
+				ctx.params.slug = this.randomName();
+
 				const entity = ctx.params;
 				const count = await this.adapter.count({user: new ObjectId(entity.user)});
-				const check = await this.adapter.findOne({twitter_username: entity.twitter_username, user: ctx.meta.user._id});
+				console.log("count", count);
+				const check = await this.adapter.findOne({
+					twitter_username: entity.twitter_username,
+					user: ctx.meta.user._id
+				});
+
 				if (!check && count < 2) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("Twitter.created", {...doc}, ["widget.twitter"]);
@@ -170,7 +181,7 @@ module.exports = {
 				}
 			} else {
 				// checklist hiç oluşmamışsa, oluştur
-				const list = await this.adapter.find();
+				const list = await this.adapter.find({query: {status: 1}});
 				let data = [];
 				if (list.length > 0) {
 					data = list;
@@ -182,7 +193,18 @@ module.exports = {
 			}
 
 			return true;
-		}
+		},
+		randomName() {
+			let length = 8;
+			let result = "";
+			const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+			let charactersLength = characters.length;
+			for (let i = 0; i < length; i++) {
+				result += characters.charAt(Math.floor(Math.random() *
+					charactersLength));
+			}
+			return result;
+		},
 	},
 
 	/**
