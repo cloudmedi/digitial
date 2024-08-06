@@ -35,7 +35,22 @@
 			"hostname": "storage.bunnycdn.com",
 			"port": 21,
 			"conn_type": "passive",
-			"region": null
+			"region": null,
+			"video": {
+				"api_base": "video.bunnycdn.com",
+				"default_lib_id": "239233",
+				"api_key": "aaa52cea-85f0-4dc3-89e994191db3-1fb3-41c2",
+				"pull_zone": "vz-d99c6c4e-749",
+				"cdn_hostname": "vz-d99c6c4e-749.b-cdn.net",
+				"cdn_local_hostname": "stream.maiasignage.com"
+			}
+		},
+		"twitter": {
+			"api_key": "hNg1peaBiiTZQhBJp9GkGX9Q1",
+			"api_secret": "cBmqHazKK33RRsP6I7DQvaAPogdsELvERP2oB1IU4rbToILtsV",
+			"bearer": "AAAAAAAAAAAAAAAAAAAAAD1vugEAAAAAfzepTjtEalrYAQ3TOXQA0fKMgKQ%3DnrNrsN9yTVYqM0oafeQxkwgeV0CIscVsoB2FlaQsnjsi1uwgRR",
+			"access_token": "55778509-55OYuTUoSuk7dBFILOeMbKQ882G2ZVmJubSx2DLRC",
+			"access_token_secret": "YFY0mKcI2WkmtYRLMfpIIotxKPgVw5YrgGpqWoYOhqNEX"
 		},
 		"instagram": {
 			"api_base": "https://ig.rpd.ink/api/",

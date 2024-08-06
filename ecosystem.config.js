@@ -157,7 +157,7 @@ module.exports = {
 		{
 			name: "widget",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js services/widget/module/video.service.js services/widget/module/instagram.service.js services/widget/module/worker/instagram.worker.js",
+			args: "services/widget/widget.service.js services/widget/filemanager.service.js services/widget/module/image.service.js services/widget/module/video.service.js services/widget/module/instagram.service.js  services/widget/module/webpage.service.js ", /*services/widget/module/worker/instagram.worker.js*/
 			exec_mode: "cluster",
 			instances: 1,
 			env: {

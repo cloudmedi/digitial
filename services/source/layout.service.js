@@ -23,7 +23,7 @@ module.exports = {
 	 */
 	settings: {
 		// Available fields in the responses
-		fields: ["_id", "name", "properties", "meta", "image", "order"],
+		fields: ["_id", "name", "properties", "meta", "image", "order", "type"],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
@@ -46,6 +46,9 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.status = true;
+				if (!ctx.params.type) {
+					ctx.params.type = "page";
+				}
 			}, update(ctx) {
 				ctx.params.updatedAt = new Date();
 			}
@@ -59,9 +62,20 @@ module.exports = {
 		create: false,
 		list: {
 			auth: "required",
-			cache: {
+			cache: false, /*{
 				ttl: 60 * 60 * 24 * 7 // 1 week
+			},*/
+			params: {
+				type: {type: "string", "default": "page", required: false},
 			},
+			async handler(ctx) {
+				let type = ctx.params.type;
+				if (!type) {
+					type = "page";
+				}
+
+				return await this.adapter.find({query: {type: type}});
+			}
 		},
 		get: {
 			auth: "required",
@@ -119,6 +133,7 @@ module.exports = {
 					name: "single",
 					image: "",
 					order: 10,
+					type: "page",
 					properties: {
 						container: "flex-col",
 						boxes: [
@@ -131,23 +146,42 @@ module.exports = {
 					name: "two-row",
 					image: "",
 					order: 20,
+					type: "page",
 					properties: {
 						container: "flex-col",
 						boxes: [
 							{cell: 0, classes: "layout-two-row-01", meta: {}, resolution: "1920x960"},
-							{cell: 1, classes: "layout-two-row-02", meta: {},resolution: "1920x120"}
+							{cell: 1, classes: "layout-two-row-02", meta: {}, resolution: "1920x120"}
 						]
 					}, meta: {}
 				},
 				{
-					name: "two-col", image: "", order: 30, properties: {
+					name: "two-col",
+					image: "",
+					order: 30,
+					type: "page",
+					properties: {
 						container: "flex-col",
 						boxes: [
 							{cell: 0, classes: "layout-two-col-01", meta: {}, resolution: "1385x1080"},
-							{cell: 1, classes: "layout-two-col-02", meta: {},resolution: "535x1080"}
+							{cell: 1, classes: "layout-two-col-02", meta: {}, resolution: "535x1080"}
 						],
 					}, meta: {}
-				}];
+				},
+				{
+					name: "single.widget.instagram",
+					image: "",
+					order: 10,
+					type: "widget.instagram",
+					properties: {
+						container: "flex-col",
+						boxes: [
+							{cell: 0, classes: "instagram.layout-single-01", meta: {}, resolution: "1920x1080"}
+						],
+
+					}, meta: {}
+				},
+			];
 
 			await this.adapter.insertMany(data);
 		},

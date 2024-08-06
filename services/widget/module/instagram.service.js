@@ -81,6 +81,23 @@ module.exports = {
 	 * Actions
 	 */
 	actions: {
+		properties: {
+			rest: "GET /properties",
+			auth: "required",
+			async handler(ctx) {
+				return {
+					name: "image",
+					params: [
+						"username",
+						"meta",
+						"limit",
+						"content",
+						"type",
+					],
+					status: true
+				};
+			}
+		},
 		create: {
 			rest: "POST /",
 			auth: "required",
@@ -93,7 +110,7 @@ module.exports = {
 				const entity = ctx.params;
 				const count = await this.adapter.count({user: new ObjectId(entity.user)});
 				const check = await this.adapter.findOne({username: entity.username, user: entity.user});
-				if (!check && count < 3 ) {
+				if (!check && count < 3) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("instagram.created", {...doc}, ["widget.instagram"]);
 

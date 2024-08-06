@@ -71,7 +71,7 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const count = await this.adapter.count({user: ObjectId(entity.user)});
+				const count = await this.adapter.count({user: new ObjectId(entity.user)});
 				const check = await this.adapter.findOne({timezone: entity.timezone, user: ctx.meta.user._id});
 				if (!check && count < 6) {
 					const doc = await this.adapter.insert(entity);
@@ -109,7 +109,7 @@ module.exports = {
 				}
 			}
 		},
-		list: false,
+		list: true,
 		get: false,
 		count: false,
 		insert: false,
