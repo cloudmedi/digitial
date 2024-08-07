@@ -95,7 +95,7 @@ module.exports = {
 						args: ["device-status", {status: ctx.params.state, screen: {...screen}}], //optional
 						volatile: false, //optional
 						local: false, //optional
-						rooms: [`user-${screen.user._id}-devices`, `device-${screen.device._id}`] //optional
+						rooms: [`user-${screen.user._id}-devices`] //optional
 					});
 				}
 			}
