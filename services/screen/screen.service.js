@@ -328,9 +328,10 @@ module.exports = {
 							state: "offline"
 						});
 					}
-					if (screen.source) {
+
+					/*if (screen.source) {
 						await ctx.call("v1.source.remove", {id: screen.source._id});
-					}
+					}*/
 
 					await this.adapter.removeById(screen._id);
 
