@@ -210,6 +210,7 @@ module.exports = {
 		getDefaultFolder: {
 			rest: "GET /folder/default",
 			auth: "required",
+			cache: false,
 			async handler(ctx) {
 				const default_folder = await ctx.call("v1.filemanager.find", {
 					query: {

@@ -106,7 +106,7 @@ module.exports = {
 							meta: {},
 							status: 1,
 							createdAt: new Date(),
-							updatedAt: null
+							updatedAt: new Date()
 						};
 						data.push(image_row);
 
@@ -149,7 +149,7 @@ module.exports = {
 					"file": "YFfxuBOm.jpg",
 					"status": 1,
 					"createdAt": new Date(),
-					"updatedAt": null,
+					"updatedAt": new Date(),
 				},
 				{
 					"user": user_id,
