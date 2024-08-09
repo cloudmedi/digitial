@@ -58,6 +58,14 @@
 			"api_pass": "",
 			"api_key": null,
 			"api_secret": null
+		},
+		"iyzico": {
+			"api_base": "https://api.iyzipay.com",
+			"api_key":"VG9zSznWZzsRAbI1UWPlLyLoGh5ZT2P6",
+			"api_secret": "Vj2HECQhPOQr9Q6kjGDOpQTMst75viQf",
+			"cep_pos_api_key": "",
+			"cep_pos_api_secret": "",
+			"callback_url": ""
 		}
 	}
 }

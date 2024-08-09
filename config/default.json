@@ -58,6 +58,14 @@
 			"api_pass": "",
 			"api_key": null,
 			"api_secret": null
+		},
+		"iyzico": {
+			"api_base": "https://sandbox-api.iyzipay.com",
+			"api_key":"sandbox-hvsmK9L3pzzvFJAJVeiCzUTi1plj1EY6",
+			"api_secret": "sandbox-AMVm5t9PwiHUUjP70VsBfIyi6FTZcnEP",
+			"cep_pos_api_key": "amdxpJGijYaeyBVO",
+			"cep_pos_api_secret": "l1FDHqzAkWXRzHoncfAVsl1pZzW8UuOV",
+			"callback_url": "https://trekblends-callback.rdbr.workers.dev/"
 		}
 	}
 }

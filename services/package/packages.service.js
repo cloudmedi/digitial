@@ -171,25 +171,46 @@ module.exports = {
 		 */
 		async seedDB() {
 			try {
-				const packages = [{
-					name: "Free Trial",
-					description: "7 days free trial",
-					old_price: 100,
-					price: 0,
-					annual_discount: 0,
-					serial_count: 1,
-					is_trial: true,
-					trial_days: 7,
-					package_properties: [
-						{name: "150 serial number", description: ""},
-						{name: "10 req/min", description: ""},
-						{name: "Cancel when you want", description: ""}
-					],
-					order: 0,
-					status: true,
-					updatedAt: null,
-					createdAt: new Date()
-				}];
+				const packages = [
+					{
+						name: "Free Trial",
+						description: "7 days free trial",
+						old_price: 100,
+						price: 0,
+						annual_discount: 0,
+						serial_count: 1,
+						is_trial: true,
+						trial_days: 7,
+						package_properties: [
+							{name: "150 serial number", description: ""},
+							{name: "10 req/min", description: ""},
+							{name: "Cancel when you want", description: ""}
+						],
+						order: 0,
+						status: true,
+						updatedAt: null,
+						createdAt: new Date()
+					},
+					{
+						name: "10 Screen",
+						description: "10 Screen license",
+						old_price: 0,
+						price: 50,
+						annual_discount: 10,
+						serial_count: 10,
+						is_trial: false,
+						trial_days: 365,
+						package_properties: [
+							{name: "10 serial number", description: ""},
+							{name: "60 req/min", description: ""},
+							{name: "Cancel when you want", description: ""}
+						],
+						order: 0,
+						status: true,
+						updatedAt: null,
+						createdAt: new Date()
+					},
+				];
 				await this.adapter.insertMany(packages);
 			} catch (e) {
 				console.error("Error seeding database:", e);
