@@ -322,7 +322,9 @@ module.exports = {
 							serial: screen.device.serial,
 							state: "deleting"
 						});
+
 						await ctx.call("v1.device.remove", {id: screen.device._id});
+
 						await this.broker.call("v1.device.status", {
 							serial: screen.device.serial,
 							state: "offline"
