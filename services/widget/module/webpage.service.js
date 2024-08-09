@@ -65,18 +65,19 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const count = await this.adapter.count({user: new ObjectId(entity.user)});
-				const check = await this.adapter.findOne({url: entity.url, user: ctx.meta.user._id});
+				const count = await this.adapter.count({user: new ObjectId(ctx.meta.user._id)});
+				const check = await this.adapter.findOne({url: entity.url, user: new ObjectId(ctx.meta.user._id)});
 				if (!check && count < 8) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("Webpage.created", {...doc}, ["widget.webpage"]);
 
 					return {"webpage": {...doc}};
 				} else {
-					throw new MoleculerClientError(`Duplicated Record for URL @${entity.url}`, 409, "", [{
+					return {"webpage": {...check}};
+					/*throw new MoleculerClientError(`Duplicated Record for URL @${entity.url}`, 409, "", [{
 						field: "widget.webpage",
 						message: "Duplicated Record"
-					}]);
+					}]);*/
 				}
 			}
 		},
@@ -116,7 +117,9 @@ module.exports = {
 				}
 			}
 		},
-		remove: false
+		remove: {
+			auth: "required"
+		}
 	},
 
 	/**

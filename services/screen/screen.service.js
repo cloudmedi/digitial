@@ -322,15 +322,18 @@ module.exports = {
 							serial: screen.device.serial,
 							state: "deleting"
 						});
+
 						await ctx.call("v1.device.remove", {id: screen.device._id});
+
 						await this.broker.call("v1.device.status", {
 							serial: screen.device.serial,
 							state: "offline"
 						});
 					}
-					if (screen.source) {
+
+					/*if (screen.source) {
 						await ctx.call("v1.source.remove", {id: screen.source._id});
-					}
+					}*/
 
 					await this.adapter.removeById(screen._id);
 

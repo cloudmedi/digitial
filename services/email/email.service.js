@@ -1,13 +1,10 @@
 "use strict";
-const {MoleculerClientError} = require("moleculer").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const CacheCleanerMixin = require("../../mixins/cache.cleaner.mixin");
 const _ = require("lodash");
-const postmark = require("postmark");
 const config = require("config");
-const countries_json = require("../../data/countries-states-cities.json");
-const creds = (config.get("provider_creds"))["postmarkapp"];
 const env = (config.get("ENV")) ?? "test";
+const nodemailer = require("nodemailer");
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -107,20 +104,36 @@ module.exports = {
 			async handler(ctx) {
 				const user = ctx.params.user;
 				const template = ctx.params.template;
+
+				// replace field
+				const html_content = template.html.replaceAll("[NAME]", user.username).replaceAll("[CODE]", user.email_verify_code);
+				const text_content = template.text.replaceAll("[NAME]", user.username).replaceAll("[CODE]", user.email_verify_code);
+				// end of replace field
+
 				let to = ctx.params.user.email;
 				if (env === "test") {
-					to = "murat.backend@maiasignage.com";
+					to = "blackbunny@gmail.com";
 				}
 
-				const mailClient = new postmark.ServerClient(`${creds.api_key}`);
 				try {
-					const mail_response = await mailClient.sendEmail({
-						"From": "developer@maiasignage.com",
-						"To": `${to}`,
-						"Subject": template.subject,
-						"TextBody": template.text,
-						"HtmlBody": template.html
+					const mailTransporter = nodemailer.createTransport({
+						host: "smtp.hostinger.com",
+						port: 465,
+						secure: true, // Use `true` for port 465, `false` for all other ports
+						auth: {
+							user: "noreply@maiasignage.com",
+							pass: `hTMU7r\\34ZQD`,
+						},
 					});
+
+					await mailTransporter.sendMail({
+						from: '"Maia Signage" <noreply@maiasignage.com>', // sender address
+						to: `${to}`, // list of receivers
+						subject: template.subject, // Subject line
+						text: text_content, // plain text body
+						html: html_content, // html body
+					});
+
 				} catch (e) {
 					console.log(e);
 				}
