@@ -189,6 +189,7 @@ module.exports = {
 		list: {
 			rest: "GET /list/:parent?",
 			auth: "required",
+			cache: false,
 			params: {
 				parent: {type: "string", default: null, optional: true}
 			},
@@ -239,9 +240,10 @@ module.exports = {
 		},
 		get: {
 			rest: "GET /folder/:id?",
-			cache: {
+			/* cache: {
 				keys: ["#userID", "id"]
-			},
+			},*/
+			cache: false,
 			auth: "required",
 			params: {
 				id: {type: "string", optional: true}
