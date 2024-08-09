@@ -22,7 +22,7 @@ module.exports = {
 	crons: [
 		{
 			name: "JobIGCheckList",
-			cronTime: "*/30 * * * * *",
+			cronTime: "0 */3 * * *", /* 3 saatte 1 */
 			onTick: function () {
 
 				this.logger.info("JobIGCheckList ticked");

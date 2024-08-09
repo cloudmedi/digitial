@@ -189,6 +189,7 @@ module.exports = {
 		list: {
 			rest: "GET /list/:parent?",
 			auth: "required",
+			cache: false,
 			params: {
 				parent: {type: "string", default: null, optional: true}
 			},
@@ -210,6 +211,7 @@ module.exports = {
 		getDefaultFolder: {
 			rest: "GET /folder/default",
 			auth: "required",
+			cache: false,
 			async handler(ctx) {
 				const default_folder = await ctx.call("v1.filemanager.find", {
 					query: {
@@ -238,9 +240,10 @@ module.exports = {
 		},
 		get: {
 			rest: "GET /folder/:id?",
-			cache: {
+			/* cache: {
 				keys: ["#userID", "id"]
-			},
+			},*/
+			cache: false,
 			auth: "required",
 			params: {
 				id: {type: "string", optional: true}
