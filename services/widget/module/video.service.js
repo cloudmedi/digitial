@@ -332,7 +332,15 @@ module.exports = {
 		update: {
 			auth: "required",
 		},
-		remove: true,
+		remove: {
+			auth: "required",
+			params: {
+				id: "string"
+			},
+			async handler(ctx) {
+				return await this.bunny_delete_video(ctx.params.id);
+			}
+		},
 		create: false,
 		webhook: {
 			rest: "POST /webhook",
@@ -369,13 +377,16 @@ module.exports = {
 					}
 				};
 
-				axios
+				return axios
 					.request(options)
 					.then(function (response) {
-						console.log(response.data);
+						return response.data;
 					})
 					.catch(function (error) {
-						console.error(error);
+						throw new MoleculerClientError("Connection Error", error.statusCode, "", [{
+							field: "widget.video",
+							message: error.message
+						}]);
 					});
 			}
 
