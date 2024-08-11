@@ -257,7 +257,7 @@ module.exports = {
 				let id = ctx.params?.id;
 				let parent = null;
 				if (id !== undefined) {
-					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), user: new ObjectId(ctx.meta.user._id), status: 1});
+					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), user: new ObjectId(ctx.meta.user._id), status: true});
 					if (!folder_data.folder) {
 						throw new MoleculerClientError("Folder Not Found", 404, "", [{
 							field: "folder",

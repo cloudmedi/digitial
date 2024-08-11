@@ -181,7 +181,7 @@ module.exports = {
 				}
 			} else {
 				// checklist hiç oluşmamışsa, oluştur
-				const list = await this.adapter.find({query: {status: 1}});
+				const list = await this.adapter.find({query: {status: true}});
 				let data = [];
 				if (list.length > 0) {
 					data = list;

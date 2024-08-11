@@ -104,7 +104,7 @@ module.exports = {
 							type: "image",
 							file: val.file,
 							meta: {},
-							status: 1,
+							status: true,
 							createdAt: new Date(),
 							updatedAt: new Date()
 						};

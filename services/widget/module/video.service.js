@@ -106,7 +106,7 @@ module.exports = {
 							file: val.file,
 							type: "video",
 							process_step: 0,
-							status: 1,
+							status: true,
 							meta: {},
 							createdAt: new Date(),
 							updatedAt: new Date()
@@ -292,7 +292,7 @@ module.exports = {
 			async handler(ctx) {
 				let limit = 20;
 				let offset = 0;
-				let query = {user: new ObjectId(ctx.meta.user._id), status: 1};
+				let query = {user: new ObjectId(ctx.meta.user._id), status: true};
 				if (ctx.params.folder) {
 					query.folder = new ObjectId(ctx.params.folder);
 				}
