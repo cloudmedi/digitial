@@ -66,7 +66,7 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.status = true;
-				ctx.params.user = ctx.meta.user._id;
+				ctx.params.user = ctx.meta.user?._id ?? ctx.params.user;
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -257,7 +257,7 @@ module.exports = {
 				let id = ctx.params?.id;
 				let parent = null;
 				if (id !== undefined) {
-					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), user: new ObjectId(ctx.meta.user._id), status: true});
+					folder_data.folder = await this.adapter.findOne({_id: new ObjectId(ctx.params.id), user: new ObjectId(ctx.meta.user._id), status: 1});
 					if (!folder_data.folder) {
 						throw new MoleculerClientError("Folder Not Found", 404, "", [{
 							field: "folder",
