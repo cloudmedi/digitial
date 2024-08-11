@@ -66,7 +66,7 @@ module.exports = {
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.status = true;
-				ctx.params.user = ctx.meta.user._id;
+				ctx.params.user = ctx.meta.user?._id ?? ctx.params.user;
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
