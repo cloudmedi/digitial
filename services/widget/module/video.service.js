@@ -10,6 +10,7 @@ const ffmpeg = require("fluent-ffmpeg");
 
 const DbMixin = require("../../../mixins/db.mixin");
 const config = require("config");
+const axios = require("axios");
 const domains = config.get("DOMAINS");
 
 
@@ -352,6 +353,34 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		async bunny_delete_video(id) {
+			const api_info = (config.get("provider_creds"))["bunny_net"];
+			const ACCESS_KEY = api_info.video.api_key;
+			const DEFAULT_LIB_ID = api_info.default_lib_id;
+
+			const video = await this.adapter.findOne({_id: new ObjectId(id)});
+			if (video && video.process_step >= 2) {
+				const options = {
+					method: "DELETE",
+					url: `https://video.bunnycdn.com/library/${DEFAULT_LIB_ID}/videos/${video.meta.video_id}}`,
+					headers: {
+						accept: "application/json",
+						AccessKey: ACCESS_KEY
+					}
+				};
+
+				axios
+					.request(options)
+					.then(function (response) {
+						console.log(response.data);
+					})
+					.catch(function (error) {
+						console.error(error);
+					});
+			}
+
+			await this.adapter.removeById(video._id);
+		},
 		getVideoDuration(videoPath) {
 			return new Promise((resolve, reject) => {
 				ffmpeg.ffprobe(videoPath, (err, metadata) => {
