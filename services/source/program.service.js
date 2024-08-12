@@ -25,12 +25,21 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
-			"name"
+			"user",
+			"name",
+			"datetime_start",
+			"datetime_end",
+			"screens",
+			"createdAt",
+			"updatedAt",
+			"status"
 		],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
-			name: "string"
+			name: "string",
+			datetime_start: {type: "date", convert: true},
+			datetime_end: {type: "date", convert: true},
 		},
 		populates: {}
 	},
@@ -47,6 +56,14 @@ module.exports = {
 			 * @param {Context} ctx
 			 */
 			create(ctx) {
+				if (!ctx.params.name) {
+					ctx.params.name = "Schedule " + Date.now();
+				}
+
+				if (!ctx.params.screens) {
+					ctx.params.screens = [];
+				}
+
 				ctx.params.createdAt = new Date();
 				ctx.params.updatedAt = new Date();
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
@@ -54,6 +71,11 @@ module.exports = {
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
+			}
+		},
+		after: {
+			create(ctx) {
+
 			}
 		}
 	},
@@ -83,7 +105,7 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
-			async handler(ctx)  {
+			async handler(ctx) {
 				return await this.adapter.findOne({user: ctx.params.user});
 			}
 		},
@@ -144,7 +166,8 @@ module.exports = {
 		 * It is called in the DB.mixin after the database
 		 * connection establishing & the collection is empty.
 		 */
-		async seedDB() {},
+		async seedDB() {
+		},
 	},
 
 	/**
