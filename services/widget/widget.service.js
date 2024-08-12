@@ -105,6 +105,7 @@ module.exports = {
 				if (entity.widget.length > 20) {
 					check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
 				} else {
+					// slug kontrolü
 					check_module = await this.adapter.findOne({slug: entity.widget});
 				}
 				if (check_module) {
