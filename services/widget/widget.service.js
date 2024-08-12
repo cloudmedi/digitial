@@ -76,7 +76,7 @@ module.exports = {
 				const entity = ctx.params;
 
 				const check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
-				if(check_module) {
+				if (check_module) {
 					return await ctx.call(`v1.widget.${check_module.slug}.properties`);
 				} else {
 					return "non";
@@ -101,8 +101,13 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const entity = ctx.params;
-				const check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
-				if(check_module) {
+				let check_module = null;
+				if (entity.widget.length > 20) {
+					check_module = await this.adapter.findOne({_id: new ObjectId(entity.widget)});
+				} else {
+					check_module = await this.adapter.findOne({slug: entity.widget});
+				}
+				if (check_module) {
 					console.log(entity.id);
 					return await ctx.call(`v1.widget.${check_module.slug}.remove`, {id: entity.id});
 				} else {
@@ -168,11 +173,51 @@ module.exports = {
 		 */
 		async seedDB() {
 			const data = [
-				{icon: "fa-picture", name: "image", slug: "image", provider: "local", service: "image", has_file: true, meta: {}},
-				{icon: "fa-video", name: "video", slug: "video", provider: "local", service: "video", has_file: true, meta: {}},
-				{icon: "fa-instagram", name: "instagram", slug: "instagram", provider: "local", service: "instagram", has_file: false, meta: {}},
-				{icon: "fa-clock", name: "time", slug: "time", provider: "local", service: "time", has_file: false, meta: {}},
-				{icon: "fa-youtube", name: "youtube", slug: "youtube", provider: "local", service: "youtube", has_file: false, meta: {}}
+				{
+					icon: "fa-picture",
+					name: "image",
+					slug: "image",
+					provider: "local",
+					service: "image",
+					has_file: true,
+					meta: {}
+				},
+				{
+					icon: "fa-video",
+					name: "video",
+					slug: "video",
+					provider: "local",
+					service: "video",
+					has_file: true,
+					meta: {}
+				},
+				{
+					icon: "fa-instagram",
+					name: "instagram",
+					slug: "instagram",
+					provider: "local",
+					service: "instagram",
+					has_file: false,
+					meta: {}
+				},
+				{
+					icon: "fa-clock",
+					name: "time",
+					slug: "time",
+					provider: "local",
+					service: "time",
+					has_file: false,
+					meta: {}
+				},
+				{
+					icon: "fa-youtube",
+					name: "youtube",
+					slug: "youtube",
+					provider: "local",
+					service: "youtube",
+					has_file: false,
+					meta: {}
+				}
 			];
 			await this.adapter.insertMany(data);
 		}
