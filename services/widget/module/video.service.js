@@ -390,7 +390,7 @@ module.exports = {
 						AccessKey: ACCESS_KEY
 					}
 				};
-
+console.log("options",options);
 				return axios
 					.request(options)
 					.then(function (response) {
