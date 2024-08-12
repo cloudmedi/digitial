@@ -384,13 +384,13 @@ module.exports = {
 			if (video && video.process_step >= 2) {
 				const options = {
 					method: "DELETE",
-					url: `https://video.bunnycdn.com/library/${DEFAULT_LIB_ID}/videos/${video.meta.video_id}}`,
+					url: `https://video.bunnycdn.com/library/${DEFAULT_LIB_ID}/videos/${video.meta.video_id}`,
 					headers: {
 						accept: "application/json",
 						AccessKey: ACCESS_KEY
 					}
 				};
-console.log("options",options);
+
 				return axios
 					.request(options)
 					.then(function (response) {
