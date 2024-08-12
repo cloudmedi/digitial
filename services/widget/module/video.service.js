@@ -343,7 +343,16 @@ module.exports = {
 				id: "string"
 			},
 			async handler(ctx) {
-				return await this.bunny_delete_video(ctx.params.id);
+				const delete_bunny = await this.bunny_delete_video(ctx.params.id);
+				if(delete_bunny) {
+					await this.adapter.removeById( ctx.params.id);
+				}
+
+				return {
+					status: "success",
+					message: "Source Removed successfully",
+					id: ctx.params.id,
+				};
 			}
 		},
 		create: false,
@@ -369,7 +378,7 @@ module.exports = {
 		async bunny_delete_video(id) {
 			const api_info = (config.get("provider_creds"))["bunny_net"];
 			const ACCESS_KEY = api_info.video.api_key;
-			const DEFAULT_LIB_ID = api_info.default_lib_id;
+			const DEFAULT_LIB_ID = api_info.video.default_lib_id ?? 239233;
 
 			const video = await this.adapter.findOne({_id: new ObjectId(id)});
 			if (video && video.process_step >= 2) {
