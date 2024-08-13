@@ -33,6 +33,7 @@ module.exports = {
 		fields: [
 			"_id",
 			"user",
+			"full_name",
 			"identity_number",
 			"birthdate",
 			"phone",
@@ -47,6 +48,7 @@ module.exports = {
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
 			user: {type: "object"},
+			full_name: {type: "string"},
 			birthdate: {type: "date", convert: true},
 			merchant_name: {type: "string", default: "Personal", required: false},
 			identity_number: {type: "string"},

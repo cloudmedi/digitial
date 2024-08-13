@@ -35,13 +35,7 @@ module.exports = {
 		fields: [],
 
 		// Validator for the `create` & `insert` actions.
-		entityValidator: {
-			amount: {type: "number", min: 100},
-			country: {type: "string"},
-			start_date: {type: "date", format: "YYYY-MM-DD"},
-			end_date: {type: "date", format: "YYYY-MM-DD"},
-			car_rental: {type: "boolean"},
-		},
+		entityValidator: {},
 		populates: {}
 	},
 
@@ -62,7 +56,37 @@ module.exports = {
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
+			},
+			start(ctx) {
+				return new Promise((resolve, reject) => {
+					ctx.params.createdAt = new Date();
+					ctx.call("v1.profile.getUser", {user: ctx.meta.user._id})
+						.then(profile => {
+							if (profile) {
+								ctx.params.name = profile.full_name;
+								ctx.params.user = ctx.meta.user._id;
+								ctx.params.email = ctx.meta.user.email;
+								ctx.params.address = profile.address;
+								ctx.params.phone = profile.phone;
+								ctx.params.identity_number = profile.identity_number;
+								ctx.params.city = profile.city;
+								ctx.params.country = profile.country;
+								ctx.params.zip_code = profile.postcode;
+								ctx.params.state = profile.city;
+								resolve(); // Başarılı olduğunda resolve çağrılır.
+							} else {
+								reject(new MoleculerClientError("This Device hasn't been recognized", 404, "", [{
+									field: "user.profile",
+									message: "profile not found"
+								}]));
+							}
+						})
+						.catch(error => {
+							reject(error); // Eğer ctx.call başarısız olursa, hata yakalanır.
+						});
+				});
 			}
+
 		}
 	},
 
@@ -72,7 +96,9 @@ module.exports = {
 	actions: {
 		start: {
 			rest: "POST /start",
+			auth: "required",
 			params: {
+				/*
 				name: "string",
 				email: "string",
 				address: "string",
@@ -82,7 +108,7 @@ module.exports = {
 				country: "string",
 				zip_code: "string",
 				state: "string",
-				tour_date: {type: "date", convert: true},
+				*/
 				basket_items: "array",
 				locale: "string",
 				amount: "string",
@@ -146,17 +172,7 @@ module.exports = {
 					lower: true,      // Küçük harflere dönüştür
 					strict: true      // Sadece URL dostu karakterleri tut
 				});
-				let user = await (await ctx.call("users.create", {
-					username: `${username}${rnd}`,
-					password: this.generateRandomPassword(6),
-					email: data.buyer.email,
-					internal: true
-				}));
-				if (user?.errors) {
-					user = await ctx.call("users.getUserByEmail", {email: data.buyer.email});
-				} else {
-					user = user.user;
-				}
+				let user = await (await ctx.call("users.get", {id: ctx.meta.user._id}));
 				data.buyer.id = user._id;
 
 				data.buyer.registrationDate = moment(user.createdAt).format("YYYY-MM-DD HH:mm:ss");
@@ -183,7 +199,7 @@ module.exports = {
 							console.error(err);
 							reject(err);
 						} else {
-							console.log(result);
+							console.log("iyzico result", result);
 							ctx.call("v1.payment.update", {
 								id: data.conversationId,
 								provider_id: err ? "" : result.token,
@@ -247,7 +263,7 @@ module.exports = {
 						} else {
 							console.log("result", result);
 							if (result.status === "success") {
-								if(result.status !== "failure") {
+								if (result.status !== "failure") {
 									ctx.call("v1.payment.update", {
 										id: payment._id.toString(),
 										provider_response_2: err ?? result,
