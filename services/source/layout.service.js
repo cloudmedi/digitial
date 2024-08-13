@@ -134,6 +134,7 @@ module.exports = {
 					image: "",
 					order: 10,
 					type: "page",
+					direction: "h",
 					properties: {
 						container: "flex-col",
 						boxes: [
@@ -143,10 +144,30 @@ module.exports = {
 					}, meta: {}
 				},
 				{
+					name: "v-single",
+					image: "",
+					order: 10,
+					direction: "v",
+					properties: {
+						container: "flex-col",
+						boxes: [
+							{
+								"cell": 0,
+								"classes": "h-layout-single-01",
+								"meta": {},
+								"resolution": "1080-1920"
+							}
+						]
+					},
+					meta: {},
+					type: "page"
+				},
+				{
 					name: "two-row",
 					image: "",
 					order: 20,
 					type: "page",
+					direction: "h",
 					properties: {
 						container: "flex-col",
 						boxes: [
@@ -160,6 +181,7 @@ module.exports = {
 					image: "",
 					order: 30,
 					type: "page",
+					direction: "h",
 					properties: {
 						container: "flex-col",
 						boxes: [
@@ -173,6 +195,7 @@ module.exports = {
 					image: "",
 					order: 10,
 					type: "widget.instagram",
+					direction: "h",
 					properties: {
 						container: "flex-col",
 						boxes: [
