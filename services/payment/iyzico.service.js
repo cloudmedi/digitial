@@ -287,13 +287,42 @@ module.exports = {
 		count: false,
 		insert: false,
 		update: false,
-		remove: false
+		remove: false,
+		test: {
+			rest: "POST /test",
+			async handler(ctx) {
+				return await this.create_subscription_products();
+			}
+		}
 	},
 
 	/**
 	 * Methods
 	 */
 	methods: {
+		async create_subscription_products() {
+			const products = await this.broker.call("v1.package.find", {query: {is_trial: false}});
+			for (const product of products) {
+				if(product?.meta?.iyzico_id) {
+					console.log("id var");
+				} else {
+					const createRequest = {
+						locale: Iyzipay.LOCALE.EN,
+						conversationId: product._id.toString(),
+						name: product.name,
+						description: product.description
+					};
+					const iyzipay = new Iyzipay({
+						"apiKey": iyzico_conf.api_key,
+						"secretKey": iyzico_conf.api_secret,
+						"uri": iyzico_conf.api_base
+					});
+					iyzipay.subscriptionProduct.create(createRequest, function (err, result) {
+						console.log(err, result);
+					});
+				}
+			}
+		},
 		generateRandomPassword(length) {
 			return crypto.randomBytes(Math.ceil(length * 3 / 4))
 				.toString("base64")  // base64 formatına çevir
