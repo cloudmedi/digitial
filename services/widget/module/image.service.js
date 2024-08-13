@@ -133,103 +133,105 @@ module.exports = {
 
 	events: {
 		// Subscribe to `user.created` event
-		async "folder.created"(folder) {
-			console.log("event_fired");
-			console.log(folder.folder);
-			const user_id = folder.folder.user;
-			const default_images = [
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "chalo-gallardo-6uCy44FbdqM-unsplash.jpg",
-					"slug": "HuQe7jZw",
-					"provider": "local",
-					"file": "YFfxuBOm.jpg",
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "clay-banks-FPhpVpwUviA-unsplash.jpg",
-					"slug": "uXnwZdmw",
-					"provider": "local",
-					"file": "9EEi70Nz.jpg",
-					"type": "image",
-					"meta": {},
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "anton-lammert-UH2V6BYBHtU-unsplash.jpg",
-					"slug": "PKBsfIal",
-					"provider": "local",
-					"file": "rGmMKbOc.jpg",
-					"type": "image",
-					"meta": {},
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "omar-ram-z0VdFXfyhOk-unsplash.jpg",
-					"slug": "rzjd11C2",
-					"provider": "local",
-					"file": "NepYRUWx.jpg",
-					"type": "image",
-					"meta": {},
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "wolfgang-hasselmann-R5hhJYZoBRA-unsplash.jpg",
-					"slug": "fwE59w3L",
-					"provider": "local",
-					"file": "0qaLpDSU.jpg",
-					"type": "image",
-					meta: {},
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				},
-				{
-					"user": user_id,
-					"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
-					"domain": "cdn.maiasignage.com",
-					"folder": new ObjectId(folder.folder._id),
-					"name": "shiqi-zhao-18RECWIobXw-unsplash.jpg",
-					"slug": "vS5VG6KH",
-					"provider": "local",
-					"file": "PNepmkTf.jpg",
-					"type": "image",
-					meta: {},
-					"status": 1,
-					"createdAt": new Date(),
-					"updatedAt": new Date(),
-				}
-			];
+		/*
+				async "folder.created"(folder) {
+					console.log("event_fired");
+					console.log(folder.folder);
+					const user_id = folder.folder.user;
+					const default_images = [
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "chalo-gallardo-6uCy44FbdqM-unsplash.jpg",
+							"slug": "HuQe7jZw",
+							"provider": "local",
+							"file": "YFfxuBOm.jpg",
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						},
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "clay-banks-FPhpVpwUviA-unsplash.jpg",
+							"slug": "uXnwZdmw",
+							"provider": "local",
+							"file": "9EEi70Nz.jpg",
+							"type": "image",
+							"meta": {},
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						},
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "anton-lammert-UH2V6BYBHtU-unsplash.jpg",
+							"slug": "PKBsfIal",
+							"provider": "local",
+							"file": "rGmMKbOc.jpg",
+							"type": "image",
+							"meta": {},
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						},
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "omar-ram-z0VdFXfyhOk-unsplash.jpg",
+							"slug": "rzjd11C2",
+							"provider": "local",
+							"file": "NepYRUWx.jpg",
+							"type": "image",
+							"meta": {},
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						},
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "wolfgang-hasselmann-R5hhJYZoBRA-unsplash.jpg",
+							"slug": "fwE59w3L",
+							"provider": "local",
+							"file": "0qaLpDSU.jpg",
+							"type": "image",
+							meta: {},
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						},
+						{
+							"user": user_id,
+							"path": "upload/65ff33cdd9affc5019e9ca4f/663e998e1bd509ff62c5c669",
+							"domain": "cdn.maiasignage.com",
+							"folder": new ObjectId(folder.folder._id),
+							"name": "shiqi-zhao-18RECWIobXw-unsplash.jpg",
+							"slug": "vS5VG6KH",
+							"provider": "local",
+							"file": "PNepmkTf.jpg",
+							"type": "image",
+							meta: {},
+							"status": 1,
+							"createdAt": new Date(),
+							"updatedAt": new Date(),
+						}
+					];
 
-			await this.adapter.insertMany(default_images);
-		},
+					await this.adapter.insertMany(default_images);
+				},
+		* */
 
 		"user.created"(user) {
 			//console.log("User created:", user);
@@ -439,7 +441,7 @@ module.exports = {
 					user: new ObjectId(ctx.meta.user._id)
 				});
 				if (image) {
-					await this.adapter.removeById( image._id);
+					await this.adapter.removeById(image._id);
 					await this.bunnyDelete(image);
 
 					await this.broker.broadcast("image.removed", {...image}, ["source"]);

@@ -33,8 +33,9 @@ module.exports = {
 		fields: [
 			"_id",
 			"user",
+			"identity_number",
 			"birthdate",
-			"skype",
+			"phone",
 			"image",
 			"address",
 			"country",
@@ -47,13 +48,16 @@ module.exports = {
 		entityValidator: {
 			user: {type: "object"},
 			birthdate: {type: "date", convert: true},
-			merchant_name: {type: "string"},
-			logo: {type: "string"},
-			description: {type: "string"},
+			merchant_name: {type: "string", default: "Personal", required: false},
+			identity_number: {type: "string"},
+			logo: {type: "string", required: false, default: null},
+			description: {type: "string", required: false, default: null},
 			address: {type: "string"},
 			country: {type: "string"},
 			city: {type: "string"},
 			postcode: {type: "string"},
+			phone: {type: "string"},
+			image: {type: "string"},
 		},
 		populates: {
 			user: {
@@ -74,11 +78,11 @@ module.exports = {
 			 */
 			create(ctx) {
 				ctx.params.createdAt = new Date();
+				ctx.params.updatedAt = new Date();
 				ctx.params.status = true;
 				ctx.params.user = new ObjectId(ctx.meta.user._id);
 			},
 			update(ctx) {
-				ctx.params.user = new ObjectId(ctx.meta.user._id);
 				ctx.params.updatedAt = new Date();
 			}
 		}
@@ -110,11 +114,11 @@ module.exports = {
 		list: false,
 		create: {
 			auth: "required",
-			async handler(ctx){
+			async handler(ctx) {
 				const entity = ctx.params;
 				await this.validateEntity(entity);
 				const profile_check = await this.adapter.findOne({user: entity.user});
-				if(profile_check) {
+				if (profile_check) {
 					entity.updatedAt = new Date();
 					delete ctx.params.createdAt;
 					const profile = await this.adapter.updateById(profile_check._id.toString(), {$set: entity});

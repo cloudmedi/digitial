@@ -33,11 +33,11 @@ module.exports = {
 		// Available fields in the responses
 		fields: [
 			"_id",
+			"user",
+			"package",
 			"amount",
+			"currency",
 			"country",
-			"start_date",
-			"end_date",
-			"car_rental",
 			"status",
 			"createdAt",
 			"updatedAt",
@@ -45,7 +45,6 @@ module.exports = {
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
-			name: "string",
 			user: "object",
 			email: "string",
 			address: "string",
@@ -58,7 +57,9 @@ module.exports = {
 			basket_items: "array",
 			locale: "string",
 			provider_request_data: "object",
-			amount: {type: "string"}
+			amount: {type: "string"},
+			currency: {type: "string", default: "USD"},
+			ip: {type: "string", default: "85.34.78.112"}
 		},
 		populates: {}
 	},

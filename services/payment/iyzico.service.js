@@ -1,10 +1,7 @@
 "use strict";
 const {MoleculerClientError} = require("moleculer").Errors;
-const DbMixin = require("../../mixins/db.mixin");
 const config = require("config");
 const Iyzipay = require("iyzipay");
-const axios = require("axios");
-const path = require("node:path");
 const crypto = require("crypto");
 const slugify = require("slugify");
 const moment = require("moment");
@@ -23,7 +20,7 @@ module.exports = {
 	/**
 	 * Mixins
 	 */
-	mixins: [DbMixin("payments")],
+	mixins: [],
 	whitelist: [
 		"payment.iyzico.get",
 		"payment.iyzico.create",
@@ -35,17 +32,7 @@ module.exports = {
 	 */
 	settings: {
 		// Available fields in the responses
-		fields: [
-			"_id",
-			"amount",
-			"country",
-			"start_date",
-			"end_date",
-			"car_rental",
-			"status",
-			"createdAt",
-			"updatedAt",
-		],
+		fields: [],
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
