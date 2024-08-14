@@ -309,9 +309,10 @@ module.exports = {
 					const createRequest = {
 						locale: Iyzipay.LOCALE.EN,
 						conversationId: product._id.toString(),
-						name: product.name,
+						name: `${product.name} ${Math.floor(Math.random() * 1000)}`,
 						description: product.description
 					};
+					console.log(createRequest);
 					const iyzipay = new Iyzipay({
 						"apiKey": iyzico_conf.api_key,
 						"secretKey": iyzico_conf.api_secret,
