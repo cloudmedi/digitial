@@ -3,13 +3,13 @@ const {ObjectId} = require("mongodb");
 const {MoleculerClientError} = require("moleculer").Errors;
 const DbMixin = require("../../mixins/db.mixin");
 const Encryption = require("../../shared/encryption");
-
+const crypto = require("crypto");
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
 
 module.exports = {
-	name: "payment.cardstorage",
+	name: "payment.cards",
 	version: 1,
 
 	/**
@@ -30,8 +30,11 @@ module.exports = {
 			"exp_month",
 			"exp_year",
 			"cvv",
+			"is_default",
+			"card_last_six",
 			"last_payment_date",
 			"last_payment_status",
+			"meta",
 			"status",
 			"createdAt",
 			"updatedAt",
@@ -42,7 +45,7 @@ module.exports = {
 		populates: {}
 	},
 	dependencies: [
-		"v1.widget", // shorthand w/o version
+		"v1.payment", // shorthand w/o version
 	],
 	/**
 	 * Action Hooks
@@ -50,14 +53,16 @@ module.exports = {
 	hooks: {
 		before: {
 			create(ctx) {
-				const encryptionInstance = new Encryption();
 
-				ctx.params.name = encryptionInstance.encrypt(name);
-				ctx.params.card_number = encryptionInstance.encrypt(card_number);
-				ctx.params.exp_month = encryptionInstance.encrypt(exp_month);
-				ctx.params.exp_year = encryptionInstance.encrypt(exp_year);
-				ctx.params.cvv = encryptionInstance.encrypt(cvv);
+
+				ctx.params.last_payment_date = null;
+				ctx.params.last_payment_status = null;
+
+				ctx.params.is_default = ctx.params.is_default ?? false;
+
+				ctx.params.updatedAt = new Date();
 				ctx.params.createdAt = new Date();
+
 			},
 			update(ctx) {
 				ctx.params.updatedAt = new Date();
@@ -73,27 +78,42 @@ module.exports = {
 			rest: "POST /",
 			auth: "required",
 			params: {
-				url: {type: "string", required: true},
 				name: {type: "string", required: true},
+				card_number: {type: "string", required: true},
+				exp_month: {type: "string", required: true},
+				exp_year: {type: "string", required: true},
+				cvv: {type: "string", required: true},
+				is_default: {type: "boolean", required: false, default: false},
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
-				ctx.params.slug = this.randomName();
+				ctx.params.alias = this.randomName();
+				const key = crypto.randomBytes(32);
+				const iv = crypto.randomBytes(16);
+
+				const encryptionInstance = new Encryption(key, iv);
+				ctx.params.user = new ObjectId(ctx.meta.user._id);
+				ctx.params.name = encryptionInstance.encrypt(ctx.params.name);
+
+				ctx.params.card_last_six = ctx.params.card_number.slice(-6);
+				ctx.params.card_number = encryptionInstance.encrypt(ctx.params.card_number);
+
+				ctx.params.exp_month = encryptionInstance.encrypt(ctx.params.exp_month);
+				ctx.params.exp_year = encryptionInstance.encrypt(ctx.params.exp_year);
+				ctx.params.cvv = encryptionInstance.encrypt(ctx.params.cvv);
+				await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:key`, key.toString("base64"));
+				await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:iv`, iv.toString("base64"));
 
 				const entity = ctx.params;
 				const count = await this.adapter.count({user: new ObjectId(ctx.meta.user._id)});
-				const check = await this.adapter.findOne({url: entity.url, user: new ObjectId(ctx.meta.user._id)});
-				if (!check && count < 8) {
+				const check = await this.adapter.findOne({card_number: ctx.params.card_number, user: ctx.params.user});
+				if (!check && count < 3) {
 					const doc = await this.adapter.insert(entity);
-					await this.broker.broadcast("Webpage.created", {...doc}, ["widget.webpage"]);
-
-					return {"webpage": {...doc}};
+					await this.broker.broadcast("payment.card.stored", {...doc}, ["payment.cardstorage"]);
+					await ctx.call("v1.payment.iyzico.card_save", doc);
+					return {"card": {...doc}};
 				} else {
-					return {"webpage": {...check}};
-					/*throw new MoleculerClientError(`Duplicated Record for URL @${entity.url}`, 409, "", [{
-						field: "widget.webpage",
-						message: "Duplicated Record"
-					}]);*/
+					return {"card": {...check}};
 				}
 			}
 		},
