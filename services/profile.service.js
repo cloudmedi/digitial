@@ -47,19 +47,21 @@ module.exports = {
 
 		// Validator for the `create` & `insert` actions.
 		entityValidator: {
-			user: {type: "object"},
-			full_name: {type: "string"},
-			birthdate: {type: "date", convert: true},
-			merchant_name: {type: "string", default: "Personal", required: false},
-			identity_number: {type: "string"},
-			logo: {type: "string", required: false, default: null},
-			description: {type: "string", required: false, default: null},
-			address: {type: "string"},
-			country: {type: "string"},
-			city: {type: "string"},
-			postcode: {type: "string"},
-			phone: {type: "string"},
-			image: {type: "string"},
+			/*
+						user: {type: "object"},
+						full_name: {type: "string"},
+						birthdate: {type: "date", convert: true},
+						merchant_name: {type: "string", default: "Personal", required: false},
+						identity_number: {type: "string"},
+						logo: {type: "string", required: false, default: null},
+						description: {type: "string", required: false, default: null},
+						address: {type: "string"},
+						country: {type: "string"},
+						city: {type: "string"},
+						postcode: {type: "string"},
+						phone: {type: "string"},
+						image: {type: "string"},
+			* */
 		},
 		populates: {
 			user: {
