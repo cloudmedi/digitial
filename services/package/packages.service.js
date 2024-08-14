@@ -42,6 +42,7 @@ module.exports = {
 			"trial_days",
 			"package_properties",
 			"order",
+			"meta",
 			"status",
 			"updatedAt",
 			"createdAt"
@@ -108,7 +109,9 @@ module.exports = {
 			auth: "required"
 		},
 		list: true,
-		update: false,
+		update: {
+			visibility: "protected"
+		},
 		find: {
 			auth: "required"
 		},
@@ -187,6 +190,7 @@ module.exports = {
 							{name: "Cancel when you want", description: ""}
 						],
 						order: 0,
+						meta:{},
 						status: true,
 						updatedAt: null,
 						createdAt: new Date()
@@ -206,6 +210,7 @@ module.exports = {
 							{name: "Cancel when you want", description: ""}
 						],
 						order: 0,
+						meta:{},
 						status: true,
 						updatedAt: null,
 						createdAt: new Date()
