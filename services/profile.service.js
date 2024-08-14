@@ -106,10 +106,14 @@ module.exports = {
 			async handler(ctx) {
 				const user = new ObjectId(ctx.params.user);
 				const doc = await this.adapter.findOne({user});
-				console.log(doc);
 				const json = await this.transformDocuments(ctx, {populate: ["user"]}, doc);
+				const user_de = await ctx.call("users.get", {id: ctx.params.user});
+				return {
+					profile: {...doc},
+					user: {...user_de}
+				};
 
-				return this.transformResult(ctx, json, user);
+				//return this.transformResult(ctx, json, user);
 			}
 		},
 		get: false,
