@@ -87,33 +87,40 @@ module.exports = {
 				meta: {type: "object", required: false, default: {}}
 			},
 			async handler(ctx) {
-				ctx.params.alias = this.randomName();
-				const key = crypto.randomBytes(32);
-				const iv = crypto.randomBytes(16);
-
-				const encryptionInstance = new Encryption(key, iv);
-				ctx.params.user = new ObjectId(ctx.meta.user._id);
-				ctx.params.name = encryptionInstance.encrypt(ctx.params.name);
-
-				ctx.params.card_last_six = ctx.params.card_number.slice(-6);
-				ctx.params.card_number = encryptionInstance.encrypt(ctx.params.card_number);
-
-				ctx.params.exp_month = encryptionInstance.encrypt(ctx.params.exp_month);
-				ctx.params.exp_year = encryptionInstance.encrypt(ctx.params.exp_year);
-				ctx.params.cvv = encryptionInstance.encrypt(ctx.params.cvv);
-				await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:key`, key.toString("base64"));
-				await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:iv`, iv.toString("base64"));
-
 				const entity = ctx.params;
+				ctx.params.card_last_six = ctx.params.card_number.slice(-6);
+
 				const count = await this.adapter.count({user: new ObjectId(ctx.meta.user._id)});
-				const check = await this.adapter.findOne({card_number: ctx.params.card_number, user: ctx.params.user});
+				const check = await this.adapter.findOne({card_last_six: ctx.params.card_last_six, user: ctx.params.user});
 				if (!check && count < 3) {
+
+					ctx.params.alias = this.randomName();
+					const key = crypto.randomBytes(32);
+					const iv = crypto.randomBytes(16);
+
+					const encryptionInstance = new Encryption(key, iv);
+					ctx.params.user = new ObjectId(ctx.meta.user._id);
+					ctx.params.name = encryptionInstance.encrypt(ctx.params.name);
+
+					ctx.params.card_number = encryptionInstance.encrypt(ctx.params.card_number);
+
+					ctx.params.exp_month = encryptionInstance.encrypt(ctx.params.exp_month);
+					ctx.params.exp_year = encryptionInstance.encrypt(ctx.params.exp_year);
+					ctx.params.cvv = encryptionInstance.encrypt(ctx.params.cvv);
+					await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:key`, key.toString("base64"),0);
+					await this.broker.cacher.set(`card:secure:${ctx.params.card_last_six}:iv`, iv.toString("base64"),0);
+
+
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("payment.card.stored", {...doc}, ["payment.cardstorage"]);
 					//await ctx.call("v1.payment.iyzico.card_save", doc);
 					return {"card": {...doc}};
 				} else {
-					return {"card": {...check}};
+					throw new MoleculerClientError("Duplicated Record ", 400, "Entity Error", [{
+						field: "Payment.Cards",
+						message: "Duplicated Record"
+					}]);
+					//return {"card": {...check}};
 				}
 			}
 		},
