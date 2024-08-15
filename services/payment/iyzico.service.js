@@ -5,6 +5,7 @@ const Iyzipay = require("iyzipay");
 const crypto = require("crypto");
 const slugify = require("slugify");
 const moment = require("moment");
+const Encryption = require("../../shared/encryption");
 
 const provider_configs = config.get("provider_creds");
 const iyzico_conf = provider_configs["iyzico"];
@@ -280,6 +281,13 @@ module.exports = {
 				return await provider_answer;
 			}
 		},
+		card_save: {
+			rest: "POST /card/",
+			params: {},
+			async handler(ctx) {
+				return await this.cardSave(ctx.params);
+			}
+		},
 		create: false,
 		get: false,
 		list: false,
@@ -300,10 +308,41 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
+		async cardSave(data) {
+
+			const key = Buffer.from(await this.broker.cacher.get(`card:secure:${data.card_last_six}:key`), "base64");
+			const iv = Buffer.from(await this.broker.cacher.get(`card:secure:${data.card_last_six}:iv`), "base64");
+
+			const Cryptic = new Encryption(key, iv);
+
+			const card_info = {
+				cardAlias: data.alias,
+				email: data.email,
+				expireYear: Cryptic.decrypt(data.exp_year),
+				expireMonth: Cryptic.decrypt(data.exp_month),
+				cardNumber: Cryptic.decrypt(data.card_number),
+				cardHoldername: Cryptic.decrypt(data.name),
+				externalId: data._id,
+				conversationId: data._id
+			};
+
+			console.log(card_info);
+
+			const iyzipay = new Iyzipay({
+				"apiKey": iyzico_conf.api_key,
+				"secretKey": iyzico_conf.api_secret,
+				"uri": iyzico_conf.api_base
+			});
+console.log(iyzipay);
+			const iyzi_response = await iyzipay.card.create(card_info);
+
+			console.log("iyzi_response", iyzi_response);
+
+		},
 		async create_subscription_products() {
 			const products = await this.broker.call("v1.package.find", {query: {is_trial: false}});
 			for (const product of products) {
-				if(product?.meta?.iyzico_id) {
+				if (product?.meta?.iyzico_id) {
 					console.log("id var");
 				} else {
 					const createRequest = {
