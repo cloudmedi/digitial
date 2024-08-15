@@ -126,6 +126,7 @@ module.exports = {
 		},
 		list: {
 			auth: "required",
+			cache:false,
 			params: {},
 			async handler(ctx) {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
