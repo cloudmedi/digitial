@@ -157,7 +157,7 @@ module.exports = {
 		{
 			name: "payment",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/payment/payment.service.js services/payment/iyzico.service.js",
+			args: "services/payment/payment.service.js services/payment/iyzico.service.js services/payment/cards.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {

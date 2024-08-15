@@ -110,7 +110,7 @@ module.exports = {
 				if (!check && count < 3) {
 					const doc = await this.adapter.insert(entity);
 					await this.broker.broadcast("payment.card.stored", {...doc}, ["payment.cardstorage"]);
-					await ctx.call("v1.payment.iyzico.card_save", doc);
+					//await ctx.call("v1.payment.iyzico.card_save", doc);
 					return {"card": {...doc}};
 				} else {
 					return {"card": {...check}};
@@ -124,33 +124,7 @@ module.exports = {
 				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
 			}
 		},
-		update: {
-			auth: "required",
-			params: {
-				id: {type: "string", required: true},
-				url: {type: "string", required: true},
-				name: {type: "string", required: true},
-				meta: {type: "object", required: false, default: {}}
-			},
-			async handler(ctx) {
-				const entity = ctx.params;
-				const check = await this.adapter.findOne({_id: ObjectId(entity.id), user: ctx.meta.user._id});
-				if (check) {
-					const doc = await this.adapter.updateById(entity.id, {
-						url: entity.url,
-						meta: entity.meta,
-					});
-					await this.broker.broadcast("webpage.updated", {...doc}, ["widget.webpage"]);
-
-					return {"webpage": {...doc}};
-				} else {
-					throw new MoleculerClientError("Restricted", 409, "", [{
-						field: "widget.time",
-						message: "Restricted Record"
-					}]);
-				}
-			}
-		},
+		update: false,
 		remove: {
 			auth: "required"
 		},
