@@ -196,9 +196,9 @@ module.exports = {
 			},
 			async handler(ctx) {
 				const doc = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
-				let json = await this.transformDocuments(ctx, {populate: ["device"]}, doc);
+				return await this.transformDocuments(ctx, {populate: ["device"]}, doc);
 
-				return await this.transformResult(ctx, json, ctx.meta.user);
+				//return await this.transformResult(ctx, json, ctx.meta.user);
 				/*
 				const limit = Number(ctx.params.limit);
 				const page = Number(ctx.params.page) - 1;
