@@ -195,8 +195,9 @@ module.exports = {
 				page: {type: "string", required: false, default: "1"},
 			},
 			async handler(ctx) {
-				return await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
-
+				const screen = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+				const device = await ctx.call("v1.device", {id: screen.device});
+				return {screen: {...screen}, device: {...device}};
 				/*
 				const limit = Number(ctx.params.limit);
 				const page = Number(ctx.params.page) - 1;
