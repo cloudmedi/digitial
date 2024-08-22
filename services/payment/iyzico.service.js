@@ -10,6 +10,17 @@ const Encryption = require("../../shared/encryption");
 const provider_configs = config.get("provider_creds");
 const iyzico_conf = provider_configs["iyzico"];
 
+const iyzico = new Iyzipay({
+	"apiKey": iyzico_conf.api_key,
+	"secretKey": iyzico_conf.api_secret,
+	"uri": iyzico_conf.api_base
+});
+
+console.log({
+	"apiKey": iyzico_conf.api_key,
+	"secretKey": iyzico_conf.api_secret,
+	"uri": iyzico_conf.api_base
+});
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
@@ -27,6 +38,7 @@ module.exports = {
 		"payment.iyzico.create",
 		"payment.iyzico.update",
 		"payment.iyzico.list",
+		"payment.iyzico.remove",
 	],
 	/**
 	 * Settings
@@ -295,7 +307,16 @@ module.exports = {
 		count: false,
 		insert: false,
 		update: false,
-		remove: false,
+		card_remove: {
+			rest: "DELETE /card",
+			auth: "required",
+			params: {
+				card: {type: "object"}
+			},
+			async handler(ctx) {
+				return await this.deleteCard(ctx.params.card);
+			}
+		},
 		test: {
 			rest: "POST /test",
 			async handler(ctx) {
@@ -308,36 +329,73 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-		async cardSave(data) {
+		async deleteCard(data) {
+			const request = {
+				locale: Iyzipay.LOCALE.TR,
+				conversationId: data._id.toString(),
+				cardUserKey: data.meta.cardUserKey,
+				cardToken: data.meta.cardToken
+			};
+			return new Promise((resolve, reject) => {
+				iyzico.card.delete(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
+			});
+		},
+		generateAuthorizationString(uri_path = "/payment/bin/check") {
+			const randomKey = new Date().getTime() + "123456789";
+			const payload = _.isEmpty(request.data) ? randomKey + uri_path : randomKey + uri_path + request.data;
+			const encryptedData = CryptoJS.HmacSHA256(payload, secretKey);
+			const authorizationString = "apiKey:" + apiKey
+				+ "&randomKey:" + randomKey
+				+ "&signature:" + encryptedData;
+			const base64EncodedAuthorization = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(authorizationString));
 
+			return "IYZWSv2 " + base64EncodedAuthorization;
+		},
+		async cardSave(data) {
 			const key = Buffer.from(await this.broker.cacher.get(`card:secure:${data.card_last_six}:key`), "base64");
 			const iv = Buffer.from(await this.broker.cacher.get(`card:secure:${data.card_last_six}:iv`), "base64");
 
-			const Cryptic = new Encryption(key, iv);
+			return new Promise((resolve, reject) => {
+				const Cryptic = new Encryption(key, iv);
 
-			const card_info = {
-				cardAlias: data.alias,
-				email: data.email,
-				expireYear: Cryptic.decrypt(data.exp_year),
-				expireMonth: Cryptic.decrypt(data.exp_month),
-				cardNumber: Cryptic.decrypt(data.card_number),
-				cardHoldername: Cryptic.decrypt(data.name),
-				externalId: data._id,
-				conversationId: data._id
-			};
+				const iyzico = new Iyzipay({
+					"apiKey": iyzico_conf.api_key,
+					"secretKey": iyzico_conf.api_secret,
+					"uri": iyzico_conf.api_base
+				});
 
-			console.log(card_info);
+				let request = {
+					locale: Iyzipay.LOCALE.TR,
+					conversationId: data._id.toString(),
+					email: data.email,
+					externalId: data._id.toString(),
+					card: {
+						cardAlias: data.alias,
+						cardHolderName: data.name,
+						cardNumber: Cryptic.decrypt(data.card_number),
+						expireMonth: Cryptic.decrypt(data.exp_month),
+						expireYear: Cryptic.decrypt(data.exp_year)
+					}
+				};
 
-			const iyzipay = new Iyzipay({
-				"apiKey": iyzico_conf.api_key,
-				"secretKey": iyzico_conf.api_secret,
-				"uri": iyzico_conf.api_base
+				if (data.cardUserKey) {
+					request.cardUserKey = data.cardUserKey;
+				}
+
+				iyzico.card.create(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
 			});
-console.log(iyzipay);
-			const iyzi_response = await iyzipay.card.create(card_info);
-
-			console.log("iyzi_response", iyzi_response);
-
 		},
 		async create_subscription_products() {
 			const products = await this.broker.call("v1.package.find", {query: {is_trial: false}});
@@ -362,30 +420,6 @@ console.log(iyzipay);
 					});
 				}
 			}
-		},
-		generateRandomPassword(length) {
-			return crypto.randomBytes(Math.ceil(length * 3 / 4))
-				.toString("base64")  // base64 formatına çevir
-				.slice(0, length)    // İstenen uzunluğa kısalt
-				.replace(/\+/g, "0") // '+' karakterlerini '0' ile değiştir
-				.replace(/\//g, "0"); // '/' karakterlerini '0' ile değiştir
-		},
-		generateRequestString(data) {
-			function serialize(obj, prefix) {
-				const str = [];
-				for (const p in obj) {
-					// eslint-disable-next-line no-prototype-builtins
-					if (obj.hasOwnProperty(p)) {
-						const k = prefix ? prefix + "." + p : p, v = obj[p];
-						str.push((v !== null && typeof v === "object") ?
-							serialize(v, k) :
-							k + "=" + v);
-					}
-				}
-				return str.join(",");
-			}
-
-			return `[${serialize(data)}]`;
 		},
 		/**
 		 * Transform the result entities to follow the API spec

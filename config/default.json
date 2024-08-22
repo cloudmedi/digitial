@@ -61,11 +61,11 @@
 		},
 		"iyzico": {
 			"api_base": "https://sandbox-api.iyzipay.com",
-			"api_key":"sandbox-hvsmK9L3pzzvFJAJVeiCzUTi1plj1EY6",
-			"api_secret": "sandbox-AMVm5t9PwiHUUjP70VsBfIyi6FTZcnEP",
-			"cep_pos_api_key": "amdxpJGijYaeyBVO",
-			"cep_pos_api_secret": "l1FDHqzAkWXRzHoncfAVsl1pZzW8UuOV",
-			"callback_url": "https://trekblends-callback.rdbr.workers.dev/"
+			"api_key":"sandbox-gLVrx7BZgBF4ujqB4q3YK80jjhqOsYON",
+			"api_secret": "sandbox-Qzh4qQimgg6YOdYM0X0sFDgm5XVAVOs1",
+			"cep_pos_api_key": "fRPI0Na6qk499EzM",
+			"cep_pos_api_secret": "rCiDDrYT5BMJY28nDZZ1HVONnaJwiQO6",
+			"callback_url": "http://localhost:4001"
 		}
 	}
 }
