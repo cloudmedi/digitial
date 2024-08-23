@@ -1,18 +1,26 @@
 "use strict";
 const {MoleculerClientError} = require("moleculer").Errors;
 const DbMixin = require("../../mixins/db.mixin");
-const config = require("config");
-const Iyzipay = require("iyzipay");
-const axios = require("axios");
-const path = require("node:path");
-const crypto = require("crypto");
-const slugify = require("slugify");
-const moment = require("moment");
 const {ObjectId} = require("mongodb");
 const _ = require("lodash");
 
-const provider_configs = config.get("provider_creds");
-const iyzico_conf = provider_configs["iyzico"];
+const STATUS = {
+	WAITING: "WAITING",
+	PROCESSING: "PROCESSING",
+	PAID: "PAID",
+	FAILED: "FAILED"
+};
+
+const CURRENCY = {
+	TRY: "TRY",
+	EUR: "EUR",
+	USD: "USD",
+	IRR: "IRR",
+	GBP: "GBP",
+	NOK: "NOK",
+	RUB: "RUB",
+	CHF: "CHF"
+};
 
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
@@ -35,10 +43,11 @@ module.exports = {
 		fields: [
 			"_id",
 			"user",
-			"package",
+			"subscription",
+			"card",
 			"amount",
 			"currency",
-			"country",
+			"payment_status", /* waiting, processing, paid, fail*/
 			"status",
 			"createdAt",
 			"updatedAt",
@@ -59,7 +68,7 @@ module.exports = {
 			locale: "string",
 			provider_request_data: "object",
 			amount: {type: "string"},
-			currency: {type: "string", default: "USD"},
+			currency: {type: "string", default: CURRENCY.USD},
 			ip: {type: "string", default: "85.34.78.112"}
 		},
 		populates: {
@@ -119,18 +128,31 @@ module.exports = {
 				const subscription = await ctx.call("v1.package.get", {id: subscription_id, is_trial: false});
 				if (subscription) {
 					let card;
-					if(!card_id || card_id === "") {
+					if (!card_id || card_id === "") {
 						const users_cards = await ctx.call("v1.payment.cards.list");
-						card = _.find(users_cards, { is_default: true }) || _.first(users_cards);
+						card = _.find(users_cards, {is_default: true}) || _.first(users_cards);
 					} else {
 						card = await ctx.call("v1.payment.cards.get", {id: card_id});
 					}
 					if (card) {
 						const user = await ctx.call("v1.profile.getUser", {user: ctx.meta.user._id});
 						const new_user_entity = {...user.user, profile: user.profile};
-						const output = {subscription, card, user: new_user_entity};
 
-						return output;
+						const payment = await this.adapter.insert({
+							user: new ObjectId(user._id),
+							subscription: new ObjectId(subscription._id),
+							card: new ObjectId(card._id),
+							amount: subscription.price,
+							currency: CURRENCY.USD,
+							payment_status: STATUS.WAITING,
+							status: false,
+							createdAt: new Date(),
+							updatedAt: new Date(),
+						});
+
+						const output = {...payment, subscription, card, user: new_user_entity};
+
+						return await ctx.call("v1.payment.iyzico.start_subscription", {payment: {...output}});
 					} else {
 						return "kart bulunamadı";
 					}
@@ -149,7 +171,6 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-
 		/**
 		 * Transform the result entities to follow the API spec
 		 *

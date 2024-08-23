@@ -351,10 +351,12 @@ module.exports = {
 			rest: "POST /subscription",
 			visibility: "protected",
 			params: {
-				payment: {type: "string"},
+				payment: {type: "object"},
 			},
 			async handler(ctx) {
-				console.log(ctx.params);
+				const subscription_status = await this.start_subscription(ctx, ctx.params.payment);
+				console.log("response", subscription_status);
+				return subscription_status;
 			}
 		}
 	},
@@ -501,7 +503,7 @@ module.exports = {
 				});
 			});
 		},
-		async start_subscription(ctx, payment){
+		async start_subscription(ctx, payment) {
 			return new Promise((resolve, reject) => {
 				const name_array = payment.user.profile.full_name.split(" ");
 
@@ -516,13 +518,14 @@ module.exports = {
 				const request = {
 					locale: Iyzipay.LOCALE.TR, // Veya iyzipay.LOCALE.EN
 					conversationId: payment._id.toString(),
-					pricingPlanReferenceCode: payment.package.meta.iyzico_plans.monthly.referenceCode, // Ödeme planı referans kodu
+					pricingPlanReferenceCode: payment.subscription.meta.iyzico_plans.monthly.referenceCode, // Ödeme planı referans kodu
 					subscriptionInitialStatus: "ACTIVE", // Abonelik başlangıç durumu
 					paymentCard: {
 						cardUserKey: payment.card.meta.cardUserKey, // Kullanıcının saklanan kart anahtarı
 						cardToken: payment.card.meta.cardToken, // Saklanan kartın tokeni
 					},
 					buyer: {
+						id: ctx.meta.user._id,
 						name: first_name,
 						surname: last_name,
 						identityNumber: payment.user.profile.identity_number,
@@ -532,8 +535,17 @@ module.exports = {
 						city: payment.user.profile.city,
 						country: payment.user.profile.country,
 						zipCode: payment.user.profile.postcode
-					}
+					},
+					billingAddress: {
+						contactName: payment.user.profile.full_name,
+						address: payment.user.profile.address,
+						city: payment.user.profile.city,
+						country: payment.user.profile.country,
+						zipCode: payment.user.profile.postcode
+					},
 				};
+
+				console.log("request", request);
 
 				iyzico.subscription.initialize(request, function (err, result) {
 					if (err) {
