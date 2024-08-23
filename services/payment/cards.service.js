@@ -198,7 +198,13 @@ module.exports = {
 				}
 			}
 		},
-		get: false,
+		get: {
+			auth: "required",
+			async handler(ctx) {
+				const card_id = ctx.params.id;
+				return await this.adapter.findOne({_id: new ObjectId(card_id), user: new ObjectId(ctx.meta.user._id)});
+			}
+		},
 		count: false,
 		insert: false
 	},

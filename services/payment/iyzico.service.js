@@ -312,15 +312,15 @@ module.exports = {
 				return await this.deleteCard(ctx.params.card);
 			}
 		},
-		test: {
-			rest: "POST /test",
+		insert_products: {
+			rest: "POST /insert_products",
 			async handler(ctx) {
 				const products = await ctx.call("v1.package.find", {query: {is_trial: false}});
 				for (const product of products) {
 					const meta = product.meta ? product.meta : {};
 					let iyzico_product = await this.create_subscription_products(product);
 
-					if(iyzico_product.status === "failure" && iyzico_product.errorCode === "201001" && product.meta.iyzico_product) {
+					if (iyzico_product.status === "failure" && iyzico_product.errorCode === "201001" && product.meta.iyzico_product) {
 						iyzico_product = product.meta.iyzico_product;
 					}
 
@@ -345,6 +345,16 @@ module.exports = {
 				}
 
 				return {status: "success", message: "Success"};
+			}
+		},
+		start_subscription: {
+			rest: "POST /subscription",
+			visibility: "protected",
+			params: {
+				payment: {type: "string"},
+			},
+			async handler(ctx) {
+				console.log(ctx.params);
 			}
 		}
 	},
@@ -452,13 +462,13 @@ module.exports = {
 		async createSubscriptionPricingPlan(product, period = "MONTHLY") {
 			let price, payment_period;
 
-			if(period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.MONTHLY) {
-				if(product.annual_discount !== 0) {
+			if (period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.MONTHLY) {
+				if (product.annual_discount !== 0) {
 					price = product.price;
 					payment_period = Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.MONTHLY;
 				}
-			} else if(period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.YEARLY) {
-				if(product.annual_discount > 0) {
+			} else if (period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.YEARLY) {
+				if (product.annual_discount > 0) {
 					price = (product.price / ((product.annual_discount + 100) / 100)) * 12;
 				} else {
 					price = product.price * 12;
@@ -479,13 +489,56 @@ module.exports = {
 					currencyCode: Iyzipay.CURRENCY.USD, // TRY, USD, EUR, vb.
 					planPaymentType: Iyzipay.PLAN_PAYMENT_TYPE.RECURRING, // RECURRING veya PREPAID
 				};
-				console.log("request",request);
+				console.log("request", request);
 
 				iyzico.subscriptionPricingPlan.create(request, function (err, result) {
 					if (err) {
 						reject(err);  // Hata durumunda Promise'i reddeder
 					} else {
-						console.log("result",result);
+						console.log("result", result);
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
+			});
+		},
+		async start_subscription(ctx, payment){
+			return new Promise((resolve, reject) => {
+				const name_array = payment.user.profile.full_name.split(" ");
+
+				let first_name = `${name_array[0]}`;
+				let last_name = `${name_array[1]}`;
+
+				if (name_array.length > 2) {
+					first_name = `${name_array[0]} ${name_array[1]}`;
+					last_name = `${name_array[2]}`;
+				}
+
+				const request = {
+					locale: Iyzipay.LOCALE.TR, // Veya iyzipay.LOCALE.EN
+					conversationId: payment._id.toString(),
+					pricingPlanReferenceCode: payment.package.meta.iyzico_plans.monthly.referenceCode, // Ödeme planı referans kodu
+					subscriptionInitialStatus: "ACTIVE", // Abonelik başlangıç durumu
+					paymentCard: {
+						cardUserKey: payment.card.meta.cardUserKey, // Kullanıcının saklanan kart anahtarı
+						cardToken: payment.card.meta.cardToken, // Saklanan kartın tokeni
+					},
+					buyer: {
+						name: first_name,
+						surname: last_name,
+						identityNumber: payment.user.profile.identity_number,
+						email: payment.user.email,
+						gsmNumber: payment.user.profile.phone,
+						registrationAddress: payment.user.profile.address,
+						city: payment.user.profile.city,
+						country: payment.user.profile.country,
+						zipCode: payment.user.profile.postcode
+					}
+				};
+
+				iyzico.subscription.initialize(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
 						resolve(result);  // Başarı durumunda sonucu döner
 					}
 				});

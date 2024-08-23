@@ -9,6 +9,7 @@ const crypto = require("crypto");
 const slugify = require("slugify");
 const moment = require("moment");
 const {ObjectId} = require("mongodb");
+const _ = require("lodash");
 
 const provider_configs = config.get("provider_creds");
 const iyzico_conf = provider_configs["iyzico"];
@@ -61,7 +62,17 @@ module.exports = {
 			currency: {type: "string", default: "USD"},
 			ip: {type: "string", default: "85.34.78.112"}
 		},
-		populates: {}
+		populates: {
+			user: {
+				action: "users.get"
+			},
+			subscription: {
+				action: "v1.package.get"
+			},
+			card: {
+				action: "v1.card.get"
+			},
+		}
 	},
 
 	/**
@@ -95,6 +106,36 @@ module.exports = {
 		},
 		get: {
 			visible: "protected",
+		},
+		subscribe: {
+			rest: "POST /subscription",
+			params: {
+				subscription: {type: "string"},
+				card: {type: "string", default: null, required: false},
+			},
+			async handler(ctx) {
+				const subscription_id = ctx.params.subscription;
+				const card_id = ctx.params.card;
+				const subscription = await ctx.call("v1.package.get", {id: subscription_id, is_trial: false});
+				if (subscription) {
+					let card;
+					if(!card_id || card_id === "") {
+						const users_cards = await ctx.call("v1.payment.cards.list");
+						card = _.find(users_cards, { is_default: true }) || _.first(users_cards);
+					} else {
+						card = await ctx.call("v1.payment.cards.get", {id: card_id});
+					}
+					if (card) {
+						const user = await ctx.call("v1.profile.getUser", {user: ctx.meta.user._id});
+						const new_user_entity = {...user.user, profile: user.profile};
+						const output = {subscription, card, user: new_user_entity};
+
+						return output;
+					} else {
+						return "kart bulunamadı";
+					}
+				}
+			}
 		},
 		list: false,
 		find: false,
