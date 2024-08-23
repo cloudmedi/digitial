@@ -16,11 +16,6 @@ const iyzico = new Iyzipay({
 	"uri": iyzico_conf.api_base
 });
 
-console.log({
-	"apiKey": iyzico_conf.api_key,
-	"secretKey": iyzico_conf.api_secret,
-	"uri": iyzico_conf.api_base
-});
 /**
  * @typedef {import("moleculer").Context} Context Moleculer's Context
  */
@@ -320,7 +315,18 @@ module.exports = {
 		test: {
 			rest: "POST /test",
 			async handler(ctx) {
-				return await this.create_subscription_products();
+				const products = await ctx.call("v1.package.find", {query: {is_trial: false}});
+				for (const product of products) {
+					const iyzico_product = await this.create_subscription_products(product);
+					const meta = product.meta ? product.meta : {};
+					const new_meta = {...product.meta, iyzico_product: iyzico_product.data};
+					await ctx.call("v1.package.update", {
+						id: product._id.toString(),
+						meta: new_meta
+					});
+				}
+
+				return products;
 			}
 		}
 	},
@@ -329,22 +335,7 @@ module.exports = {
 	 * Methods
 	 */
 	methods: {
-		async deleteCard(data) {
-			const request = {
-				locale: Iyzipay.LOCALE.TR,
-				conversationId: data._id.toString(),
-				cardUserKey: data.meta.cardUserKey,
-				cardToken: data.meta.cardToken
-			};
-			return new Promise((resolve, reject) => {
-				iyzico.card.delete(request, function (err, result) {
-					if (err) {
-						reject(err);  // Hata durumunda Promise'i reddeder
-					} else {
-						resolve(result);  // Başarı durumunda sonucu döner
-					}
-				});
-			});
+		async listCard(data) {
 		},
 		generateAuthorizationString(uri_path = "/payment/bin/check") {
 			const randomKey = new Date().getTime() + "123456789";
@@ -397,29 +388,48 @@ module.exports = {
 				});
 			});
 		},
-		async create_subscription_products() {
-			const products = await this.broker.call("v1.package.find", {query: {is_trial: false}});
-			for (const product of products) {
-				if (product?.meta?.iyzico_id) {
-					console.log("id var");
-				} else {
-					const createRequest = {
-						locale: Iyzipay.LOCALE.EN,
-						conversationId: product._id.toString(),
-						name: `${product.name} ${Math.floor(Math.random() * 1000)}`,
-						description: product.description
-					};
-					console.log(createRequest);
-					const iyzipay = new Iyzipay({
-						"apiKey": iyzico_conf.api_key,
-						"secretKey": iyzico_conf.api_secret,
-						"uri": iyzico_conf.api_base
-					});
-					iyzipay.subscriptionProduct.create(createRequest, function (err, result) {
-						console.log(err, result);
-					});
-				}
-			}
+		async deleteCard(data) {
+			const request = {
+				locale: Iyzipay.LOCALE.TR,
+				conversationId: data._id.toString(),
+				cardUserKey: data.meta.cardUserKey,
+				cardToken: data.meta.cardToken
+			};
+			return new Promise((resolve, reject) => {
+				iyzico.card.delete(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
+			});
+		},
+		async create_subscription_products(product) {
+			return new Promise((resolve, reject) => {
+				const request = {
+					locale: Iyzipay.LOCALE.TR, // Veya iyzipay.LOCALE.EN
+					conversationId: product._id.toString(),
+					name: `${product.name}`,
+					description: product.description,
+				};
+				console.log(request);
+				iyzico.subscriptionProduct.create(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
+			});
+
+
+		},
+		async update_subscription_products() {
+
+		},
+		async delete_subscription_products() {
+
 		},
 		/**
 		 * Transform the result entities to follow the API spec
