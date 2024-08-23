@@ -317,16 +317,34 @@ module.exports = {
 			async handler(ctx) {
 				const products = await ctx.call("v1.package.find", {query: {is_trial: false}});
 				for (const product of products) {
-					const iyzico_product = await this.create_subscription_products(product);
 					const meta = product.meta ? product.meta : {};
-					const new_meta = {...product.meta, iyzico_product: iyzico_product.data};
+					let iyzico_product = await this.create_subscription_products(product);
+
+					if(iyzico_product.status === "failure" && iyzico_product.errorCode === "201001" && product.meta.iyzico_product) {
+						iyzico_product = product.meta.iyzico_product;
+					}
+
+					let new_meta = {...meta, iyzico_product: iyzico_product.data, iyzico_plan: null};
+					const subscription_plan = await this.createSubscriptionPricingPlan({...product, meta: new_meta});
+					/*
+					const subscription_plan2 = await this.createSubscriptionPricingPlan({...product, meta: new_meta}, "YEARLY");
+					*/
+
+					new_meta.iyzico_plans = {
+						monthly: subscription_plan.data,
+						yearly: null,
+					};
+
+
 					await ctx.call("v1.package.update", {
 						id: product._id.toString(),
 						meta: new_meta
 					});
+
+
 				}
 
-				return products;
+				return {status: "success", message: "Success"};
 			}
 		}
 	},
@@ -413,7 +431,7 @@ module.exports = {
 					name: `${product.name}`,
 					description: product.description,
 				};
-				console.log(request);
+				//
 				iyzico.subscriptionProduct.create(request, function (err, result) {
 					if (err) {
 						reject(err);  // Hata durumunda Promise'i reddeder
@@ -430,6 +448,48 @@ module.exports = {
 		},
 		async delete_subscription_products() {
 
+		},
+		async createSubscriptionPricingPlan(product, period = "MONTHLY") {
+			let price, payment_period;
+
+			if(period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.MONTHLY) {
+				if(product.annual_discount !== 0) {
+					price = product.price;
+					payment_period = Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.MONTHLY;
+				}
+			} else if(period === Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.YEARLY) {
+				if(product.annual_discount > 0) {
+					price = (product.price / ((product.annual_discount + 100) / 100)) * 12;
+				} else {
+					price = product.price * 12;
+				}
+				payment_period = Iyzipay.SUBSCRIPTION_PRICING_PLAN_INTERVAL.YEARLY;
+			}
+
+			return new Promise((resolve, reject) => {
+				const request = {
+					locale: Iyzipay.LOCALE.TR, // Veya iyzipay.LOCALE.EN
+					conversationId: product._id.toString(),
+					productReferenceCode: product.meta.iyzico_product.referenceCode, // Ürünün referans kodu
+					name: product.name,
+					price: price,
+					paymentInterval: payment_period, // Ödeme aralığı: DAILY, WEEKLY, MONTHLY, YEARLY
+					paymentIntervalCount: 1, // Ödeme aralığı sayısı
+					trialPeriodDays: 0, // Deneme süresi (gün)
+					currencyCode: Iyzipay.CURRENCY.USD, // TRY, USD, EUR, vb.
+					planPaymentType: Iyzipay.PLAN_PAYMENT_TYPE.RECURRING, // RECURRING veya PREPAID
+				};
+				console.log("request",request);
+
+				iyzico.subscriptionPricingPlan.create(request, function (err, result) {
+					if (err) {
+						reject(err);  // Hata durumunda Promise'i reddeder
+					} else {
+						console.log("result",result);
+						resolve(result);  // Başarı durumunda sonucu döner
+					}
+				});
+			});
 		},
 		/**
 		 * Transform the result entities to follow the API spec
