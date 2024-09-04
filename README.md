@@ -5,6 +5,8 @@ Maia Signage Rest/WS API Framework with moleculer.services
 - NodeJS v18+
 - MongoDB
 - Redis
+- ffmpeg
+- imageMagick
 
 ## Installation
 
@@ -48,15 +50,16 @@ pm2 start ecosystem.config.js --env=production
   - [x] Video
   - [ ] Instagram (in progress)
   - [ ] Date & Time
-  - [ ] Youtube
+  - [x] Youtube
   - [ ] rss
-  - [ ] Twitter
+  - [ ] Twitter (in progress)
   - [ ] Weather
-  - [ ] Webpage
+  - [x] Webpage
+- [ ] Groups
 - [ ] Sources
     - [x] Layouts
     - [x] Playlist
-    - [ ] Program
+    - [ ] Program (schedule)
     - [ ] Channel
 - [x] Screen
   - [x] Device
@@ -64,6 +67,11 @@ pm2 start ecosystem.config.js --env=production
 - [x] Package
 - [x] Email
 - [ ] Partials
-  - [x] Country
+  - [x] Country (data dosyasındaki idler silinecek)
   - [x] Currency
   - [x] Ip2Country
+- [x] Payment
+  - [x] Iyzico
+    - [x] Ürün ekleme
+    - [x] Kullanıcı Ekleme
+    - [ ] Abonelik (in progress)
