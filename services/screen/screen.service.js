@@ -326,6 +326,7 @@ module.exports = {
 						});
 
 						await ctx.call("v1.device.remove", {id: screen.device._id});
+						await ctx.call("v1.group.removeScreen", {screenId: screen._id});
 
 						await this.broker.call("v1.device.status", {
 							serial: screen.device.serial,

@@ -8,14 +8,14 @@
 		"stream": "stream.maiasignage.com"
 	},
 	"REDIS": {
-		"host": "172.17.0.3",
+		"host": "127.0.0.1",
 		"port": "6379",
 		"password": "",
 		"db": 12
 	},
 	"MONGODB": {
 		"is_active": true,
-		"URL": "mongodb://172.17.0.2:27017/signage_api_prod"
+		"URL": "mongodb://127.0.0.1:27017/signage_api_prod"
 	},
 	"JWT_SECRET": "5ca854e9a10491b53cab2d6a885aa9bc",
 	"JSON_SOCKET_PORT": 9838,
