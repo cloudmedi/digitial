@@ -69,7 +69,7 @@ module.exports = {
 		{
 			name: "screens",
 			script: "./node_modules/.bin/moleculer-runner",
-			args: "services/screen/screen.service.js services/screen/device.service.js",
+			args: "services/screen/screen.service.js services/screen/device.service.js services/screen/group.service.js",
 			exec_mode: "cluster",
 			instances: 1,
 			env: {
