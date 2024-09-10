@@ -56,7 +56,7 @@ services:
 
   screens:
     build: .
-    command: ./node_modules/.bin/moleculer-runner services/screen/screen.service.js services/screen/device.service.js
+    command: ./node_modules/.bin/moleculer-runner services/screen/screen.service.js services/screen/device.service.js services/screen/group.service.js
     env_file:
       - ./docker-compose.env
     environment:
