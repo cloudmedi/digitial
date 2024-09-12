@@ -64,7 +64,9 @@ module.exports = {
 								"room.*",
 								"v1.device.check_serial",
 								"v1.device.status",
-								"v1.log.create"
+								"v1.log.create",
+								"v1.group.synchronize",
+								"v1.device.rotate"
 							],
 							onBeforeCall: async function (ctx, socket, action, params, callOptions) { //before hook
 								this.logger.info("before socket hook");

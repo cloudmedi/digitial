@@ -180,6 +180,33 @@ module.exports = {
 				return this.adapter.findOne({serial: ctx.params.serial});
 			}
 		},
+		rotate: {
+            rest: "POST /rotate",
+            auth: "required",
+            params: {
+                screen: "object",
+                rotate: "number"
+            },
+            async handler(ctx) {
+                const screen = ctx.params.screen;
+                const rotate = ctx.params.rotate;
+              
+				const screen1 = await this.broker.call("v1.screen.findByDeviceSerial", {serial: ctx.params.screen.serial});
+                // Broadcast the rotation message to the relevant screen
+			if(screen1){
+				await ctx.call("io.broadcast", {
+					namespace: "/", //optional
+					event: "rotate",
+					args: ["rotate", {rotate: rotate, screen: screen}], //optional
+					volatile: false, //optional
+					local: false, //optional
+					rooms: [`device-${screen1.device._id}`] //optional
+				});
+			}
+
+               
+            }
+        },
 		get: true,
 		create: false,
 		insert: false,

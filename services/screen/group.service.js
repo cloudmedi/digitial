@@ -34,7 +34,7 @@ module.exports = {
         // Validator for the `create` & `insert` actions.
         entityValidator: {
             name: "string",
-           
+
         }
     },
 
@@ -53,7 +53,7 @@ module.exports = {
                 ctx.params.createdAt = new Date();
                 ctx.params.updatedAt = new Date();
 
-                
+
                 ctx.params.user = new ObjectId(ctx.meta.user._id);
                 ctx.params.screens = [];
             },
@@ -74,7 +74,7 @@ module.exports = {
             rest: "POST /",
             params: {
                 name: "string",
-               
+
             },
             async handler(ctx) {
                 const newGroup = await this.adapter.insert(ctx.params);
@@ -97,21 +97,21 @@ module.exports = {
                 if (!group) {
                     throw new MoleculerClientError("Group not found!", 404);
                 }
-        
+
                 // Eğer screens undefined ise, boş bir dizi olarak başlat
                 if (!group.screens) {
                     group.screens = [];
                 }
-        
+
                 // Gelen screen objesini gruba ekle
                 group.screens.push(ctx.params.screen.selectedScreens);
-        
+
                 // Grubu güncelle
                 await this.adapter.updateById(ctx.params.groupId, {
                     $set: { screens: ctx.params.screen.selectedScreens }
                 });
-        
-                return  await this.adapter.findById(ctx.params.groupId);
+
+                return await this.adapter.findById(ctx.params.groupId);
             }
         },
 
@@ -178,24 +178,24 @@ module.exports = {
             async handler(ctx) {
                 // Tüm grupları çek
                 const groups = await this.adapter.find();
-        
+
                 if (!groups || groups.length === 0) {
                     throw new MoleculerClientError("No groups found!", 404);
                 }
-        
+
                 // Ekran silinen grup sayacını tut
                 let updatedGroups = 0;
-        
+
                 // Her bir grup için ekranı sil
                 for (const group of groups) {
                     // Eğer grup içinde ekran yoksa devam et
                     if (!group.screens || group.screens.length === 0) {
                         continue;
                     }
-        
+
                     // Ekranı bul ve gruptan çıkar
                     const updatedScreens = group.screens.filter(screen => screen._id.toString() !== ctx.params.screenId);
-        
+
                     // Eğer ekran sayısı değiştiyse, güncelleme yap
                     if (updatedScreens.length !== group.screens.length) {
                         await this.adapter.updateById(group._id, {
@@ -204,17 +204,47 @@ module.exports = {
                         updatedGroups++;
                     }
                 }
-        
+
                 // Eğer hiç grup güncellenmediyse, ekran bulunamadı demektir
                 if (updatedGroups === 0) {
                     throw new MoleculerClientError("Screen not found in any group!", 404);
                 }
-        
+
                 return { message: `Screen removed from ${updatedGroups} groups.` };
             }
+        },
+        synchronize: {
+            rest: "POST /:groupId/synchronize",
+            params: {
+                groupId: "string"
+            },
+            async handler(ctx) {
+                console.log("ctxasfasfas", ctx.params)
+                const groupId = ctx.params.groupId;
+                const group = await this.adapter.findById(groupId);
+
+                if (!group) {
+                    throw new MoleculerClientError("Group not found", 404);
+                }
+
+                if (group.screens && group.screens.length > 0) {
+                    console.log("buraya girdi")
+                    for (const screen of group.screens) {
+                      
+                        await ctx.broker.call("io.broadcast", {
+                            namespace: "/",
+                            event: "synchronize",
+                            args: ["Synchronize request", { groupId, screenId: screen._id }],
+                            rooms: [`device-${screen.device._id}`]
+                        });
+                    }
+
+
+                }
+            }
         }
-        
-        
+
+
     },
 
     /**
