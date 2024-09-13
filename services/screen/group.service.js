@@ -15,12 +15,7 @@ module.exports = {
     /**
      * Mixins
      */
-    mixins: [DbMixin("groups"),
-        CacheCleanerMixin([
-			"cache.clean.groups",
-			"groups"
-		])
-    ],
+    mixins: [DbMixin("groups"), ],
     
 
     /**
