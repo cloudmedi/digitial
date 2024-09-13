@@ -15,7 +15,13 @@ module.exports = {
     /**
      * Mixins
      */
-    mixins: [DbMixin("groups")],
+    mixins: [DbMixin("groups"),
+        CacheCleanerMixin([
+			"cache.clean.groups",
+			"groups"
+		])
+    ],
+    
 
     /**
      * Settings
@@ -87,6 +93,7 @@ module.exports = {
          */
         addScreen: {
             rest: "POST /:groupId/screens",
+            cache: false,
             params: {
                 groupId: "string",
                 screen: "object"
@@ -120,6 +127,7 @@ module.exports = {
          */
         list: {
             rest: "GET /",
+            cache: false,
             async handler() {
                 return await this.adapter.find();
             }
@@ -130,6 +138,7 @@ module.exports = {
          */
         get: {
             rest: "GET /groups/:id",
+            cache: false,
             params: {
                 id: "string"
             },
@@ -147,6 +156,7 @@ module.exports = {
          */
         update: {
             rest: "PUT /groups/:id",
+            cache: false,
             params: {
                 id: "string",
                 name: "string"
@@ -163,6 +173,7 @@ module.exports = {
          */
         remove: {
             rest: "DELETE /groups/:id",
+            cache: false,
             params: {
                 id: "string"
             },
@@ -172,6 +183,7 @@ module.exports = {
         },
         removeScreen: {
             rest: "DELETE /screens/:screenId",
+            cache: false,
             params: {
                 screenId: "string"
             },
@@ -215,6 +227,7 @@ module.exports = {
         },
         synchronize: {
             rest: "POST /:groupId/synchronize",
+            cache: false,
             params: {
                 groupId: "string"
             },
