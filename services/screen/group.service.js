@@ -15,8 +15,8 @@ module.exports = {
     /**
      * Mixins
      */
-    mixins: [DbMixin("groups"), ],
-    
+    mixins: [DbMixin("groups"),],
+
 
     /**
      * Settings
@@ -120,13 +120,27 @@ module.exports = {
         /**
          * List all groups.
          */
+        /**
+   * List all groups for the current user.
+   */
         list: {
             rest: "GET /",
             cache: false,
-            async handler() {
-                return await this.adapter.find();
+            async handler(ctx) {
+                // Kullanıcının ID'sini al
+                console.log(ctx.meta)
+                const userId = ctx.meta.user._id;
+
+                // Kullanıcıya ait grupları bul
+                const groups = await this.adapter.find({ user: userId });
+                const doc = await this.adapter.find({query: {user: new ObjectId(ctx.meta.user._id)}});
+            
+                return doc
+                // Grupları döndür
+              
             }
         },
+
 
         /**
          * Get a specific group by ID.
@@ -238,7 +252,7 @@ module.exports = {
                 if (group.screens && group.screens.length > 0) {
                     console.log("buraya girdi")
                     for (const screen of group.screens) {
-                      
+
                         await ctx.broker.call("io.broadcast", {
                             namespace: "/",
                             event: "synchronize",
